@@ -93,17 +93,10 @@
    ============================================ */
 
 .desktop-icon-grid {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 16px;
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 40px;
+  inset: 0;
+  bottom: 36px;
   z-index: 1;
-  align-content: flex-start;
 }
 
 .desktop-icon {
