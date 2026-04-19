@@ -1,0 +1,9 @@
+/* Window positioning and layout — 98.css handles component aesthetics */
+
+.win-container {
+  box-sizing: border-box;
+}
+
+.win-maximized {
+  border-radius: 0;
+}
