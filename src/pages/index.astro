@@ -1,9 +1,10 @@
 ---
+import Desktop from '../components/desktop/Desktop';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 export const prerender = true;
 ---
 
 <BaseLayout>
-  <div id="desktop-root">Desktop</div>
+  <Desktop client:load />
 </BaseLayout>
