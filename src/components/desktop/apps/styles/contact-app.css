@@ -1,0 +1,49 @@
+/* ContactApp — small contact method chooser dialog */
+
+.contact-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: -8px;
+  padding: 16px;
+}
+
+.contact-app__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 16px;
+}
+
+.contact-app__text {
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+}
+
+.contact-app__buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.contact-app__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  min-width: 100px;
+  cursor: pointer;
+}
+
+.contact-app__btn-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.contact-app__btn-label {
+  font-size: 12px;
+  white-space: nowrap;
+}

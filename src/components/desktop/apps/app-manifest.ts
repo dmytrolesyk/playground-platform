@@ -1,5 +1,6 @@
 import { lazy } from 'solid-js';
 import { BrowserApp } from './BrowserApp';
+import { ContactApp } from './ContactApp';
 import { EmailApp } from './EmailApp';
 import { ExplorerApp } from './ExplorerApp';
 import { registerApp } from './registry';
@@ -32,16 +33,29 @@ registerApp({
   defaultSize: { width: 500, height: 350 },
 });
 
+// Email app — opened from ContactApp, not shown on desktop/start menu directly
 registerApp({
   id: 'email',
-  title: 'Contact Me',
+  title: 'Send Email',
   icon: '/icons/email_icon.png',
   component: EmailApp,
+  desktop: false,
+  startMenu: false,
+  singleton: true,
+  defaultSize: { width: 550, height: 400 },
+});
+
+// Contact chooser — shown on desktop/start menu
+registerApp({
+  id: 'contact',
+  title: 'Contact Me',
+  icon: '/icons/email_icon.png',
+  component: ContactApp,
   desktop: true,
   startMenu: true,
   startMenuCategory: 'Programs',
   singleton: true,
-  defaultSize: { width: 550, height: 400 },
+  defaultSize: { width: 300, height: 180 },
 });
 
 registerApp({
