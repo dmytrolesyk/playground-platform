@@ -1,18 +1,18 @@
+import { BrowserApp } from './BrowserApp';
 import { PlaceholderApp } from './PlaceholderApp';
 import { registerApp } from './registry';
 
-// Register MVP apps with placeholder components
+// Register MVP apps
 registerApp({
   id: 'browser',
   title: 'View CV',
   icon: '/icons/browser_icon.png',
-  component: PlaceholderApp,
+  component: BrowserApp,
   desktop: true,
   startMenu: true,
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 640, height: 480 },
-  defaultProps: { name: 'CV Browser' },
 });
 
 registerApp({
