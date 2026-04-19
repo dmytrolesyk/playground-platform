@@ -56,7 +56,7 @@ function handleCvCommand(args: string, writeLine: (text: string) => void): void 
       return;
     }
     for (const section of sections) {
-      writeLine(`\x1b[1m\x1b[33m=== ${section.title} ===\x1b[0m`);
+      writeLine(`=== ${section.title} ===`);
       writeLine(stripHtml(section.html));
       writeLine('');
     }
@@ -66,7 +66,7 @@ function handleCvCommand(args: string, writeLine: (text: string) => void): void 
     (s) => s.slug.toLowerCase() === args || s.title.toLowerCase() === args,
   );
   if (match) {
-    writeLine(`\x1b[1m\x1b[33m=== ${match.title} ===\x1b[0m`);
+    writeLine(`=== ${match.title} ===`);
     writeLine(stripHtml(match.html));
   } else {
     writeLine(`Section not found: "${args}"`);
@@ -94,29 +94,25 @@ function handleOpenCommand(
   }
 }
 
-const ASCII_BANNER = `
-╔═══════════════════════════════════════════╗
-║   ____            _              _        ║
-║  |  _ \\ _ __ ___ (_) ___  ___  | |       ║
-║  | | | | '_ \` _ \\| |/ _ \\/ __| | |       ║
-║  | |_| | | | | | | |  __/\\__ \\ | |___    ║
-║  |____/|_| |_| |_|_|\\___||___/ |_____|   ║
-║                                           ║
-║  Dmytro Lesyk — Software Engineer         ║
-║  Type 'help' for available commands       ║
-╚═══════════════════════════════════════════╝
-`;
+const ASCII_BANNER = [
+  '',
+  '  Dmytro Lesyk - Software Engineer',
+  "  Type 'help' for available commands.",
+  '',
+].join('\n');
 
-const HELP_TEXT = `Available commands:
-  help          Show this help message
-  about         Display ASCII art banner
-  cv            Print all CV sections
-  cv <section>  Print a specific CV section
-  open browser  Open the CV Browser
-  open email    Open the Contact app
-  open explorer Open the File Explorer
-  clear         Clear the terminal
-`;
+const HELP_TEXT = [
+  'Available commands:',
+  '  help            Show this help message',
+  '  about           Display info banner',
+  '  cv              Print all CV sections',
+  '  cv <section>    Print a specific CV section',
+  '  open browser    Open the CV Browser',
+  '  open email      Open the Contact app',
+  '  open explorer   Open the File Explorer',
+  '  clear           Clear the terminal',
+  '',
+].join('\n');
 
 export function TerminalApp(): JSX.Element {
   const [, actions] = useDesktop();
@@ -128,7 +124,7 @@ export function TerminalApp(): JSX.Element {
   let resizeObserver: ResizeObserver | undefined;
 
   function getPrompt(): string {
-    return '\x1b[32mguest@cv\x1b[0m:\x1b[34m~\x1b[0m$ ';
+    return 'C:\\Users\\guest> ';
   }
 
   function writePrompt(): void {
@@ -136,7 +132,11 @@ export function TerminalApp(): JSX.Element {
   }
 
   function writeLine(text: string): void {
-    terminalInstance?.write(`${text}\r\n`);
+    // Handle multi-line text by splitting on \n and writing each with \r\n
+    const lines = text.split('\n');
+    for (const line of lines) {
+      terminalInstance?.write(`${line}\r\n`);
+    }
   }
 
   function handleCommand(input: string): void {
@@ -188,10 +188,10 @@ export function TerminalApp(): JSX.Element {
     const terminal = new Terminal({
       theme: {
         background: '#000000',
-        foreground: '#00ff00',
-        cursor: '#00ff00',
+        foreground: '#c0c0c0',
+        cursor: '#c0c0c0',
         cursorAccent: '#000000',
-        selectionBackground: '#008000',
+        selectionBackground: '#000080',
       },
       fontFamily: '"Courier New", monospace',
       fontSize: 14,

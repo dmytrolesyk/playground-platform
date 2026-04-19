@@ -5,6 +5,21 @@ import { TitleBar } from './TitleBar';
 import './styles/window.css';
 
 const TASKBAR_HEIGHT = 28;
+const MIN_WIDTH = 200;
+const MIN_HEIGHT = 150;
+
+type ResizeEdge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
+
+const CURSOR_MAP: Record<ResizeEdge, string> = {
+  n: 'ns-resize',
+  s: 'ns-resize',
+  e: 'ew-resize',
+  w: 'ew-resize',
+  ne: 'nesw-resize',
+  nw: 'nwse-resize',
+  se: 'nwse-resize',
+  sw: 'nesw-resize',
+};
 
 interface WindowProps {
   window: WindowState;
@@ -17,11 +32,20 @@ export function Window(props: WindowProps): JSX.Element {
   let dragOffsetX = 0;
   let dragOffsetY = 0;
 
+  // Resize state
+  let isResizing = false;
+  let resizeEdge: ResizeEdge | null = null;
+  let resizeStartX = 0;
+  let resizeStartY = 0;
+  let resizeStartBounds = { x: 0, y: 0, w: 0, h: 0 };
+
   const handleDragStart = (e: PointerEvent): void => {
-    // No drag on mobile
     if (state.isMobile) return;
     if (e.button !== 0) return;
     if (props.window.isMaximized) return;
+
+    const clicked = e.target as HTMLElement;
+    if (clicked.closest('.title-bar-controls')) return;
 
     const target = e.currentTarget as HTMLElement;
     target.setPointerCapture(e.pointerId);
@@ -64,11 +88,78 @@ export function Window(props: WindowProps): JSX.Element {
     }
   };
 
+  const handleResizeStart = (edge: ResizeEdge, e: PointerEvent): void => {
+    if (state.isMobile) return;
+    if (props.window.isMaximized) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const target = e.currentTarget as HTMLElement;
+    target.setPointerCapture(e.pointerId);
+    isResizing = true;
+    resizeEdge = edge;
+    resizeStartX = e.clientX;
+    resizeStartY = e.clientY;
+    resizeStartBounds = {
+      x: props.window.x,
+      y: props.window.y,
+      w: props.window.width,
+      h: props.window.height,
+    };
+
+    actions.focusWindow(props.window.id);
+  };
+
+  const handleResizeMove = (e: PointerEvent): void => {
+    if (!(isResizing && resizeEdge)) return;
+
+    const dx = e.clientX - resizeStartX;
+    const dy = e.clientY - resizeStartY;
+    let { x, y, w, h } = resizeStartBounds;
+
+    if (resizeEdge.includes('e')) w = Math.max(MIN_WIDTH, w + dx);
+    if (resizeEdge.includes('s')) h = Math.max(MIN_HEIGHT, h + dy);
+    if (resizeEdge.includes('w')) {
+      const newW = Math.max(MIN_WIDTH, w - dx);
+      x += w - newW;
+      w = newW;
+    }
+    if (resizeEdge.includes('n')) {
+      const newH = Math.max(MIN_HEIGHT, h - dy);
+      y += h - newH;
+      h = newH;
+    }
+
+    actions.updateWindowPosition(props.window.id, x, y);
+    actions.updateWindowSize(props.window.id, w, h);
+  };
+
+  const handleResizeEnd = (e: PointerEvent): void => {
+    if (!isResizing) return;
+    isResizing = false;
+    resizeEdge = null;
+
+    const target = e.currentTarget as HTMLElement;
+    target.releasePointerCapture(e.pointerId);
+  };
+
   const handleWindowFocus = (): void => {
     actions.focusWindow(props.window.id);
   };
 
   const isFullScreen = (): boolean => state.isMobile || props.window.isMaximized;
+
+  function renderResizeHandle(edge: ResizeEdge): JSX.Element {
+    return (
+      <div
+        class={`win-resize win-resize--${edge}`}
+        style={{ cursor: CURSOR_MAP[edge] }}
+        onPointerDown={(e: PointerEvent) => handleResizeStart(edge, e)}
+        onPointerMove={handleResizeMove}
+        onPointerUp={handleResizeEnd}
+      />
+    );
+  }
 
   return (
     <div
@@ -110,6 +201,20 @@ export function Window(props: WindowProps): JSX.Element {
       <div class="window-body" style={{ flex: '1', overflow: 'auto', margin: '0', padding: '8px' }}>
         {props.children}
       </div>
+
+      {/* Resize handles — hidden when maximized or mobile */}
+      {!isFullScreen() && (
+        <>
+          {renderResizeHandle('n')}
+          {renderResizeHandle('s')}
+          {renderResizeHandle('e')}
+          {renderResizeHandle('w')}
+          {renderResizeHandle('ne')}
+          {renderResizeHandle('nw')}
+          {renderResizeHandle('se')}
+          {renderResizeHandle('sw')}
+        </>
+      )}
     </div>
   );
 }
