@@ -1,91 +1,15 @@
-/* Desktop icon grid, icon styling, and CRT monitor frame */
-
-/* ============================================
-   CRT Monitor Frame
-   ============================================ */
-
-.crt-monitor {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100vw;
-  height: 100vh;
-  background: #2a2a2e;
-  overflow: hidden;
-  padding-top: 12px;
-}
-
-.crt-bezel {
-  width: calc(100% - 48px);
-  max-width: 1400px;
-  flex: 1;
-  min-height: 0;
-  background: #3a3a3e;
-  border-radius: 16px 16px 8px 8px;
-  padding: 12px 12px 16px;
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.08),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.5);
-}
-
-.crt-inner-bezel {
-  width: 100%;
-  height: 100%;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 3px solid #1a1a1e;
-  box-shadow:
-    inset 0 0 8px rgba(0, 0, 0, 0.6),
-    0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-.crt-screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.crt-scanlines {
-  position: absolute;
-  inset: 0;
-  z-index: 999;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-}
-
-/* Monitor stand */
-.crt-stand {
-  width: 80px;
-  height: 18px;
-  background: linear-gradient(to bottom, #3a3a3e, #2e2e32);
-  border-radius: 0 0 4px 4px;
-  flex-shrink: 0;
-}
-
-.crt-base {
-  width: 200px;
-  height: 8px;
-  background: linear-gradient(to bottom, #4a4a4e, #3a3a3e);
-  border-radius: 0 0 8px 8px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
+/* Desktop icon grid and icon styling */
 
 /* ============================================
    Desktop (the "screen" area)
    ============================================ */
 
 .desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
   background-color: #008080;
+  overflow: hidden;
 }
 
 /* ============================================
@@ -157,37 +81,9 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .crt-monitor {
-    padding: 0;
-    background: none;
-  }
-
-  .crt-bezel {
-    width: 100%;
-    max-width: none;
-    padding: 0;
-    border-radius: 0;
-    box-shadow: none;
-    background: none;
-  }
-
-  .crt-inner-bezel {
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .crt-scanlines {
-    display: none;
-  }
-
-  .crt-stand,
-  .crt-base {
-    display: none;
-  }
-
   .desktop-icon-grid {
     position: static;
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;

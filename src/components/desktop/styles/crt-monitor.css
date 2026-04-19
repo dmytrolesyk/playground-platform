@@ -1,0 +1,424 @@
+/* CRT Monitor Frame — Realistic late-90s Dell-style CRT */
+
+/* ============================================
+   CSS Variables for easy tweaking
+   ============================================ */
+
+:root {
+  --crt-shell-color: #d5cdbe;
+  --crt-shell-highlight: #e0d9cb;
+  --crt-shell-shadow: #b8b0a2;
+  --crt-shell-edge: #c8c0b2;
+  --crt-bezel-color: #141416;
+  --crt-bezel-depth: 12px;
+  --crt-screen-radius: 10px;
+  --crt-outer-radius: 28px;
+  --crt-shadow-strength: 0.45;
+  --crt-scanline-opacity: 0.035;
+  --crt-reflection-opacity: 0.08;
+  --crt-vignette-opacity: 0.3;
+}
+
+/* ============================================
+   Monitor container — centers everything
+   ============================================ */
+
+.crt-monitor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: #2a2a2e;
+  overflow: hidden;
+  padding: 10px 20px 0;
+}
+
+/* ============================================
+   Monitor body — the plastic housing
+   ============================================ */
+
+.crt-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 24px);
+  max-width: 1400px;
+  flex: 1;
+  min-height: 0;
+  /* Warm beige plastic with top-lit shading */
+  background: linear-gradient(
+    180deg,
+    var(--crt-shell-highlight) 0%,
+    var(--crt-shell-color) 15%,
+    var(--crt-shell-color) 70%,
+    var(--crt-shell-shadow) 100%
+  );
+  border-radius: var(--crt-outer-radius);
+  padding: 26px 30px 0;
+  /* Layered shadows for physical depth */
+  box-shadow: /* Ambient shadow */
+    0 12px 40px rgba(0, 0, 0, var(--crt-shadow-strength)),
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    /* Top highlight ridge */
+    inset 0 2px 1px rgba(255, 255, 255, 0.4),
+    /* Bottom edge shadow */
+    inset 0 -2px 1px rgba(0, 0, 0, 0.1),
+    /* Left highlight */
+    inset 2px 0 1px rgba(255, 255, 255, 0.15),
+    /* Right shadow */
+    inset -2px 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Subtle plastic texture via pseudo-element */
+.crt-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 30% 10%, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   Top vent — subtle detail line
+   ============================================ */
+
+.crt-body__vent {
+  width: 60%;
+  height: 3px;
+  margin: 0 auto 8px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--crt-shell-shadow) 0px,
+    var(--crt-shell-shadow) 8px,
+    transparent 8px,
+    transparent 12px
+  );
+  opacity: 0.4;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   Bezel — dark recessed frame around screen
+   ============================================ */
+
+.crt-bezel {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--crt-bezel-color);
+  border-radius: var(--crt-screen-radius);
+  padding: var(--crt-bezel-depth);
+  /* Deep recessed look */
+  box-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.8),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.4),
+    inset 3px 0 8px rgba(0, 0, 0, 0.5),
+    inset -3px 0 8px rgba(0, 0, 0, 0.5),
+    /* Outer ridge where plastic meets bezel */
+    0 1px 0 rgba(255, 255, 255, 0.1),
+    0 -1px 0 rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+/* ============================================
+   Screen — contains the desktop content
+   ============================================ */
+
+.crt-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  /* Subtle inner glow from the screen */
+  box-shadow:
+    0 0 20px rgba(0, 128, 128, 0.15),
+    0 0 60px rgba(0, 128, 128, 0.05);
+}
+
+/* ============================================
+   Glass overlay — convex + reflection
+   ============================================ */
+
+.crt-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 998;
+  /* Convex glass curvature illusion */
+  background: /* Ceiling light reflection hotspot */
+      radial-gradient(
+        ellipse at 40% 15%,
+        rgba(255, 255, 255, var(--crt-reflection-opacity)) 0%,
+        transparent 45%
+      ),
+      /* Secondary softer reflection */
+      radial-gradient(ellipse at 65% 25%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
+      /* Edge-to-edge curvature shading */
+      radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(0, 0, 0, 0.06) 100%);
+}
+
+/* ============================================
+   Scanlines
+   ============================================ */
+
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, var(--crt-scanline-opacity)) 2px,
+    rgba(0, 0, 0, var(--crt-scanline-opacity)) 4px
+  );
+}
+
+/* ============================================
+   Vignette — darker edges
+   ============================================ */
+
+.crt-vignette {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 997;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 55%,
+    rgba(0, 0, 0, var(--crt-vignette-opacity)) 100%
+  );
+}
+
+/* ============================================
+   Chin — bottom panel with controls
+   ============================================ */
+
+.crt-chin {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 24px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Left side: menu buttons */
+.crt-chin__buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.crt-chin__btn {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 35%,
+    var(--crt-shell-highlight),
+    var(--crt-shell-shadow)
+  );
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.15);
+  border: none;
+  padding: 0;
+  cursor: default;
+}
+
+/* Small icon labels on some buttons */
+.crt-chin__btn-icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 35%,
+    var(--crt-shell-highlight),
+    var(--crt-shell-shadow)
+  );
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Center: brand badge */
+.crt-chin__badge {
+  flex: 1;
+  text-align: center;
+}
+
+.crt-chin__badge-text {
+  display: inline-block;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #8a8478;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3),
+    0 -1px 0 rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+}
+
+/* Right side: power button + LED */
+.crt-chin__power {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crt-chin__power-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--crt-shell-highlight), var(--crt-shell-edge));
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--crt-shell-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  padding: 0;
+}
+
+/* Power icon (circle with line) */
+.crt-chin__power-icon {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #8a8478;
+  border-radius: 50%;
+  position: relative;
+}
+
+.crt-chin__power-icon::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 6px;
+  background: #8a8478;
+}
+
+/* Green power LED */
+.crt-chin__led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00c800;
+  box-shadow:
+    0 0 4px #00c800,
+    0 0 8px rgba(0, 200, 0, 0.3);
+}
+
+/* ============================================
+   Stand
+   ============================================ */
+
+.crt-stand__neck {
+  width: 70px;
+  height: 14px;
+  background: linear-gradient(
+    180deg,
+    var(--crt-shell-shadow) 0%,
+    var(--crt-shell-color) 50%,
+    var(--crt-shell-shadow) 100%
+  );
+  flex-shrink: 0;
+  box-shadow:
+    inset 2px 0 2px rgba(255, 255, 255, 0.1),
+    inset -2px 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.crt-stand__base {
+  width: 180px;
+  height: 16px;
+  background: linear-gradient(
+    180deg,
+    var(--crt-shell-color) 0%,
+    var(--crt-shell-shadow) 60%,
+    #a8a094 100%
+  );
+  border-radius: 50% / 40%;
+  flex-shrink: 0;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   Mobile — hide CRT frame entirely
+   ============================================ */
+
+@media (max-width: 768px) {
+  .crt-monitor {
+    padding: 0;
+    background: none;
+  }
+
+  .crt-body {
+    width: 100%;
+    max-width: none;
+    flex: 1;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+
+  .crt-body::before {
+    display: none;
+  }
+
+  .crt-body__vent {
+    display: none;
+  }
+
+  .crt-bezel {
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+
+  .crt-screen {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .crt-glass,
+  .crt-scanlines,
+  .crt-vignette {
+    display: none;
+  }
+
+  .crt-chin,
+  .crt-stand__neck,
+  .crt-stand__base {
+    display: none;
+  }
+}

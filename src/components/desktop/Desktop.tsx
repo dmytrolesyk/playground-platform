@@ -1,6 +1,7 @@
 import type { JSX } from 'solid-js';
 // Import app manifest to register all apps before rendering
 import './apps/app-manifest';
+import { CrtMonitorFrame } from './CrtMonitorFrame';
 import { DesktopIconGrid } from './DesktopIconGrid';
 import { DesktopProvider, useDesktop } from './store/context';
 import { Taskbar } from './Taskbar';
@@ -26,26 +27,19 @@ function DesktopInner(): JSX.Element {
   };
 
   return (
-    <div class="crt-monitor">
-      <div class="crt-bezel">
-        <div class="crt-inner-bezel">
-          <div
-            class="desktop crt-screen"
-            role="application"
-            aria-label="Desktop"
-            onMouseDown={handleDesktopClick}
-            onKeyDown={handleKeyDown}
-          >
-            <div class="crt-scanlines" />
-            <DesktopIconGrid />
-            <WindowManager />
-            <Taskbar />
-          </div>
-        </div>
+    <CrtMonitorFrame>
+      <div
+        class="desktop"
+        role="application"
+        aria-label="Desktop"
+        onMouseDown={handleDesktopClick}
+        onKeyDown={handleKeyDown}
+      >
+        <DesktopIconGrid />
+        <WindowManager />
+        <Taskbar />
       </div>
-      <div class="crt-stand" />
-      <div class="crt-base" />
-    </div>
+    </CrtMonitorFrame>
   );
 }
 
