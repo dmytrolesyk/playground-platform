@@ -1,3 +1,4 @@
+import type { Component } from 'solid-js';
 import type { AppRegistryEntry } from '../store/types';
 
 export const APP_REGISTRY: Record<string, AppRegistryEntry> = {};

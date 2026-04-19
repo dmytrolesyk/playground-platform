@@ -1,4 +1,4 @@
-import type { JSX, MouseEvent } from 'solid-js';
+import type { JSX } from 'solid-js';
 import { useDesktop } from './store/context';
 import type { WindowState } from './store/types';
 
@@ -26,17 +26,17 @@ export function TitleBar(props: TitleBarProps): JSX.Element {
     return topId === props.window.id;
   };
 
-  const handleMinimize = (e: MouseEvent): void => {
+  const handleMinimize = (e: Event): void => {
     e.stopPropagation();
     actions.minimizeWindow(props.window.id);
   };
 
-  const handleMaximize = (e: MouseEvent): void => {
+  const handleMaximize = (e: Event): void => {
     e.stopPropagation();
     actions.maximizeWindow(props.window.id);
   };
 
-  const handleClose = (e: MouseEvent): void => {
+  const handleClose = (e: Event): void => {
     e.stopPropagation();
     actions.closeWindow(props.window.id);
   };

@@ -12,7 +12,7 @@ export interface WindowState {
   zIndex: number;
   isMinimized: boolean;
   isMaximized: boolean;
-  prevBounds?: { x: number; y: number; width: number; height: number };
+  prevBounds?: { x: number; y: number; width: number; height: number } | undefined;
   appProps?: Record<string, unknown>;
 }
 
