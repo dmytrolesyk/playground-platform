@@ -12,8 +12,8 @@ const COLORS = {
 } as const;
 
 const CELL_SIZE = 15;
-const GRID_COLS = 20;
-const GRID_ROWS = 20;
+const GRID_COLS = 25;
+const GRID_ROWS = 25;
 
 const KEY_MAP: Record<string, Direction> = {
   ArrowUp: 'up',

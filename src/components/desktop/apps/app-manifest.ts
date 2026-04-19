@@ -79,5 +79,5 @@ registerApp({
   startMenu: true,
   startMenuCategory: 'Games',
   singleton: true,
-  defaultSize: { width: 330, height: 380 },
+  defaultSize: { width: 405, height: 460 },
 });
