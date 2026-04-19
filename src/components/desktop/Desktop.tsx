@@ -7,14 +7,21 @@ import { Taskbar } from './Taskbar';
 import { WindowManager } from './WindowManager';
 
 function DesktopInner(): JSX.Element {
-  const [, actions] = useDesktop();
+  const [state, actions] = useDesktop();
 
   const handleDesktopClick = (e: MouseEvent): void => {
-    // Only deselect if clicking on the desktop background itself
     const target = e.target as HTMLElement;
     if (target.classList.contains('desktop')) {
       actions.selectDesktopIcon(null);
       actions.closeStartMenu();
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent): void => {
+    if (e.key === 'Escape') {
+      if (state.startMenuOpen) {
+        actions.closeStartMenu();
+      }
     }
   };
 
@@ -30,6 +37,7 @@ function DesktopInner(): JSX.Element {
         overflow: 'hidden',
       }}
       onMouseDown={handleDesktopClick}
+      onKeyDown={handleKeyDown}
     >
       <DesktopIconGrid />
       <WindowManager />

@@ -25,4 +25,15 @@ const cvData = cvSections.map((section) => ({
 <BaseLayout>
   <Desktop client:load />
   <script is:inline type="application/json" id="cv-data" set:html={JSON.stringify(cvData)} />
+  <noscript>
+    <div style="max-width: 800px; margin: 40px auto; padding: 20px; background: #fff; font-family: Arial, sans-serif;">
+      <h1>Dmytro Lesyk — CV</h1>
+      <p>This site requires JavaScript for the interactive desktop experience. Here are direct links:</p>
+      <ul>
+        <li><a href="/downloads/cv.pdf">Download CV (PDF)</a></li>
+        <li><a href="/downloads/cv.docx">Download CV (DOCX)</a></li>
+        <li><a href="mailto:dmitriylesik@gmail.com">Contact via Email</a></li>
+      </ul>
+    </div>
+  </noscript>
 </BaseLayout>
