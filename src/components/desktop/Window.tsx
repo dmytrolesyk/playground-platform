@@ -4,7 +4,7 @@ import type { WindowState } from './store/types';
 import { TitleBar } from './TitleBar';
 import './styles/window.css';
 
-const TASKBAR_HEIGHT = 28;
+const TASKBAR_HEIGHT = 36;
 const MIN_WIDTH = 200;
 const MIN_HEIGHT = 150;
 

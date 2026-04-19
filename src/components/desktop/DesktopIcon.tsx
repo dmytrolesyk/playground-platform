@@ -45,8 +45,8 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
       <img
         src={props.icon}
         alt=""
-        width={32}
-        height={32}
+        width={48}
+        height={48}
         draggable={false}
         class="desktop-icon__img"
       />

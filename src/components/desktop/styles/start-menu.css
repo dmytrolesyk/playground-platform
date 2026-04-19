@@ -3,7 +3,7 @@
 .start-menu {
   display: none;
   position: absolute;
-  bottom: 28px;
+  bottom: 36px;
   left: 0;
   z-index: 1001;
   background-color: #c0c0c0;
@@ -33,7 +33,7 @@
   transform: rotate(180deg);
   color: #c0c0c0;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
   letter-spacing: 1px;
 }
@@ -54,7 +54,7 @@
   border: none;
   box-shadow: none;
   color: #000;
-  font-size: 11px;
+  font-size: 13px;
   font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
   cursor: default;
   text-align: left;

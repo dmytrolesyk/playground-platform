@@ -30,8 +30,8 @@ export function StartMenu(): JSX.Element {
               <img
                 src={app.icon}
                 alt=""
-                width={16}
-                height={16}
+                width={20}
+                height={20}
                 style={{ 'image-rendering': 'pixelated' }}
                 draggable={false}
               />

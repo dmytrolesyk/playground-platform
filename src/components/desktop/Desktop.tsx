@@ -11,7 +11,7 @@ function DesktopInner(): JSX.Element {
 
   const handleDesktopClick = (e: MouseEvent): void => {
     const target = e.target as HTMLElement;
-    if (target.classList.contains('desktop')) {
+    if (target.classList.contains('desktop') || target.classList.contains('crt-screen')) {
       actions.selectDesktopIcon(null);
       actions.closeStartMenu();
     }
@@ -26,22 +26,25 @@ function DesktopInner(): JSX.Element {
   };
 
   return (
-    <div
-      class="desktop"
-      role="application"
-      aria-label="Desktop"
-      style={{
-        position: 'relative',
-        width: '100vw',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-      onMouseDown={handleDesktopClick}
-      onKeyDown={handleKeyDown}
-    >
-      <DesktopIconGrid />
-      <WindowManager />
-      <Taskbar />
+    <div class="crt-monitor">
+      <div class="crt-bezel">
+        <div class="crt-inner-bezel">
+          <div
+            class="desktop crt-screen"
+            role="application"
+            aria-label="Desktop"
+            onMouseDown={handleDesktopClick}
+            onKeyDown={handleKeyDown}
+          >
+            <div class="crt-scanlines" />
+            <DesktopIconGrid />
+            <WindowManager />
+            <Taskbar />
+          </div>
+        </div>
+      </div>
+      <div class="crt-stand" />
+      <div class="crt-base" />
     </div>
   );
 }

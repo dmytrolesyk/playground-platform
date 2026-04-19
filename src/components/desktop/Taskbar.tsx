@@ -74,8 +74,8 @@ export function Taskbar(): JSX.Element {
                   <img
                     src={win.icon}
                     alt=""
-                    width={16}
-                    height={16}
+                    width={20}
+                    height={20}
                     style={{ 'image-rendering': 'pixelated' }}
                     draggable={false}
                   />
