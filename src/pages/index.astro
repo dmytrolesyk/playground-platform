@@ -5,7 +5,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 export const prerender = true;
 
-const cvSections = (await getCollection('cv')).sort((a, b) => a.data.order - b.data.order);
+interface CvEntry {
+  id: string;
+  data: { title: string; order: number };
+  rendered?: { html: string };
+  body?: string;
+}
+
+const cvSections = ((await getCollection('cv')) as CvEntry[]).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 const cvData = cvSections.map((section) => ({
   slug: section.id,
   title: section.data.title,
@@ -15,5 +24,5 @@ const cvData = cvSections.map((section) => ({
 
 <BaseLayout>
   <Desktop client:load />
-  <script type="application/json" id="cv-data" set:html={JSON.stringify(cvData)} />
+  <script is:inline type="application/json" id="cv-data" set:html={JSON.stringify(cvData)} />
 </BaseLayout>
