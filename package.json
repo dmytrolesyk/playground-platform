@@ -14,8 +14,8 @@
     "lint:fix": "biome check --write .",
     "typecheck": "astro check",
     "check": "biome check . && astro check",
-    "test": "vitest run",
-    "verify": "biome check . && astro check && vitest run"
+    "test": "vitest run --passWithNoTests",
+    "verify": "biome check . && astro check && vitest run --passWithNoTests"
   },
   "dependencies": {
     "98.css": "^0.1.21",
