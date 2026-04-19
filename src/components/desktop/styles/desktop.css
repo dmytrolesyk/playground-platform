@@ -30,7 +30,7 @@
 }
 
 .desktop-icon:focus {
-  outline: 1px dotted #000;
+  outline: 1px dotted #fff;
   outline-offset: -1px;
 }
 
@@ -54,6 +54,12 @@
 }
 
 .desktop-icon--selected .desktop-icon__label {
+  background-color: #000080;
+  color: #fff;
+  text-shadow: none;
+}
+
+.desktop-icon:active .desktop-icon__label {
   background-color: #000080;
   color: #fff;
   text-shadow: none;
