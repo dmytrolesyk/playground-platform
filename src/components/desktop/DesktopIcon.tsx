@@ -17,6 +17,7 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
   let hasMoved = false;
   let dragOffsetX = 0;
   let dragOffsetY = 0;
+  let elementRef: HTMLButtonElement | undefined;
 
   const isSelected = (): boolean => state.selectedDesktopIcon === props.id;
 
@@ -40,13 +41,17 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
     const newX = e.clientX - dragOffsetX;
     const newY = e.clientY - dragOffsetY;
 
-    // Only count as "moved" if dragged more than 4px
     if (!hasMoved && (Math.abs(newX - props.x) > 4 || Math.abs(newY - props.y) > 4)) {
       hasMoved = true;
+      if (elementRef) {
+        elementRef.style.willChange = 'transform';
+        elementRef.style.zIndex = '100';
+      }
     }
 
-    if (hasMoved) {
-      props.onDrag(newX, newY);
+    if (hasMoved && elementRef) {
+      // Move directly via transform — no signal/re-render overhead
+      elementRef.style.transform = `translate(${newX}px, ${newY}px)`;
     }
   };
 
@@ -56,10 +61,20 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
 
     const target = e.currentTarget as HTMLElement;
     target.releasePointerCapture(e.pointerId);
+
+    if (hasMoved && elementRef) {
+      // Read final position from the transform we've been setting
+      const finalX = e.clientX - dragOffsetX;
+      const finalY = e.clientY - dragOffsetY;
+      elementRef.style.willChange = 'auto';
+      elementRef.style.zIndex = '';
+      // Commit final position to state (single update)
+      props.onDrag(finalX, finalY);
+    }
   };
 
   const handleClick = (): void => {
-    if (hasMoved) return; // Don't open if we were dragging
+    if (hasMoved) return;
     if (state.isMobile) {
       actions.openWindow(props.id);
     } else {
@@ -81,13 +96,13 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
 
   return (
     <button
+      ref={elementRef}
       type="button"
       class="desktop-icon"
       classList={{ 'desktop-icon--selected': isSelected() }}
       style={{
         position: 'absolute',
-        left: `${props.x}px`,
-        top: `${props.y}px`,
+        transform: `translate(${props.x}px, ${props.y}px)`,
         'touch-action': 'none',
       }}
       onClick={handleClick}
