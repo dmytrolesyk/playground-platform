@@ -1,3 +1,4 @@
+import { onCleanup } from 'solid-js';
 import { createStore, produce } from 'solid-js/store';
 import { APP_REGISTRY } from '../apps/registry';
 import type { DesktopActions, DesktopState, WindowState } from './types';
@@ -7,6 +8,8 @@ const CASCADE_BASE_Y = 50;
 const CASCADE_OFFSET = 30;
 const CASCADE_MAX_STEPS = 8;
 
+const MOBILE_BREAKPOINT = 768;
+
 let windowCounter = 0;
 
 function generateWindowId(appId: string): string {
@@ -15,13 +18,28 @@ function generateWindowId(appId: string): string {
 }
 
 export function createDesktopStore(): [DesktopState, DesktopActions] {
+  const mediaQuery =
+    typeof window !== 'undefined'
+      ? window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`)
+      : undefined;
+
   const [state, setState] = createStore<DesktopState>({
     windows: {},
     windowOrder: [],
     nextZIndex: 10,
     startMenuOpen: false,
     selectedDesktopIcon: null,
+    isMobile: mediaQuery?.matches ?? false,
   });
+
+  // Listen for viewport changes
+  if (mediaQuery) {
+    const handleChange = (e: MediaQueryListEvent): void => {
+      setState('isMobile', e.matches);
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    onCleanup(() => mediaQuery.removeEventListener('change', handleChange));
+  }
 
   const actions: DesktopActions = {
     openWindow(appId: string, extraProps?: Record<string, unknown>): void {

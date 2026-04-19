@@ -35,6 +35,7 @@ export interface DesktopState {
   nextZIndex: number;
   startMenuOpen: boolean;
   selectedDesktopIcon: string | null;
+  isMobile: boolean;
 }
 
 export interface DesktopActions {
