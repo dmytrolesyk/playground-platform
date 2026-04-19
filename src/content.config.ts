@@ -8,4 +8,4 @@ const cv = defineCollection({
   }),
 });
 
-export const collections = { cv };
+export const collections: Record<string, ReturnType<typeof defineCollection>> = { cv };

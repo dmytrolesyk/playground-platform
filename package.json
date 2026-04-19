@@ -10,7 +10,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "astro check",
+    "check": "biome check . && astro check",
+    "test": "vitest run",
+    "verify": "biome check . && astro check && vitest run"
   },
   "dependencies": {
     "98.css": "^0.1.21",
@@ -24,5 +29,10 @@
       "esbuild",
       "sharp"
     ]
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@biomejs/biome": "^2.4.12",
+    "vitest": "^4.1.4"
   }
 }
