@@ -56,6 +56,18 @@ export function Taskbar(): JSX.Element {
         classList={{ 'taskbar__start-btn--active': state.startMenuOpen }}
         onClick={handleStartClick}
       >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+          style={{ 'flex-shrink': '0', 'image-rendering': 'pixelated' }}
+        >
+          <rect x="1" y="1" width="6" height="6" fill="#ff0000" />
+          <rect x="9" y="1" width="6" height="6" fill="#00ff00" />
+          <rect x="1" y="9" width="6" height="6" fill="#0000ff" />
+          <rect x="9" y="9" width="6" height="6" fill="#ffff00" />
+        </svg>
         <strong>Start</strong>
       </button>
       <div class="taskbar__divider" />
