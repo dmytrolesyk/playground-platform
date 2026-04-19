@@ -146,6 +146,7 @@
   font-size: 12px;
   height: 22px;
   padding: 0 2px;
+  min-width: 80px;
 }
 
 .email-format-divider {
