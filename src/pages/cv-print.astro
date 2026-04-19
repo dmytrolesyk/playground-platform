@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export const prerender = true;
+
+interface CvEntry {
+  id: string;
+  data: { title: string; order: number };
+  rendered?: { html: string };
+  body?: string;
+}
+
+const cvSections = ((await getCollection('cv')) as CvEntry[]).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout title="Dmytro Lesyk — CV (Print)" description="Print-friendly CV">
+  <div class="cv-print">
+    {cvSections.map((section) => (
+      <section set:html={section.rendered?.html ?? section.body ?? ''} />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .cv-print {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    background: #fff;
+    color: #000;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  @media print {
+    .cv-print {
+      padding: 0;
+      max-width: none;
+    }
+  }
+</style>
