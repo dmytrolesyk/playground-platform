@@ -73,7 +73,7 @@ registerApp({
 registerApp({
   id: 'snake',
   title: 'Snake',
-  icon: '/icons/terminal_icon.png',
+  icon: '/icons/snake_icon.png',
   component: SnakeGame,
   desktop: true,
   startMenu: true,
