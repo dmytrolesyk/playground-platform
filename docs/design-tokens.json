@@ -1,0 +1,82 @@
+{
+  "colors": {
+    "desktop": "#008080",
+    "surface": "#c0c0c0",
+    "surfaceDark": "#808080",
+    "surfaceLight": "#dfdfdf",
+    "titleBarActive": "#000080",
+    "titleBarInactive": "#808080",
+    "textDefault": "#000000",
+    "textInverse": "#ffffff",
+    "shadowInner": "#808080",
+    "shadowOuter": "#0a0a0a",
+    "highlightInner": "#dfdfdf",
+    "highlightOuter": "#ffffff",
+    "iconSelectBg": "#000080",
+    "iconSelectText": "#ffffff",
+    "iconFocusRing": "#000000",
+    "linkText": "#0000ff",
+    "linkVisited": "#800080"
+  },
+  "typography": {
+    "fontFamily": "\"Pixelated MS Sans Serif\", \"MS Sans Serif\", Arial, sans-serif",
+    "fontSize": "12px",
+    "fontSizeSmall": "11px",
+    "letterSpacing": "0px",
+    "note": "98.css imports Pixelated MS Sans Serif automatically. Do not load additional fonts."
+  },
+  "shadows": {
+    "outset": "inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf",
+    "inset": "inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080"
+  },
+  "borders": {
+    "width": "2px",
+    "style": "solid",
+    "window": "2px solid #dfdfdf"
+  },
+  "spacing": {
+    "windowPadding": "4px",
+    "titleBarHeight": "18px",
+    "taskbarHeight": "28px",
+    "iconSize": "32px",
+    "iconGridGap": "16px",
+    "iconLabelMaxWidth": "72px"
+  },
+  "zIndex": {
+    "desktopIcons": 1,
+    "windowBase": 10,
+    "taskbar": 1000,
+    "startMenu": 1001,
+    "dialogOverlay": 1002,
+    "note": "Windows get incrementing z-index starting at windowBase. Counter never resets."
+  },
+  "breakpoints": {
+    "mobile": "768px",
+    "note": "Below this value, windows go full-screen, drag is disabled, taskbar simplifies."
+  },
+  "cursors": {
+    "default": "/cursors/default.cur",
+    "pointer": "/cursors/pointer.cur",
+    "wait": "/cursors/wait.cur",
+    "note": "Optional. Served from public/cursors/. Falls back to browser defaults if files are missing."
+  },
+  "gamePalette": {
+    "note": "16-color Win95 palette for retro games (Snake, etc.). No gradients, no anti-aliasing.",
+    "black": "#000000",
+    "darkRed": "#800000",
+    "darkGreen": "#008000",
+    "darkYellow": "#808000",
+    "darkBlue": "#000080",
+    "darkMagenta": "#800080",
+    "darkCyan": "#008080",
+    "lightGray": "#c0c0c0",
+    "darkGray": "#808080",
+    "red": "#ff0000",
+    "green": "#00ff00",
+    "yellow": "#ffff00",
+    "blue": "#0000ff",
+    "magenta": "#ff00ff",
+    "cyan": "#00ffff",
+    "white": "#ffffff"
+  }
+}
