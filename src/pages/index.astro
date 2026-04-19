@@ -1,10 +1,19 @@
 ---
+import { getCollection } from 'astro:content';
 import Desktop from '../components/desktop/Desktop';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 export const prerender = true;
+
+const cvSections = (await getCollection('cv')).sort((a, b) => a.data.order - b.data.order);
+const cvData = cvSections.map((section) => ({
+  slug: section.id,
+  title: section.data.title,
+  html: section.rendered?.html ?? section.body ?? '',
+}));
 ---
 
 <BaseLayout>
   <Desktop client:load />
+  <script type="application/json" id="cv-data" set:html={JSON.stringify(cvData)} />
 </BaseLayout>
