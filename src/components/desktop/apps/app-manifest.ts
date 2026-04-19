@@ -5,6 +5,7 @@ import { ExplorerApp } from './ExplorerApp';
 import { registerApp } from './registry';
 
 const TerminalApp = lazy(() => import('./TerminalApp').then((m) => ({ default: m.TerminalApp })));
+const SnakeGame = lazy(() => import('./games/Snake').then((m) => ({ default: m.SnakeGame })));
 
 // Register MVP apps
 registerApp({
@@ -53,4 +54,16 @@ registerApp({
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 640, height: 400 },
+});
+
+registerApp({
+  id: 'snake',
+  title: 'Snake',
+  icon: '/icons/terminal_icon.png',
+  component: SnakeGame,
+  desktop: true,
+  startMenu: true,
+  startMenuCategory: 'Games',
+  singleton: true,
+  defaultSize: { width: 330, height: 380 },
 });

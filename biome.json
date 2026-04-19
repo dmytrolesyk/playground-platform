@@ -97,6 +97,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["**/games/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noNoninteractiveTabindex": "off"
+          }
+        }
+      }
     }
   ]
 }
