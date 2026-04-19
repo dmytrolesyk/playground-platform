@@ -1,6 +1,6 @@
 import { BrowserApp } from './BrowserApp';
+import { EmailApp } from './EmailApp';
 import { ExplorerApp } from './ExplorerApp';
-import { PlaceholderApp } from './PlaceholderApp';
 import { registerApp } from './registry';
 
 // Register MVP apps
@@ -32,11 +32,10 @@ registerApp({
   id: 'email',
   title: 'Contact Me',
   icon: '/icons/email_icon.png',
-  component: PlaceholderApp,
+  component: EmailApp,
   desktop: true,
   startMenu: true,
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 550, height: 400 },
-  defaultProps: { name: 'Email' },
 });

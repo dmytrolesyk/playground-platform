@@ -1,0 +1,111 @@
+/* EmailApp — 90s email client style */
+
+.email-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: -8px;
+}
+
+/* Toolbar */
+.email-toolbar {
+  background-color: #c0c0c0;
+  padding: 4px;
+  border-bottom: 1px solid #808080;
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.email-toolbar__send-btn {
+  min-width: 80px;
+  min-height: 24px;
+  font-weight: 700;
+}
+
+.email-toolbar__telegram-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  text-decoration: none;
+  color: #000;
+  background: silver;
+  box-shadow:
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #fff,
+    inset -2px -2px grey,
+    inset 2px 2px #dfdfdf;
+}
+
+.email-toolbar__telegram-btn:hover {
+  color: #000080;
+}
+
+.email-toolbar__telegram-btn:active {
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px #0a0a0a,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px grey;
+}
+
+/* Form fields */
+.email-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.email-field {
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  gap: 4px;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.email-field__label {
+  font-size: 11px;
+  width: 56px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.email-field__input {
+  flex: 1;
+  font-size: 11px;
+}
+
+/* Message body */
+.email-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.email-body__textarea {
+  flex: 1;
+  resize: none;
+  font-size: 12px;
+  padding: 8px;
+  border: none;
+  margin: 0;
+}
+
+/* Dialog overlay */
+.email-dialog-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1002;
+}
+
+.email-dialog {
+  min-width: 280px;
+  max-width: 360px;
+}
