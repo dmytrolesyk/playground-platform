@@ -3,20 +3,49 @@ import './styles/email-app.css';
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error';
 
+function execFormat(command: string, value?: string): void {
+  document.execCommand(command, false, value);
+}
+
+const FONT_SIZES: { label: string; value: string }[] = [
+  { label: 'Small', value: '2' },
+  { label: 'Normal', value: '3' },
+  { label: 'Large', value: '4' },
+  { label: 'Huge', value: '5' },
+];
+
+const TEXT_COLORS: { label: string; color: string }[] = [
+  { label: 'Black', color: '#000000' },
+  { label: 'Dark Red', color: '#800000' },
+  { label: 'Dark Blue', color: '#000080' },
+  { label: 'Dark Green', color: '#008000' },
+  { label: 'Red', color: '#ff0000' },
+  { label: 'Blue', color: '#0000ff' },
+  { label: 'Gray', color: '#808080' },
+];
+
 export function EmailApp(): JSX.Element {
   const [name, setName] = createSignal('');
   const [email, setEmail] = createSignal('');
   const [subject, setSubject] = createSignal('');
-  const [message, setMessage] = createSignal('');
   const [honeypot, setHoneypot] = createSignal('');
   const [status, setStatus] = createSignal<FormStatus>('idle');
   const [errorMsg, setErrorMsg] = createSignal('');
 
+  let editorRef: HTMLDivElement | undefined;
+
   // biome-ignore lint/complexity/useLiteralKeys: env var from build
   const telegramUser = import.meta.env['PUBLIC_TELEGRAM_USERNAME'] as string | undefined;
 
+  const getMessage = (): string => editorRef?.innerHTML ?? '';
+
+  const getPlainText = (): string => editorRef?.textContent?.trim() ?? '';
+
   const handleSubmit = async (e: Event): Promise<void> => {
     e.preventDefault();
+
+    if (!getPlainText()) return;
+
     setStatus('sending');
     setErrorMsg('');
 
@@ -28,7 +57,7 @@ export function EmailApp(): JSX.Element {
           name: name(),
           email: email(),
           subject: subject(),
-          message: message(),
+          message: getMessage(),
           website: honeypot(),
         }),
       });
@@ -40,7 +69,7 @@ export function EmailApp(): JSX.Element {
         setName('');
         setEmail('');
         setSubject('');
-        setMessage('');
+        if (editorRef) editorRef.innerHTML = '';
       } else {
         setStatus('error');
         setErrorMsg(data.error ?? 'Failed to send message');
@@ -147,17 +176,79 @@ export function EmailApp(): JSX.Element {
             autocomplete="off"
           />
         </div>
-
-        <div class="email-body">
-          <textarea
-            value={message()}
-            onInput={(e: InputEvent) => setMessage((e.target as HTMLTextAreaElement).value)}
-            placeholder="Write your message here..."
-            required={true}
-            class="email-body__textarea"
-          />
-        </div>
       </form>
+
+      {/* Formatting toolbar */}
+      <div class="email-format-toolbar">
+        <button
+          type="button"
+          class="email-format-btn email-format-btn--bold"
+          onClick={() => execFormat('bold')}
+          title="Bold"
+        >
+          B
+        </button>
+        <button
+          type="button"
+          class="email-format-btn email-format-btn--italic"
+          onClick={() => execFormat('italic')}
+          title="Italic"
+        >
+          I
+        </button>
+        <button
+          type="button"
+          class="email-format-btn email-format-btn--underline"
+          onClick={() => execFormat('underline')}
+          title="Underline"
+        >
+          U
+        </button>
+
+        <span class="email-format-divider" />
+
+        <select
+          class="email-format-select"
+          onChange={(e: Event) => {
+            const val = (e.target as HTMLSelectElement).value;
+            if (val) execFormat('fontSize', val);
+          }}
+          title="Font size"
+        >
+          {FONT_SIZES.map((s) => (
+            <option value={s.value} selected={s.value === '3'}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+
+        <span class="email-format-divider" />
+
+        <div class="email-format-colors">
+          {TEXT_COLORS.map((c) => (
+            <button
+              type="button"
+              class="email-format-color"
+              style={{ background: c.color }}
+              onClick={() => execFormat('foreColor', c.color)}
+              title={c.label}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Rich text editor */}
+      <div class="email-body">
+        {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: contentEditable div needs aria-label */}
+        <div
+          ref={editorRef}
+          contentEditable={true}
+          class="email-body__editor"
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: contentEditable div needs focus
+          tabIndex={0}
+          aria-label="Message body"
+        />
+      </div>
 
       {/* Dialog overlays */}
       <Show when={status() === 'success'}>

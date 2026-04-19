@@ -72,12 +72,16 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
   }
 
   const resend = new Resend(apiKey);
+  // Strip HTML tags for plain text fallback
+  const plainText = message.replace(/<[^>]*>/g, '').trim();
+
   const { error } = await resend.emails.send({
     from: `CV Contact <${fromEmail}>`,
     to: toEmail,
     replyTo: email,
     subject: `[CV Contact] ${subject}`,
-    text: `From: ${name} (${email})\n\n${message}`,
+    html: `<p><strong>From:</strong> ${name} (${email})</p><hr/>${message}`,
+    text: `From: ${name} (${email})\n\n${plainText}`,
   });
 
   if (error) {
