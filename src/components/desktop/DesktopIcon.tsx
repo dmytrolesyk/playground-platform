@@ -13,7 +13,12 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
   const isSelected = (): boolean => state.selectedDesktopIcon === props.id;
 
   const handleClick = (): void => {
-    actions.selectDesktopIcon(props.id);
+    if (state.isMobile) {
+      // Single tap opens on mobile
+      actions.openWindow(props.id);
+    } else {
+      actions.selectDesktopIcon(props.id);
+    }
   };
 
   const handleDoubleClick = (): void => {

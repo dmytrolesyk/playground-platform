@@ -1,4 +1,4 @@
-import { For, type JSX } from 'solid-js';
+import { For, type JSX, Show } from 'solid-js';
 import { Clock } from './Clock';
 import { StartMenu } from './StartMenu';
 import { useDesktop } from './store/context';
@@ -34,7 +34,7 @@ export function Taskbar(): JSX.Element {
     if (!win) return;
 
     if (win.isMinimized) {
-      actions.minimizeWindow(windowId); // toggles off
+      actions.minimizeWindow(windowId);
       actions.focusWindow(windowId);
     } else if (isTopWindow(windowId)) {
       actions.minimizeWindow(windowId);
@@ -59,31 +59,42 @@ export function Taskbar(): JSX.Element {
         <strong>Start</strong>
       </button>
       <div class="taskbar__divider" />
-      <div class="taskbar__tasks">
-        <For each={openWindows()}>
-          {(win: WindowState) => (
-            <button
-              type="button"
-              class="taskbar__task-btn"
-              classList={{ 'taskbar__task-btn--active': isTopWindow(win.id) && !win.isMinimized }}
-              onClick={() => handleTaskButtonClick(win.id)}
-              title={win.title}
-            >
-              {win.icon && (
-                <img
-                  src={win.icon}
-                  alt=""
-                  width={16}
-                  height={16}
-                  style={{ 'image-rendering': 'pixelated' }}
-                  draggable={false}
-                />
-              )}
-              <span class="taskbar__task-text">{win.title}</span>
-            </button>
+      <Show when={!state.isMobile}>
+        <div class="taskbar__tasks">
+          <For each={openWindows()}>
+            {(win: WindowState) => (
+              <button
+                type="button"
+                class="taskbar__task-btn"
+                classList={{ 'taskbar__task-btn--active': isTopWindow(win.id) && !win.isMinimized }}
+                onClick={() => handleTaskButtonClick(win.id)}
+                title={win.title}
+              >
+                {win.icon && (
+                  <img
+                    src={win.icon}
+                    alt=""
+                    width={16}
+                    height={16}
+                    style={{ 'image-rendering': 'pixelated' }}
+                    draggable={false}
+                  />
+                )}
+                <span class="taskbar__task-text">{win.title}</span>
+              </button>
+            )}
+          </For>
+        </div>
+      </Show>
+      <Show when={state.isMobile}>
+        <div class="taskbar__tasks taskbar__tasks--mobile">
+          {openWindows().length > 0 && (
+            <span class="taskbar__active-app">
+              {openWindows().find((w) => !w.isMinimized)?.title ?? ''}
+            </span>
           )}
-        </For>
-      </div>
+        </div>
+      </Show>
       <div class="taskbar__tray">
         <Clock />
       </div>

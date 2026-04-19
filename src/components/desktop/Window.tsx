@@ -12,12 +12,14 @@ interface WindowProps {
 }
 
 export function Window(props: WindowProps): JSX.Element {
-  const [, actions] = useDesktop();
+  const [state, actions] = useDesktop();
   let isDragging = false;
   let dragOffsetX = 0;
   let dragOffsetY = 0;
 
   const handleDragStart = (e: PointerEvent): void => {
+    // No drag on mobile
+    if (state.isMobile) return;
     if (e.button !== 0) return;
     if (props.window.isMaximized) return;
 
@@ -66,16 +68,18 @@ export function Window(props: WindowProps): JSX.Element {
     actions.focusWindow(props.window.id);
   };
 
+  const isFullScreen = (): boolean => state.isMobile || props.window.isMaximized;
+
   return (
     <div
       class="window win-container"
       classList={{
-        'win-maximized': props.window.isMaximized,
+        'win-maximized': isFullScreen(),
         'win-minimized': props.window.isMinimized,
       }}
       style={{
-        position: 'absolute',
-        ...(props.window.isMaximized
+        position: state.isMobile ? 'fixed' : 'absolute',
+        ...(isFullScreen()
           ? {
               top: '0',
               left: '0',

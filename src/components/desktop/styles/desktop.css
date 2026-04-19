@@ -58,3 +58,30 @@
   color: #fff;
   text-shadow: none;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .desktop-icon-grid {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 24px 16px;
+    gap: 20px;
+    padding-bottom: 40px;
+  }
+
+  .desktop-icon {
+    width: 80px;
+  }
+
+  .desktop-icon__img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .desktop-icon__label {
+    font-size: 12px;
+    max-width: 80px;
+  }
+}

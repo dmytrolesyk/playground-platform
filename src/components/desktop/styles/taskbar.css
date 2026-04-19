@@ -92,3 +92,17 @@
     inset 1px 1px #808080;
   height: 22px;
 }
+
+.taskbar__active-app {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskbar__tasks--mobile {
+  display: flex;
+  align-items: center;
+}
