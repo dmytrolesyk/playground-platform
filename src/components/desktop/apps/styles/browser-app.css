@@ -22,10 +22,10 @@
 }
 
 .browser-toolbar__buttons button {
-  font-size: 10px;
+  font-size: 12px;
   min-width: 50px;
-  min-height: 20px;
-  padding: 1px 4px;
+  min-height: 22px;
+  padding: 1px 6px;
 }
 
 .browser-toolbar__address {
@@ -35,14 +35,14 @@
 }
 
 .browser-toolbar__label {
-  font-size: 11px;
+  font-size: 13px;
   flex-shrink: 0;
 }
 
 .browser-toolbar__input {
   flex: 1;
-  font-size: 11px;
-  height: 20px;
+  font-size: 13px;
+  height: 22px;
 }
 
 /* Content viewport — "web page" inside the browser */

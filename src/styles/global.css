@@ -17,4 +17,31 @@ body {
 
 body {
   background-color: #008080;
+  font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Improve readability of 98.css elements on modern screens */
+.window-body {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+button,
+input,
+select,
+textarea {
+  font-size: 13px;
+}
+
+/* Ensure all text on gray backgrounds has strong contrast */
+.title-bar-text {
+  font-size: 13px;
+}
+
+.status-bar-field {
+  font-size: 12px;
 }
