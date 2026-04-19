@@ -1,0 +1,94 @@
+/* Taskbar layout */
+
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 28px;
+  z-index: 1000;
+  background-color: #c0c0c0;
+  box-shadow:
+    inset 0 1px #fff,
+    inset 0 2px #dfdfdf;
+  display: flex;
+  align-items: center;
+  padding: 2px 2px;
+  gap: 2px;
+}
+
+.taskbar__start-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  min-width: 54px;
+  min-height: 22px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.taskbar__start-btn--active {
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px #0a0a0a,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px #808080;
+}
+
+.taskbar__divider {
+  width: 2px;
+  height: 22px;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  flex-shrink: 0;
+}
+
+.taskbar__tasks {
+  display: flex;
+  flex: 1;
+  gap: 2px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.taskbar__task-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  min-width: 120px;
+  max-width: 160px;
+  min-height: 22px;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+}
+
+.taskbar__task-btn--active {
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px #0a0a0a,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px #808080;
+  font-weight: 700;
+}
+
+.taskbar__task-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskbar__tray {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 1px 4px;
+  box-shadow:
+    inset -1px -1px #dfdfdf,
+    inset 1px 1px #808080;
+  height: 22px;
+}

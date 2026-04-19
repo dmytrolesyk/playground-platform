@@ -1,0 +1,74 @@
+/* Start menu styles */
+
+.start-menu {
+  display: none;
+  position: absolute;
+  bottom: 28px;
+  left: 0;
+  z-index: 1001;
+  background-color: #c0c0c0;
+  box-shadow:
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px #808080,
+    inset 2px 2px #fff;
+  min-width: 180px;
+}
+
+.start-menu--open {
+  display: flex;
+}
+
+.start-menu__sidebar {
+  background: linear-gradient(to top, #000080, #1084d0);
+  width: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+.start-menu__sidebar-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: #c0c0c0;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
+  letter-spacing: 1px;
+}
+
+.start-menu__items {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 2px 0;
+}
+
+.start-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 16px 4px 8px;
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: #000;
+  font-size: 11px;
+  font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
+  cursor: default;
+  text-align: left;
+  min-height: 0;
+  min-width: 0;
+  text-shadow: none;
+  width: 100%;
+}
+
+.start-menu__item:hover {
+  background-color: #000080;
+  color: #fff;
+}
+
+.start-menu__item:active {
+  box-shadow: none;
+}
