@@ -1,4 +1,5 @@
 import { BrowserApp } from './BrowserApp';
+import { ExplorerApp } from './ExplorerApp';
 import { PlaceholderApp } from './PlaceholderApp';
 import { registerApp } from './registry';
 
@@ -19,13 +20,12 @@ registerApp({
   id: 'explorer',
   title: 'Export CV',
   icon: '/icons/folder_icon.png',
-  component: PlaceholderApp,
+  component: ExplorerApp,
   desktop: true,
   startMenu: true,
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 500, height: 350 },
-  defaultProps: { name: 'Explorer' },
 });
 
 registerApp({
