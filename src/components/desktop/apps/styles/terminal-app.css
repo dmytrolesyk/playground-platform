@@ -1,0 +1,26 @@
+/* TerminalApp — xterm.js terminal layout */
+
+.terminal-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: -8px;
+  background: #000;
+}
+
+.terminal-app__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  background: #000;
+}
+
+.terminal-app__container {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
