@@ -19,15 +19,16 @@
 
 .email-toolbar__send-btn {
   min-width: 80px;
-  min-height: 24px;
+  min-height: 26px;
   font-weight: 700;
+  font-size: 13px;
 }
 
 .email-toolbar__telegram-btn {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: 13px;
   text-decoration: none;
   color: #000;
   background: silver;
@@ -61,21 +62,25 @@
 .email-field {
   display: flex;
   align-items: center;
-  padding: 2px 4px;
-  gap: 4px;
+  padding: 3px 6px;
+  gap: 6px;
   border-bottom: 1px solid #dfdfdf;
 }
 
 .email-field__label {
-  font-size: 11px;
-  width: 56px;
+  font-size: 13px;
+  font-weight: 600;
+  width: 60px;
   flex-shrink: 0;
   text-align: right;
+  color: #000;
 }
 
 .email-field__input {
   flex: 1;
-  font-size: 11px;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 2px 4px;
 }
 
 /* Message body */
@@ -88,10 +93,12 @@
 .email-body__textarea {
   flex: 1;
   resize: none;
-  font-size: 12px;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
   padding: 8px;
   border: none;
   margin: 0;
+  line-height: 1.4;
 }
 
 /* Dialog overlay */
