@@ -34,6 +34,8 @@ export interface AppRegistryEntry {
   captureKeyboard?: boolean;
   /** Desktop icon alignment. Default: 'left'. Use 'right' to place icon on the right side. */
   desktopAlign?: 'left' | 'right';
+  /** When true, the window opens maximized (filling the screen above the taskbar). */
+  openMaximized?: boolean;
   defaultProps?: Record<string, unknown>;
 }
 

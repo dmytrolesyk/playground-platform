@@ -101,6 +101,7 @@ registerApp({
   singleton: true,
   defaultSize: { width: 700, height: 500 },
   desktopAlign: 'right',
+  openMaximized: true,
 });
 
 registerApp({
@@ -114,4 +115,5 @@ registerApp({
   singleton: true,
   defaultSize: { width: 900, height: 600 },
   desktopAlign: 'right',
+  openMaximized: true,
 });
