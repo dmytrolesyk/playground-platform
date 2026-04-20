@@ -68,8 +68,9 @@ export function Window(props: WindowProps): JSX.Element {
     let newX = e.clientX - dragOffsetX;
     let newY = e.clientY - dragOffsetY;
 
-    const maxX = window.innerWidth - 100;
-    const maxY = window.innerHeight - TASKBAR_HEIGHT - 20;
+    const container = (e.currentTarget as HTMLElement).closest('.desktop') as HTMLElement | null;
+    const maxX = (container?.clientWidth ?? window.innerWidth) - 100;
+    const maxY = (container?.clientHeight ?? window.innerHeight) - TASKBAR_HEIGHT - 20;
     newX = Math.max(-props.window.width + 100, Math.min(newX, maxX));
     newY = Math.max(0, Math.min(newY, maxY));
 
@@ -180,7 +181,9 @@ export function Window(props: WindowProps): JSX.Element {
               top: '0',
               left: '0',
               width: '100%',
-              height: `calc(100vh - ${TASKBAR_HEIGHT}px)`,
+              height: state.isMobile
+                ? `calc(100vh - ${TASKBAR_HEIGHT}px)`
+                : `calc(100% - ${TASKBAR_HEIGHT}px)`,
               transform: 'none',
             }
           : {
