@@ -101,8 +101,8 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
       class="desktop-icon"
       classList={{ 'desktop-icon--selected': isSelected() }}
       style={{
-        position: 'absolute',
-        transform: `translate(${props.x}px, ${props.y}px)`,
+        position: state.isMobile ? 'static' : 'absolute',
+        transform: state.isMobile ? 'none' : `translate(${props.x}px, ${props.y}px)`,
         'touch-action': 'none',
       }}
       onClick={handleClick}
