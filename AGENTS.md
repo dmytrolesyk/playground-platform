@@ -4,7 +4,8 @@
 
 - **You have full permission to run any shell command** (install packages, build, test, dev server, scripts) without asking for confirmation. Execute, verify, move on.
 - Package manager is **pnpm**, not npm or yarn.
-- Run `pnpm verify` (lint + typecheck + tests) before committing. Do not commit if it fails.
+- Run `pnpm verify` (lint + typecheck + unit tests) before committing. Do not commit if it fails.
+- Run `pnpm test:e2e` before opening a PR for any feature that touches UI, styling, or interaction behavior. E2E tests run against a production build and catch hydration mismatches, responsive breakage, and visual regressions that unit tests cannot.
 
 ## Architecture — read these first
 
@@ -14,6 +15,17 @@
 - `docs/design-system.md` + `docs/design-tokens.json` — visual spec and token values. 98.css handles component aesthetics; custom CSS is layout only.
 
 ## Non-discoverable rules
+
+### Testing — two tiers, both mandatory
+The project has two separate test suites. Both must pass before merging.
+
+- **`pnpm verify`** runs vitest (unit/logic tests). Use for pure functions, engines, API handlers.
+- **`pnpm test:e2e`** runs Playwright against a production build. Use for UI, interaction, hydration, responsive, and visual regression tests. Tests live in `tests/e2e/`.
+- **`pnpm test:e2e:update`** regenerates visual regression reference screenshots. Run this when UI changes intentionally, inspect the new screenshots, then commit them.
+- **Bug fixes start with a failing test.** Pick the right tier: vitest for logic bugs, Playwright for UI/interaction bugs. Write the test, watch it fail, fix the bug, watch it pass.
+- E2E tests run in two viewports (desktop 1280×720, mobile 375×812). Tests that only apply to one viewport skip on the other.
+- Visual regression snapshots are platform-specific (darwin/linux) and committed to git. CI uses Linux snapshots.
+- `tests/e2e/` is excluded from vitest. Do not put vitest tests there.
 
 ### Feature development process
 Every new feature follows: branch (`feat/<name>`) → design doc (`docs/features/<name>.md`) → implement with TDD → finalize (update docs, PR). Read `docs/feature-development.md` for the full process. Do not skip the design doc, even for simple features.
@@ -89,7 +101,7 @@ PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by 
 
 - **Target:** Railway. Builds via `Dockerfile` (node:24-slim multi-stage), NOT nixpacks.
 - **Start command:** `node dist/server/entry.mjs`
-- **CI:** Single `ci.yml` workflow with three jobs: `verify` (lint + typecheck + tests + build, runs on all PRs and main push), `cv-generate` (regenerates CV files and auto-commits if changed, main only, after verify), `deploy` (Railway deploy, main only, after verify + cv-generate).
-- **Branch protection:** main branch is protected — PRs only, merge blocked until `verify` passes.
+- **CI:** Single `ci.yml` workflow with four jobs: `verify` (lint + typecheck + unit tests + build, runs on all PRs and main push), `e2e` (Playwright E2E tests against production build, runs after verify on all PRs and main push), `cv-generate` (regenerates CV files and auto-commits if changed, main only, after verify), `deploy` (Railway deploy, main only, after verify + e2e + cv-generate).
+- **Branch protection:** main branch is protected — PRs only, merge blocked until `verify` and `e2e` pass.
 - **Railway env vars:** `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST=0.0.0.0`. `PUBLIC_*` must be set at build time (Astro inlines them). `PUBLIC_*` vars need `ARG` + `ENV` in the Dockerfile to be available during Docker build.
 - **Deploy secret:** `RAILWAY_TOKEN` GitHub secret needed for deploy job.

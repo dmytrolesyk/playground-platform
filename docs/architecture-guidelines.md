@@ -1400,3 +1400,56 @@ These patterns are load-bearing and should remain as-is:
 | Single store with zero app-specific logic | ~200 lines, stable regardless of app count | ...leak app state into `DesktopState` |
 | One SolidJS island | Simple state management, no cross-island sync | ...create additional `client:*` islands |
 | CSS isolation (each app has own CSS file) | No style conflicts between apps | ...use global classes for app-specific styling |
+
+---
+
+## 20. Testing Strategy
+
+The project uses a two-tier testing architecture. Each tier runs a different tool, targets different kinds of bugs, and has a different execution model.
+
+### Tier 1: Unit Tests — vitest
+
+**What it covers:** Pure logic — game engines, utility functions, data transformations, API route handlers. Anything that can be tested without a browser.
+
+**Runs via:** `pnpm verify` (which also runs lint + typecheck).
+
+**Location:** Test files live next to their source files or in `tests/` (but **not** in `tests/e2e/` — that directory is excluded from vitest).
+
+**When to write:** Any new function with branching logic, calculations, or state transitions gets a unit test. If the code has no UI and you can describe its behavior as "given X, returns Y", it belongs in vitest.
+
+### Tier 2: E2E Tests — Playwright
+
+**What it covers:** Hydration health, UI interactions, visual regression, responsive behavior. Tests run against a **production build** (`pnpm build && node dist/server/entry.mjs`), which is critical because SSR hydration mismatches only manifest in production — the dev server bypasses hydration via HMR.
+
+**Runs via:** `pnpm test:e2e`. Update visual regression baselines with `pnpm test:e2e:update`.
+
+**Location:** `tests/e2e/`. Four spec files:
+
+| File | Purpose |
+|---|---|
+| `health.spec.ts` | Zero console errors, hydration succeeds, icon count correct |
+| `smoke.spec.ts` | Every app opens, shows expected content, start menu + taskbar work |
+| `visual-regression.spec.ts` | Screenshot comparisons for desktop/mobile empty, start menu, window |
+| `responsive.spec.ts` | 768px breakpoint boundary, CRT frame visibility, mobile full-screen |
+
+Shared helpers live in `tests/e2e/helpers.ts`: `waitForHydration`, `ConsoleErrorCollector`, `openApp`, `closeTopWindow`.
+
+**Two viewport projects:** Every test runs twice — desktop (1280×720) and mobile (Pixel 5, 375×812 with touch). Tests that only apply to one viewport skip on the other using `page.viewportSize()`.
+
+**Visual regression snapshots** are committed to git (`tests/e2e/visual-regression.spec.ts-snapshots/`). They are platform-specific (darwin/linux). CI generates its own Linux snapshots on first run. When UI changes intentionally, run `pnpm test:e2e:update` locally and commit the updated snapshots.
+
+### Which Tier to Use
+
+| Situation | Test tier |
+|---|---|
+| New pure-logic module (game engine, parser, utility) | vitest unit test |
+| Bug fix in logic code | vitest — reproduce the bug as a failing test first |
+| New app or UI component | Playwright smoke test (app opens, content renders) |
+| Bug fix in UI/interaction/responsive behavior | Playwright E2E test — reproduce the bug as a failing test first |
+| Hydration or SSR issue | Playwright health test (only shows in production build) |
+| Visual change (layout, styling) | Playwright visual regression — update snapshots after verifying |
+| New API endpoint | vitest for the handler logic |
+
+### CI Integration
+
+The `e2e` job runs after `verify` in CI. Both `verify` and `e2e` must pass before deploy. On failure, Playwright uploads screenshot diffs and traces as artifacts for debugging.

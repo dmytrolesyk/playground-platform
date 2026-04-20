@@ -136,7 +136,11 @@ git commit -m "docs: add feature design for <feature-name>"
 ## Phase 2: Implement
 
 - Follow the implementation plan in the feature doc step by step.
-- **Test-driven development:** write the test first, watch it fail, implement, watch it pass. This applies to logic-heavy code (engines, services, API routes). Pure UI components that are hard to unit-test get manual verification instead.
+- **Test-driven development** — write the test first, watch it fail, implement, watch it pass. This applies across both test tiers:
+  - **vitest** for logic-heavy code (engines, services, API routes, utilities). If it has branching logic and no DOM, write a unit test.
+  - **Playwright E2E** for UI/interaction/responsive behavior. If the feature adds a new app, write a smoke test that opens it and asserts on key content. If you’re fixing a UI bug, reproduce it as a failing E2E test first. If the change affects layout or styling, update visual regression snapshots.
+  - **Bug fixes always start with a failing test** in the appropriate tier. Fix the bug, watch the test pass. This prevents regressions and documents the bug’s root cause.
+  - See `docs/architecture-guidelines.md` §20 (Testing Strategy) for the full decision table on which tier to use.
 - Commit incrementally — one commit per logical step, not one giant commit at the end.
 - If the design needs to change during implementation, **update the feature doc first**, then continue. The doc stays in sync with reality.
 
@@ -146,15 +150,16 @@ git commit -m "docs: add feature design for <feature-name>"
 
 Before merging:
 
-1. **`pnpm verify` passes** — lint, typecheck, tests. Non-negotiable.
-2. **Update the feature doc:**
+1. **`pnpm verify` passes** — lint, typecheck, unit tests. Non-negotiable.
+2. **`pnpm test:e2e` passes** — E2E tests against production build. If you changed UI, run `pnpm test:e2e:update` and commit updated snapshots.
+3. **Update the feature doc:**
    - Set Status to `Complete`.
    - Check off all implementation plan steps.
    - Add a "Deviations" note if anything was built differently than designed.
-3. **Update `docs/architecture-guidelines.md`** — only if the feature introduced new patterns, extension points, or architectural decisions worth recording. Most simple features won't need this. Features that add new shared services, new registry fields, or new platform-level behaviors should update §19 (Experimentation Platform Analysis) or add a new section.
-4. **Update `AGENTS.md`** — only if there are new non-discoverable rules that an agent couldn't figure out from reading the code (e.g., "audio service is a singleton — don't create a second AudioContext").
-5. **PR → merge to main.** Squash or merge commit — your preference per feature.
-6. **Expand the knowledge base** — this is the most important learning step. For each new feature:
+4. **Update `docs/architecture-guidelines.md`** — only if the feature introduced new patterns, extension points, or architectural decisions worth recording. Most simple features won't need this. Features that add new shared services, new registry fields, or new platform-level behaviors should update §19 (Experimentation Platform Analysis) or add a new section.
+5. **Update `AGENTS.md`** — only if there are new non-discoverable rules that an agent couldn't figure out from reading the code (e.g., "audio service is a singleton — don't create a second AudioContext").
+6. **PR → merge to main.** Squash or merge commit — your preference per feature.
+7. **Expand the knowledge base** — this is the most important learning step. For each new feature:
    a. Write/update all articles listed in the feature doc's "Knowledge Expansion" section.
    b. Every article must include `learningObjectives`, `prerequisites`, `exercises` (2-4 per article), `estimatedMinutes`, and `module` assignment.
    c. Every exercise must have a thorough answer, not just yes/no. At least one exercise per article must be type `predict` or `do`.
@@ -165,7 +170,7 @@ Before merging:
    h. Update `architecture/overview.md` if the feature changes the big picture.
    i. **All articles must pass both** the quality standards in `docs/features/knowledge-base.md` §7 (motivation opening, ≥1 Mermaid diagram, real code, external refs, word counts) **AND** the v2 standards in `docs/features/knowledge-base-v2.md` (exercises, learning objectives, prerequisites, module assignment).
    j. **Research process is mandatory** — read the source code, consult official docs, search the web. Never generate knowledge articles from training data alone.
-7. **(Optional but encouraged) Draft blog entry** — write a blog post about the feature, linking to relevant knowledge articles.
+8. **(Optional but encouraged) Draft blog entry** — write a blog post about the feature, linking to relevant knowledge articles.
 
 ---
 
