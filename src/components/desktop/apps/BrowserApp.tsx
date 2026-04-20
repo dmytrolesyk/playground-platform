@@ -1,21 +1,6 @@
 import { createSignal, type JSX, onMount } from 'solid-js';
+import { type CvSection, loadCvData } from './cv-data';
 import './styles/browser-app.css';
-
-interface CvSection {
-  slug: string;
-  title: string;
-  html: string;
-}
-
-function loadCvData(): CvSection[] {
-  const el = document.getElementById('cv-data');
-  if (!el?.textContent) return [];
-  try {
-    return JSON.parse(el.textContent) as CvSection[];
-  } catch {
-    return [];
-  }
-}
 
 export function BrowserApp(): JSX.Element {
   const [sections, setSections] = createSignal<CvSection[]>([]);

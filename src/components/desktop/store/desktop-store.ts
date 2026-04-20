@@ -198,6 +198,25 @@ export function createDesktopStore(): [DesktopState, DesktopActions] {
     selectDesktopIcon(id: string | null): void {
       setState('selectedDesktopIcon', id);
     },
+
+    isTopWindow(id: string): boolean {
+      return actions.getTopWindowId() === id;
+    },
+
+    getTopWindowId(): string | undefined {
+      const order = state.windowOrder;
+      if (order.length === 0) return undefined;
+      let maxZ = -1;
+      let topId: string | undefined;
+      for (const wid of order) {
+        const win = state.windows[wid];
+        if (win && !win.isMinimized && win.zIndex > maxZ) {
+          maxZ = win.zIndex;
+          topId = wid;
+        }
+      }
+      return topId;
+    },
   };
 
   return [state, actions];

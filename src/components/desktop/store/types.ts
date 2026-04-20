@@ -55,6 +55,8 @@ export interface DesktopActions {
   toggleStartMenu: () => void;
   closeStartMenu: () => void;
   selectDesktopIcon: (id: string | null) => void;
+  isTopWindow: (id: string) => boolean;
+  getTopWindowId: () => string | undefined;
 }
 
 export type DesktopStore = [DesktopState, DesktopActions];

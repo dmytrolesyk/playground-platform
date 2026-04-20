@@ -14,21 +14,6 @@ export function Taskbar(): JSX.Element {
       .filter((w): w is WindowState => w !== undefined);
   };
 
-  const isTopWindow = (windowId: string): boolean => {
-    const order = state.windowOrder;
-    if (order.length === 0) return false;
-    let maxZ = -1;
-    let topId = '';
-    for (const id of order) {
-      const win = state.windows[id];
-      if (win && !win.isMinimized && win.zIndex > maxZ) {
-        maxZ = win.zIndex;
-        topId = id;
-      }
-    }
-    return topId === windowId;
-  };
-
   const handleTaskButtonClick = (windowId: string): void => {
     const win = state.windows[windowId];
     if (!win) return;
@@ -36,7 +21,7 @@ export function Taskbar(): JSX.Element {
     if (win.isMinimized) {
       actions.minimizeWindow(windowId);
       actions.focusWindow(windowId);
-    } else if (isTopWindow(windowId)) {
+    } else if (actions.isTopWindow(windowId)) {
       actions.minimizeWindow(windowId);
     } else {
       actions.focusWindow(windowId);
@@ -78,7 +63,9 @@ export function Taskbar(): JSX.Element {
               <button
                 type="button"
                 class="taskbar__task-btn"
-                classList={{ 'taskbar__task-btn--active': isTopWindow(win.id) && !win.isMinimized }}
+                classList={{
+                  'taskbar__task-btn--active': actions.isTopWindow(win.id) && !win.isMinimized,
+                }}
                 onClick={() => handleTaskButtonClick(win.id)}
                 title={win.title}
               >

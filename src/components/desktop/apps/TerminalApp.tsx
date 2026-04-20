@@ -1,23 +1,8 @@
 import { createSignal, type JSX, onCleanup, onMount } from 'solid-js';
 import { APP_REGISTRY } from '../apps/registry';
 import { useDesktop } from '../store/context';
+import { loadCvData } from './cv-data';
 import './styles/terminal-app.css';
-
-interface CvSection {
-  slug: string;
-  title: string;
-  html: string;
-}
-
-function loadCvData(): CvSection[] {
-  const el = document.getElementById('cv-data');
-  if (!el?.textContent) return [];
-  try {
-    return JSON.parse(el.textContent) as CvSection[];
-  } catch {
-    return [];
-  }
-}
 
 function stripHtml(html: string): string {
   const div = document.createElement('div');

@@ -201,7 +201,7 @@ export function Window(props: WindowProps): JSX.Element {
         onPointerMove={handleDragMove}
         onPointerUp={handleDragEnd}
       >
-        <TitleBar window={props.window} onDragStart={() => {}} />
+        <TitleBar window={props.window} />
       </div>
       <div class="window-body" style={{ flex: '1', overflow: 'auto', margin: '0', padding: '8px' }}>
         {props.children}

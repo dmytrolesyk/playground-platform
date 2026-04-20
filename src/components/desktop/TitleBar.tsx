@@ -4,27 +4,13 @@ import type { WindowState } from './store/types';
 
 interface TitleBarProps {
   window: WindowState;
-  onDragStart: (e: PointerEvent) => void;
 }
 
 export function TitleBar(props: TitleBarProps): JSX.Element {
-  const [state, actions] = useDesktop();
+  const [, actions] = useDesktop();
 
   // Determine if this window is focused (topmost)
-  const isFocused = (): boolean => {
-    const order = state.windowOrder;
-    if (order.length === 0) return false;
-    let maxZ = -1;
-    let topId = '';
-    for (const id of order) {
-      const win = state.windows[id];
-      if (win && !win.isMinimized && win.zIndex > maxZ) {
-        maxZ = win.zIndex;
-        topId = id;
-      }
-    }
-    return topId === props.window.id;
-  };
+  const isFocused = (): boolean => actions.isTopWindow(props.window.id);
 
   const handleMinimize = (e: Event): void => {
     e.stopPropagation();
@@ -44,7 +30,6 @@ export function TitleBar(props: TitleBarProps): JSX.Element {
   return (
     <div
       class={`title-bar ${isFocused() ? '' : 'inactive'}`}
-      onPointerDown={props.onDragStart}
       style={{ 'touch-action': 'none', 'user-select': 'none' }}
     >
       <div class="title-bar-text" style={{ display: 'flex', 'align-items': 'center', gap: '4px' }}>

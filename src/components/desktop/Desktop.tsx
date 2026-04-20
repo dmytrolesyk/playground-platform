@@ -21,10 +21,9 @@ function DesktopInner(): JSX.Element {
 
   const handleKeyDown = (e: KeyboardEvent): void => {
     // If the focused window's app captures keyboard, yield to it
-    const topWindowId =
-      state.windowOrder.length > 0 ? state.windowOrder[state.windowOrder.length - 1] : undefined;
-    const topWindow = topWindowId ? state.windows[topWindowId] : undefined;
-    if (topWindow && !topWindow.isMinimized) {
+    const topId = actions.getTopWindowId();
+    const topWindow = topId ? state.windows[topId] : undefined;
+    if (topWindow) {
       const appEntry = APP_REGISTRY[topWindow.app];
       if (appEntry?.captureKeyboard) return;
     }
