@@ -16,6 +16,13 @@ interface KnowledgeEntry {
     technologies: string[];
     externalReferences: Array<{ title: string; url: string; type: string }>;
     order?: number;
+    // v2 fields
+    prerequisites: string[];
+    learningObjectives: string[];
+    exercises: Array<{ question: string; hint?: string; answer: string; type: string }>;
+    estimatedMinutes?: number;
+    module?: string;
+    moduleOrder?: number;
   };
   rendered?: { html: string };
   body?: string;
@@ -49,12 +56,14 @@ for (const cat of Object.keys(categories)) {
   }
 }
 
-const categoryOrder = ['architecture', 'concept', 'technology', 'feature'];
+const categoryOrder = ['architecture', 'concept', 'technology', 'feature', 'cs-fundamentals', 'lab'];
 const categoryLabels: Record<string, string> = {
   architecture: 'Architecture',
   concept: 'Concepts',
   technology: 'Technologies',
   feature: 'Features',
+  'cs-fundamentals': 'CS Fundamentals',
+  lab: 'Labs',
 };
 
 const typeIcons: Record<string, string> = {
@@ -63,6 +72,7 @@ const typeIcons: Record<string, string> = {
   docs: '📚',
   talk: '🎤',
   repo: '💻',
+  book: '📖',
 };
 
 // Resolve related concepts to actual entries
@@ -71,6 +81,30 @@ const relatedEntries = entry.data.relatedConcepts
     allEntries.find((e: KnowledgeEntry) => e.id === slug || e.id.endsWith(`/${slug}`)),
   )
   .filter((e): e is KnowledgeEntry => e !== undefined);
+
+// Resolve prerequisites to actual entries
+const prerequisiteEntries = (entry.data.prerequisites ?? [])
+  .map((slug: string) =>
+    allEntries.find((e: KnowledgeEntry) => e.id === slug || e.id.endsWith(`/${slug}`)),
+  )
+  .filter((e): e is KnowledgeEntry => e !== undefined);
+
+// Find previous/next article in same module
+const moduleArticles = entry.data.module
+  ? allEntries
+      .filter((e: KnowledgeEntry) => e.data.module === entry.data.module)
+      .sort((a, b) => (a.data.moduleOrder ?? 99) - (b.data.moduleOrder ?? 99))
+  : [];
+const currentModuleIndex = moduleArticles.findIndex((e) => e.id === entry.id);
+const prevInModule = currentModuleIndex > 0 ? moduleArticles[currentModuleIndex - 1] : null;
+const nextInModule = currentModuleIndex < moduleArticles.length - 1 ? moduleArticles[currentModuleIndex + 1] : null;
+
+const exerciseTypeLabels: Record<string, string> = {
+  predict: '🔮 Predict',
+  explain: '💬 Explain',
+  do: '🛠️ Do',
+  debug: '🐛 Debug',
+};
 
 const html = entry.rendered?.html ?? entry.body ?? '';
 ---
@@ -110,7 +144,59 @@ const html = entry.rendered?.html ?? entry.body ?? '';
       )}
       <p class="learn-content__summary">{entry.data.summary}</p>
 
+      {/* Estimated reading time */}
+      {entry.data.estimatedMinutes && (
+        <p class="learn-meta__time">⏱️ Estimated: {entry.data.estimatedMinutes} minutes</p>
+      )}
+
+      {/* Prerequisites */}
+      {prerequisiteEntries.length > 0 && (
+        <div class="learn-prerequisites">
+          <strong>📋 Read first:</strong>
+          <ul>
+            {prerequisiteEntries.map((e: KnowledgeEntry) => (
+              <li><a href={`/learn/${e.id}`}>{e.data.title}</a></li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Learning objectives */}
+      {entry.data.learningObjectives.length > 0 && (
+        <div class="learn-objectives">
+          <strong>🎯 After reading this, you should be able to:</strong>
+          <ul>
+            {entry.data.learningObjectives.map((obj: string) => (
+              <li>{obj}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <article set:html={html} />
+
+      {/* Exercises */}
+      {entry.data.exercises.length > 0 && (
+        <section class="learn-exercises">
+          <h2>🧪 Check Your Understanding</h2>
+          {entry.data.exercises.map((ex: { question: string; hint?: string; answer: string; type: string }) => (
+            <div class={`exercise exercise--${ex.type}`}>
+              <p class="exercise__label">{exerciseTypeLabels[ex.type] ?? ex.type}</p>
+              <p class="exercise__question">{ex.question}</p>
+              {ex.hint && (
+                <details class="exercise__hint">
+                  <summary>Show hint</summary>
+                  <p>{ex.hint}</p>
+                </details>
+              )}
+              <details class="exercise__answer">
+                <summary>Show answer</summary>
+                <p>{ex.answer}</p>
+              </details>
+            </div>
+          ))}
+        </section>
+      )}
 
       <section class="learn-related">
         {relatedEntries.length > 0 && (
@@ -147,6 +233,25 @@ const html = entry.rendered?.html ?? entry.body ?? '';
           </div>
         )}
       </section>
+
+      {/* Module navigation */}
+      {(prevInModule || nextInModule) && (
+        <nav class="learn-module-nav">
+          {prevInModule ? (
+            <a href={`/learn/${prevInModule.id}`} class="learn-module-nav__prev">
+              ← {prevInModule.data.title}
+            </a>
+          ) : <span />}
+          {nextInModule ? (
+            <a href={`/learn/${nextInModule.id}`} class="learn-module-nav__next">
+              {nextInModule.data.title} →
+            </a>
+          ) : <span />}
+        </nav>
+      )}
+
+      {/* Progress tracking placeholder — hydrated by client script */}
+      <div id="progress-tracker" data-slug={entry.id}></div>
     </main>
   </div>
 </LearnLayout>
