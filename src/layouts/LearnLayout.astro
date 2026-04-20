@@ -1,0 +1,64 @@
+---
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} — Knowledge Base</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <nav class="learn-nav">
+      <a href="/learn" class="learn-nav__title">📚 Knowledge Base</a>
+      <a href="/">← Back to Desktop</a>
+    </nav>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/learn.css';
+</style>
+
+<script>
+  // Initialize Mermaid for client-side diagram rendering.
+  // Markdown code blocks with language "mermaid" are rendered by Astro as
+  // <pre><code class="language-mermaid">...</code></pre>.
+  // We convert those to <pre class="mermaid"> for the mermaid library.
+  // Re-runs after each client-side navigation via astro:page-load.
+  import mermaid from 'mermaid';
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'neutral',
+    securityLevel: 'loose',
+  });
+
+  async function renderMermaid(): Promise<void> {
+    document.querySelectorAll('pre > code.language-mermaid').forEach((codeEl) => {
+      const pre = codeEl.parentElement;
+      if (pre) {
+        pre.className = 'mermaid';
+        pre.textContent = codeEl.textContent;
+      }
+    });
+    await mermaid.run({ querySelector: '.mermaid' });
+  }
+
+  // Run on initial load and after each client-side navigation
+  document.addEventListener('astro:page-load', () => {
+    renderMermaid();
+  });
+</script>

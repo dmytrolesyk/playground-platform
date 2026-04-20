@@ -1,0 +1,152 @@
+---
+import { getCollection } from 'astro:content';
+import LearnLayout from '../../layouts/LearnLayout.astro';
+
+export const prerender = true;
+
+interface KnowledgeEntry {
+  id: string;
+  data: {
+    title: string;
+    category: string;
+    summary: string;
+    difficulty?: string;
+    relatedConcepts: string[];
+    relatedFiles: string[];
+    technologies: string[];
+    externalReferences: Array<{ title: string; url: string; type: string }>;
+    order?: number;
+  };
+  rendered?: { html: string };
+  body?: string;
+}
+
+export async function getStaticPaths() {
+  const entries = await getCollection('knowledge');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props as { entry: KnowledgeEntry };
+
+const allEntries = (await getCollection('knowledge')) as KnowledgeEntry[];
+
+// Build sidebar navigation grouped by category
+const categories: Record<string, KnowledgeEntry[]> = {};
+for (const e of allEntries) {
+  const cat = e.data.category;
+  if (!categories[cat]) {
+    categories[cat] = [];
+  }
+  categories[cat].push(e);
+}
+for (const cat of Object.keys(categories)) {
+  const items = categories[cat];
+  if (items) {
+    items.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+  }
+}
+
+const categoryOrder = ['architecture', 'concept', 'technology', 'feature'];
+const categoryLabels: Record<string, string> = {
+  architecture: 'Architecture',
+  concept: 'Concepts',
+  technology: 'Technologies',
+  feature: 'Features',
+};
+
+const typeIcons: Record<string, string> = {
+  article: '📄',
+  video: '🎥',
+  docs: '📚',
+  talk: '🎤',
+  repo: '💻',
+};
+
+// Resolve related concepts to actual entries
+const relatedEntries = entry.data.relatedConcepts
+  .map((slug: string) =>
+    allEntries.find((e: KnowledgeEntry) => e.id === slug || e.id.endsWith(`/${slug}`)),
+  )
+  .filter((e): e is KnowledgeEntry => e !== undefined);
+
+const html = entry.rendered?.html ?? entry.body ?? '';
+---
+
+<LearnLayout title={entry.data.title}>
+  <div class="learn-page">
+    <aside class="learn-sidebar">
+      {categoryOrder.map((cat) => {
+        const items = categories[cat];
+        if (!items?.length) return null;
+        return (
+          <>
+            <h3>{categoryLabels[cat]}</h3>
+            <ul>
+              {items.map((e: KnowledgeEntry) => (
+                <li>
+                  <a
+                    href={`/learn/${e.id}`}
+                    class={e.id === entry.id ? 'active' : ''}
+                  >
+                    {e.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
+        );
+      })}
+    </aside>
+
+    <main class="learn-content">
+      <h1>{entry.data.title}</h1>
+      {entry.data.difficulty && (
+        <span class={`learn-badge learn-badge--${entry.data.difficulty}`}>
+          {entry.data.difficulty}
+        </span>
+      )}
+      <p class="learn-content__summary">{entry.data.summary}</p>
+
+      <article set:html={html} />
+
+      <section class="learn-related">
+        {relatedEntries.length > 0 && (
+          <>
+            <h2>📎 Related Concepts</h2>
+            <ul>
+              {relatedEntries.map((e: KnowledgeEntry) => (
+                <li><a href={`/learn/${e.id}`}>{e.data.title}</a> — {e.data.summary}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {entry.data.relatedFiles.length > 0 && (
+          <>
+            <h2>📁 Source Files</h2>
+            <ul>
+              {entry.data.relatedFiles.map((f: string) => (
+                <li><code>{f}</code></li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {entry.data.externalReferences.length > 0 && (
+          <div class="learn-external">
+            <h2>🔗 External References</h2>
+            {entry.data.externalReferences.map((ref: { title: string; url: string; type: string }) => (
+              <div class="learn-external__item">
+                <span class="learn-external__type">{typeIcons[ref.type] ?? '📄'} {ref.type}</span>
+                <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.title}</a>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
+  </div>
+</LearnLayout>

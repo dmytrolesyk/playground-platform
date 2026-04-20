@@ -7,6 +7,14 @@ import { registerApp } from './registry';
 
 const TerminalApp = lazy(() => import('./TerminalApp').then((m) => ({ default: m.TerminalApp })));
 const SnakeGame = lazy(() => import('./games/Snake').then((m) => ({ default: m.SnakeGame })));
+const LibraryApp = lazy(() =>
+  import('./library/LibraryApp').then((m) => ({ default: m.LibraryApp })),
+);
+const ArchitectureExplorer = lazy(() =>
+  import('./architecture-explorer/ArchitectureExplorer').then((m) => ({
+    default: m.ArchitectureExplorer,
+  })),
+);
 
 // Register MVP apps
 registerApp({
@@ -80,4 +88,32 @@ registerApp({
   startMenuCategory: 'Games',
   singleton: true,
   defaultSize: { width: 405, height: 460 },
+});
+
+registerApp({
+  id: 'library',
+  title: 'Knowledge Base',
+  icon: '/icons/library_icon.png',
+  component: LibraryApp,
+  desktop: true,
+  startMenu: true,
+  startMenuCategory: 'Programs',
+  singleton: true,
+  defaultSize: { width: 700, height: 500 },
+  desktopAlign: 'right',
+  openMaximized: true,
+});
+
+registerApp({
+  id: 'architecture-explorer',
+  title: 'Architecture Explorer',
+  icon: '/icons/blueprint_icon.png',
+  component: ArchitectureExplorer,
+  desktop: true,
+  startMenu: true,
+  startMenuCategory: 'Programs',
+  singleton: true,
+  defaultSize: { width: 900, height: 600 },
+  desktopAlign: 'right',
+  openMaximized: true,
 });

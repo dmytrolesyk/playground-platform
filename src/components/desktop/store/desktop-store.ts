@@ -78,7 +78,7 @@ export function createDesktopStore(): [DesktopState, DesktopActions] {
         height: appEntry.defaultSize.height,
         zIndex: state.nextZIndex,
         isMinimized: false,
-        isMaximized: false,
+        isMaximized: appEntry.openMaximized === true,
         appProps: { ...appEntry.defaultProps, ...extraProps },
       };
 

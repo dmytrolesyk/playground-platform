@@ -16,34 +16,56 @@ interface IconPosition {
   y: number;
 }
 
-function calculateInitialPositions(apps: AppRegistryEntry[]): IconPosition[] {
+function calculateInitialPositions(
+  apps: AppRegistryEntry[],
+  containerWidth: number,
+  containerHeight: number,
+): IconPosition[] {
   const positions: IconPosition[] = [];
+
+  const leftApps = apps.filter((a) => a.desktopAlign !== 'right');
+  const rightApps = apps.filter((a) => a.desktopAlign === 'right');
+
+  // Place left-aligned icons (top-left, column-first)
   let col = 0;
   let row = 0;
-
-  for (const app of apps) {
+  for (const app of leftApps) {
     const x = GRID_PADDING + col * (ICON_WIDTH + GRID_GAP);
     const y = GRID_PADDING + row * (ICON_HEIGHT + GRID_GAP);
     positions.push({ id: app.id, x, y });
     row += 1;
-    // Wrap to next column if exceeding viewport (rough estimate)
-    if (
-      y + ICON_HEIGHT * 2 + TASKBAR_HEIGHT >
-      (typeof window !== 'undefined' ? window.innerHeight : 800)
-    ) {
+    if (y + ICON_HEIGHT * 2 + TASKBAR_HEIGHT > containerHeight) {
       row = 0;
       col += 1;
     }
   }
+
+  // Place right-aligned icons (top-right, column-first)
+  col = 0;
+  row = 0;
+  for (const app of rightApps) {
+    const x = containerWidth - GRID_PADDING - ICON_WIDTH - col * (ICON_WIDTH + GRID_GAP);
+    const y = GRID_PADDING + row * (ICON_HEIGHT + GRID_GAP);
+    positions.push({ id: app.id, x, y });
+    row += 1;
+    if (y + ICON_HEIGHT * 2 + TASKBAR_HEIGHT > containerHeight) {
+      row = 0;
+      col += 1;
+    }
+  }
+
   return positions;
 }
 
 export function DesktopIconGrid(): JSX.Element {
   const apps = (): AppRegistryEntry[] => getDesktopApps();
   const [positions, setPositions] = createSignal<IconPosition[]>([]);
+  let gridRef: HTMLDivElement | undefined;
 
   onMount(() => {
-    setPositions(calculateInitialPositions(apps()));
+    const width = gridRef?.clientWidth ?? 1024;
+    const height = gridRef?.clientHeight ?? 800;
+    setPositions(calculateInitialPositions(apps(), width, height));
   });
 
   const handleIconDrag = (iconId: string, newX: number, newY: number): void => {
@@ -51,7 +73,7 @@ export function DesktopIconGrid(): JSX.Element {
   };
 
   return (
-    <div class="desktop-icon-grid">
+    <div class="desktop-icon-grid" ref={gridRef}>
       <For each={positions()}>
         {(pos: IconPosition) => {
           const app = apps().find((a) => a.id === pos.id);
