@@ -17,6 +17,8 @@ Among other things, I would like to highlight the following ones:
 - Took part in creating a custom testing framework based on Cypress for testing analytics. I created a solution that automated mocks gathering that used to be done manually before that and consumed a lot of time and efforts
 - Performed a significant optimization of a Next.js application, reducing its JavaScript bundle size by 60%, cutting off unused CSS, helping DevOps team integrating CDN for static assets, integrating Redis for caching API calls
 - Integrated a number of 3rd party services, including payment providers
+- Created custom Webpack plugins from scratch to address project-specific build requirements
+- Participated in developing an e-commerce application with Astro and headless WooCommerce
 - Helped my colleagues with preparation for client interviews
 
 ### Customer Support Specialist — Cloudbeds
