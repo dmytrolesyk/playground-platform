@@ -7,6 +7,8 @@ relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/observer-pattern
   - concepts/browser-rendering-pipeline
+  - concepts/javascript-proxies
+  - concepts/event-loop-and-microtasks
 technologies:
   - solidjs
 order: 2

@@ -60,6 +60,12 @@ Use `transform: translate(x, y)` for window position — not CSS `left`/`top`. T
 ### Knowledge base content collection
 Learning content lives in `src/content/knowledge/` as Markdown with Zod-validated frontmatter (category, relatedConcepts, relatedFiles, technologies, externalReferences, diagramRef). Four categories: `architecture/`, `concepts/`, `technologies/`, `features/`. Every new feature must include knowledge entries in its feature doc. The Architecture Explorer data in `architecture-data.ts` must stay in sync with the actual system — update nodes/edges when adding apps or changing architecture.
 
+### Knowledge article quality bar
+All knowledge articles must meet the content quality standards in `docs/features/knowledge-base.md` §7. Key requirements: open with motivation (not definition), ≥1 Mermaid diagram, reference actual source files, connect to broader CS concepts, include edge cases/gotchas, 3–6 external references with diverse types, meet minimum word counts (architecture: 1500–2500, concepts: 1000–1800, technologies: 800–1400, features: 600–1000). Never create shallow placeholder articles — every article must teach something a working engineer would find valuable.
+
+### Knowledge article research process
+Articles are written by AI agents, but must be grounded in thorough research — not generated from training data alone. Before writing or enriching any article, the agent must: (1) **read the actual source code** referenced in `relatedFiles` and understand the real implementation, not assumed patterns; (2) **consult official documentation** for every technology mentioned — read the docs pages, not just recall them; (3) **search the web** for authoritative explanations, talks, and blog posts to verify claims and find the best external references; (4) **analyze the codebase architecture** by reading `docs/architecture-guidelines.md`, related feature docs, and tracing actual data flows through the code; (5) **synthesize across sources** — cross-reference documentation, source code, and external resources to produce accurate, nuanced explanations. Do not write from memory. Every factual claim should be verifiable against docs or source code. If you're unsure about a detail, look it up.
+
 ## Secrets
 
 Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST`.

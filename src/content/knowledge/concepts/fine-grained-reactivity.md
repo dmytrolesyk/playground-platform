@@ -7,6 +7,8 @@ relatedConcepts:
   - concepts/signals-vs-vdom
   - concepts/observer-pattern
   - concepts/javascript-proxies
+  - concepts/event-loop-and-microtasks
+  - concepts/browser-rendering-pipeline
 relatedFiles:
   - src/components/desktop/store/desktop-store.ts
   - src/components/desktop/store/context.tsx

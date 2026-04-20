@@ -1,7 +1,7 @@
 export interface ArchNode {
   id: string;
   label: string;
-  category: 'astro' | 'solidjs' | 'registry' | 'app' | 'css' | 'infrastructure';
+  category: 'astro' | 'solidjs' | 'registry' | 'app' | 'css' | 'infrastructure' | 'concept';
   x: number;
   y: number;
   width: number;
@@ -288,6 +288,77 @@ export const NODES: ArchNode[] = [
     sourceFiles: ['src/components/desktop/apps/architecture-explorer/ArchitectureExplorer.tsx'],
   },
 
+  // Concept layer (foundational CS concepts)
+  {
+    id: 'observer-pattern',
+    label: 'Observer Pattern',
+    category: 'concept',
+    x: 620,
+    y: 310,
+    width: 130,
+    height: 45,
+    description:
+      'Pub/sub → Observer → Reactive signals progression. Foundation of SolidJS reactivity.',
+    knowledgeSlug: 'concepts/observer-pattern',
+  },
+  {
+    id: 'javascript-proxies',
+    label: 'JS Proxies',
+    category: 'concept',
+    x: 770,
+    y: 310,
+    width: 120,
+    height: 45,
+    description: 'How Proxy/Reflect enable fine-grained tracking in SolidJS stores.',
+    knowledgeSlug: 'concepts/javascript-proxies',
+  },
+  {
+    id: 'event-loop',
+    label: 'Event Loop',
+    category: 'concept',
+    x: 620,
+    y: 370,
+    width: 130,
+    height: 45,
+    description: 'Call stack, task queue, microtask queue. Why batch() works and effects schedule.',
+    knowledgeSlug: 'concepts/event-loop-and-microtasks',
+  },
+  {
+    id: 'rendering-pipeline',
+    label: 'Rendering Pipeline',
+    category: 'concept',
+    x: 770,
+    y: 370,
+    width: 140,
+    height: 45,
+    description:
+      'Parse → Style → Layout → Paint → Composite. Why some CSS is free and some causes reflow.',
+    knowledgeSlug: 'concepts/browser-rendering-pipeline',
+  },
+  {
+    id: 'module-systems',
+    label: 'Module Systems',
+    category: 'concept',
+    x: 620,
+    y: 140,
+    width: 130,
+    height: 45,
+    description: 'CommonJS → ESM, static vs dynamic imports, tree shaking, chunk splitting.',
+    knowledgeSlug: 'concepts/module-systems-and-bundling',
+  },
+  {
+    id: 'progressive-enhancement',
+    label: 'Progressive Enhancement',
+    category: 'concept',
+    x: 770,
+    y: 140,
+    width: 160,
+    height: 45,
+    description:
+      'Core content without JS → enhanced experience with JS. Astro is PE by architecture.',
+    knowledgeSlug: 'concepts/progressive-enhancement',
+  },
+
   // CSS layer
   {
     id: 'css-98',
@@ -432,6 +503,50 @@ export const EDGES: ArchEdge[] = [
     label: 'iframe',
     type: 'data-flow',
   },
+
+  // Concept → implementation dependencies
+  {
+    from: 'observer-pattern',
+    to: 'desktop-store',
+    label: 'signals use',
+    type: 'dependency',
+  },
+  {
+    from: 'javascript-proxies',
+    to: 'desktop-store',
+    label: 'stores use',
+    type: 'dependency',
+  },
+  {
+    from: 'module-systems',
+    to: 'app-registry',
+    label: 'dynamic import()',
+    type: 'dependency',
+  },
+  {
+    from: 'rendering-pipeline',
+    to: 'crt-frame',
+    label: 'compositor layer',
+    type: 'dependency',
+  },
+  {
+    from: 'rendering-pipeline',
+    to: 'window',
+    label: 'GPU compositing',
+    type: 'dependency',
+  },
+  {
+    from: 'progressive-enhancement',
+    to: 'index-astro',
+    label: 'static-first',
+    type: 'dependency',
+  },
+  {
+    from: 'event-loop',
+    to: 'desktop-store',
+    label: 'batch scheduling',
+    type: 'dependency',
+  },
 ];
 
 // Category colors for node backgrounds
@@ -442,6 +557,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
   app: '#e6ffe6',
   css: '#ffe6e6',
   infrastructure: '#f0f0f0',
+  concept: '#fdf6e3',
 };
 
 export const CATEGORY_BORDER_COLORS: Record<string, string> = {
@@ -451,4 +567,5 @@ export const CATEGORY_BORDER_COLORS: Record<string, string> = {
   app: '#27ae60',
   css: '#e74c3c',
   infrastructure: '#95a5a6',
+  concept: '#b58900',
 };
