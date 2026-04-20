@@ -85,20 +85,41 @@ registerApp({
 - [ ] Step 2
 - [ ] ...
 
-## Knowledge Entries
-<!-- What learning content does this feature need? -->
+## Knowledge Expansion
+<!-- What learning content does this feature produce?
+     Every feature should expand the knowledge base. Scale to complexity:
+     Simple feature: 1 feature article + exercises + architecture explorer update.
+     Complex feature: feature article + technology articles + CS fundamentals + lab + new module. -->
 
-New entries to create:
-- [ ] `architecture/<slug>.md` — ...
-- [ ] `concepts/<slug>.md` — ...
-- [ ] `technologies/<slug>.md` — ...
+### Articles to create:
+- [ ] `features/<slug>.md` — (REQUIRED: walkthrough of the most interesting implementation detail)
+- [ ] `technologies/<slug>.md` — (one per new technology/library introduced)
+- [ ] `concepts/<slug>.md` — (for any new patterns or architectural concepts)
+- [ ] `cs-fundamentals/<slug>.md` — (for foundational CS concepts the feature relies on that aren't already covered)
+- [ ] `labs/<slug>.md` — (at least one hands-on experiment per medium/complex feature)
 
-Existing entries to update:
-- [ ] `architecture/overview.md` — ...
+### Articles to update:
+- [ ] `architecture/overview.md` — (if the feature changes the big picture)
+- [ ] (list any other existing articles that need updates)
 
-Architecture explorer updates:
+### Per-article checklist (apply to every new/updated article):
+- [ ] `learningObjectives` filled in (2-4 action-verb objectives)
+- [ ] `prerequisites` specified (which articles should be read first)
+- [ ] `exercises` added (2-4 per article, at least one `predict` or `do` type)
+- [ ] `estimatedMinutes` set
+- [ ] `module` and `moduleOrder` assigned (new module if needed, or extend existing)
+- [ ] Quality standards met (see `docs/features/knowledge-base.md` §7 + `docs/features/knowledge-base-v2.md`)
+
+### Architecture explorer updates:
 - [ ] Add node(s): ...
 - [ ] Add edge(s): ...
+
+### Curriculum:
+- [ ] New module defined? (name, objective, article sequence, checkpoint)
+- [ ] Or articles added to existing module? (which one, at what position)
+
+### Blog entry (optional but encouraged):
+- [ ] Draft blog post linking to relevant knowledge articles
 ```
 
 ### Commit the doc before writing code
@@ -133,18 +154,28 @@ Before merging:
 3. **Update `docs/architecture-guidelines.md`** — only if the feature introduced new patterns, extension points, or architectural decisions worth recording. Most simple features won't need this. Features that add new shared services, new registry fields, or new platform-level behaviors should update §19 (Experimentation Platform Analysis) or add a new section.
 4. **Update `AGENTS.md`** — only if there are new non-discoverable rules that an agent couldn't figure out from reading the code (e.g., "audio service is a singleton — don't create a second AudioContext").
 5. **PR → merge to main.** Squash or merge commit — your preference per feature.
-6. **Update knowledge base** — write/update knowledge entries listed in the feature doc. Update `architecture-data.ts` with new nodes and edges. Update `architecture/overview.md` if the feature changes the big picture. **All articles must pass the quality standards** defined in `docs/features/knowledge-base.md` §7 (Content Quality Standards) — including motivation opening, ≥1 Mermaid diagram, broader context, edge cases, 3–6 external references, and minimum word counts per category.
-7. **(Optional) Draft blog entry** — write a blog post about the feature, linking to relevant knowledge articles.
+6. **Expand the knowledge base** — this is the most important learning step. For each new feature:
+   a. Write/update all articles listed in the feature doc's "Knowledge Expansion" section.
+   b. Every article must include `learningObjectives`, `prerequisites`, `exercises` (2-4 per article), `estimatedMinutes`, and `module` assignment.
+   c. Every exercise must have a thorough answer, not just yes/no. At least one exercise per article must be type `predict` or `do`.
+   d. For medium/complex features: write at least one lab (`labs/<name>.md`) with guided hands-on experiments.
+   e. For features introducing new technologies: write CS fundamentals articles for any underlying CS concepts not already covered.
+   f. Assign articles to curriculum modules — either a new module or extension of an existing one.
+   g. Update `architecture-data.ts` with new nodes and edges.
+   h. Update `architecture/overview.md` if the feature changes the big picture.
+   i. **All articles must pass both** the quality standards in `docs/features/knowledge-base.md` §7 (motivation opening, ≥1 Mermaid diagram, real code, external refs, word counts) **AND** the v2 standards in `docs/features/knowledge-base-v2.md` (exercises, learning objectives, prerequisites, module assignment).
+   j. **Research process is mandatory** — read the source code, consult official docs, search the web. Never generate knowledge articles from training data alone.
+7. **(Optional but encouraged) Draft blog entry** — write a blog post about the feature, linking to relevant knowledge articles.
 
 ---
 
 ## Scaling Guide
 
-| Feature complexity | Doc length | Architecture Fit | Technical Design | Implementation Plan |
-|---|---|---|---|---|
-| **Simple** (new game, small UI app) | ~30 lines | "Standard registry pattern. No platform changes." | Paragraph + file list | 3-5 steps |
-| **Medium** (shared service + UI, e.g., radio + Winamp) | ~100-200 lines | Analysis of what's new (shared service, cross-app state) | Component diagram, data flow, API contracts | 8-15 steps, possibly grouped |
-| **Complex** (WebRTC, DOS emulator integration) | ~300+ lines | Full architectural analysis, new infra needs, risk assessment | Detailed design with diagrams, state machines, error handling | 15+ steps, phased with milestones |
+| Feature complexity | Doc length | Architecture Fit | Technical Design | Implementation Plan | Knowledge Expansion |
+|---|---|---|---|---|---|
+| **Simple** (new game, small UI app) | ~30 lines | "Standard registry pattern. No platform changes." | Paragraph + file list | 3-5 steps | 1 feature article + exercises + arch explorer update |
+| **Medium** (shared service + UI, e.g., radio + Winamp) | ~100-200 lines | Analysis of what's new (shared service, cross-app state) | Component diagram, data flow, API contracts | 8-15 steps, possibly grouped | Feature + technology articles + 1 lab + exercises + module assignment |
+| **Complex** (WebRTC, DOS emulator integration, WASM) | ~300+ lines | Full architectural analysis, new infra needs, risk assessment | Detailed design with diagrams, state machines, error handling | 15+ steps, phased with milestones | Feature + technology + CS fundamentals + concepts + 1-2 labs + exercises + new curriculum module |
 
 ---
 
