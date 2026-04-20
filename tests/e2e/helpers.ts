@@ -50,7 +50,7 @@ export async function openApp(page: Page, appLabel: string): Promise<void> {
   if (isMobile) {
     await icon.tap();
   } else {
-    await icon.dblClick();
+    await icon.dblclick();
   }
   // Wait for window to appear
   await page.locator('.window.win-container').first().waitFor({
