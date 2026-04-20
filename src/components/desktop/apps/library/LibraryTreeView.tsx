@@ -17,9 +17,18 @@ const CATEGORY_LABELS: Record<string, string> = {
   concept: 'Concepts',
   technology: 'Technologies',
   feature: 'Features',
+  'cs-fundamentals': 'CS Fundamentals',
+  lab: 'Labs',
 };
 
-const CATEGORY_ORDER = ['architecture', 'concept', 'technology', 'feature'];
+const CATEGORY_ORDER = [
+  'architecture',
+  'concept',
+  'technology',
+  'feature',
+  'cs-fundamentals',
+  'lab',
+];
 
 export function LibraryTreeView(props: LibraryTreeViewProps): JSX.Element {
   const grouped = (): Record<string, KnowledgeIndexEntry[]> => {

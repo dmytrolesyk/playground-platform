@@ -62,3 +62,107 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
     renderMermaid();
   });
 </script>
+
+<script>
+  // Progress tracking — marks articles as read and renders the progress UI.
+  // Uses localStorage. Progressive enhancement — pages work without it.
+
+  const STORAGE_KEY = 'kb-learning-progress';
+
+  interface ArticleProgress {
+    firstRead: string;
+    lastRead: string;
+    completed: boolean;
+  }
+
+  interface LearningProgress {
+    articlesRead: Record<string, ArticleProgress>;
+  }
+
+  function loadProgress(): LearningProgress {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw) as LearningProgress;
+    } catch { /* ignore */ }
+    return { articlesRead: {} };
+  }
+
+  function saveProgress(progress: LearningProgress): void {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  }
+
+  function initProgressTracker(): void {
+    const container = document.getElementById('progress-tracker');
+    if (!container) return;
+
+    const slug = container.dataset['slug'];
+    if (!slug) return;
+
+    const progress = loadProgress();
+    const now = new Date().toISOString();
+
+    // Mark as read
+    const existing = progress.articlesRead[slug];
+    progress.articlesRead[slug] = {
+      firstRead: existing?.firstRead ?? now,
+      lastRead: now,
+      completed: existing?.completed ?? false,
+    };
+    saveProgress(progress);
+
+    // Render the "Mark as understood" button
+    const isCompleted = progress.articlesRead[slug]?.completed ?? false;
+    container.innerHTML = `
+      <div class="progress-tracker">
+        <span>${isCompleted ? '✅ Marked as understood' : '📖 You\'ve read this article'}</span>
+        <button class="progress-tracker__btn ${isCompleted ? 'progress-tracker__btn--completed' : ''}"
+                id="toggle-understood">
+          ${isCompleted ? 'Understood ✓' : 'Mark as understood'}
+        </button>
+      </div>
+    `;
+
+    document.getElementById('toggle-understood')?.addEventListener('click', () => {
+      const p = loadProgress();
+      const entry = p.articlesRead[slug];
+      if (entry) {
+        entry.completed = !entry.completed;
+        saveProgress(p);
+        initProgressTracker(); // re-render
+      }
+    });
+  }
+
+  function initIndexProgress(): void {
+    // Update progress bars on the /learn index page
+    const bars = document.querySelectorAll<HTMLElement>('[data-module-articles]');
+    const progress = loadProgress();
+
+    for (const bar of bars) {
+      const slugsStr = bar.dataset['moduleArticles'];
+      if (!slugsStr) continue;
+      const slugs = slugsStr.split(',').filter(Boolean);
+      const completed = slugs.filter((s) => progress.articlesRead[s]?.completed).length;
+      const pct = slugs.length > 0 ? (completed / slugs.length) * 100 : 0;
+
+      const fill = bar.querySelector<HTMLElement>('.learn-module__progress-fill');
+      if (fill) fill.style.width = `${pct}%`;
+
+      const label = bar.querySelector<HTMLElement>('.learn-module__progress-label');
+      if (label) label.textContent = `${completed}/${slugs.length} completed`;
+    }
+
+    // Update summary header
+    const summary = document.getElementById('progress-summary');
+    if (summary) {
+      const total = Object.keys(progress.articlesRead).length;
+      const completed = Object.values(progress.articlesRead).filter((a) => a.completed).length;
+      summary.textContent = `📊 Your Progress: ${total} articles read · ${completed} understood`;
+    }
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    initProgressTracker();
+    initIndexProgress();
+  });
+</script>

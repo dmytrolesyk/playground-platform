@@ -266,6 +266,319 @@ body {
   min-width: 50px;
 }
 
+/* ===== v2: Learning metadata ===== */
+
+.learn-meta__time {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 16px;
+}
+
+/* Prerequisites */
+.learn-prerequisites {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.learn-prerequisites ul {
+  margin: 4px 0 0;
+  padding-left: 20px;
+}
+
+.learn-prerequisites li {
+  margin: 2px 0;
+}
+
+/* Learning objectives */
+.learn-objectives {
+  background: #d4edda;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 0 0 24px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.learn-objectives ul {
+  margin: 4px 0 0;
+  padding-left: 20px;
+}
+
+.learn-objectives li {
+  margin: 2px 0;
+}
+
+/* ===== v2: Exercises ===== */
+
+.learn-exercises {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 2px solid var(--learn-border);
+}
+
+.learn-exercises h2 {
+  font-size: 22px;
+  color: var(--learn-heading);
+  margin: 0 0 20px;
+  border-bottom: none;
+}
+
+.exercise {
+  background: #fff;
+  border: 1px solid var(--learn-border);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 0 0 16px;
+  border-left: 4px solid #666;
+}
+
+.exercise--predict {
+  border-left-color: #9b59b6;
+}
+.exercise--explain {
+  border-left-color: #3498db;
+}
+.exercise--do {
+  border-left-color: #e67e22;
+}
+.exercise--debug {
+  border-left-color: #e74c3c;
+}
+
+.exercise__label {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 0 0 8px;
+}
+
+.exercise__question {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.exercise__hint,
+.exercise__answer {
+  margin: 8px 0 0;
+}
+
+.exercise__hint summary,
+.exercise__answer summary {
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--learn-accent);
+  padding: 4px 0;
+}
+
+.exercise__hint summary:hover,
+.exercise__answer summary:hover {
+  text-decoration: underline;
+}
+
+.exercise__hint p,
+.exercise__answer p {
+  margin: 8px 0 0;
+  padding: 12px 16px;
+  background: var(--learn-code-bg);
+  border-radius: 3px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ===== v2: Module navigation ===== */
+
+.learn-module-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--learn-border);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.learn-module-nav a {
+  color: var(--learn-accent);
+  text-decoration: none;
+  padding: 8px 0;
+}
+
+.learn-module-nav a:hover {
+  text-decoration: underline;
+}
+
+/* ===== v2: Progress tracking ===== */
+
+.progress-tracker {
+  margin-top: 32px;
+  padding: 16px 20px;
+  background: var(--learn-sidebar-bg);
+  border: 1px solid var(--learn-border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.progress-tracker__btn {
+  padding: 6px 16px;
+  border: 1px solid var(--learn-border);
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.progress-tracker__btn:hover {
+  background: var(--learn-accent);
+  color: #fff;
+  border-color: var(--learn-accent);
+}
+
+.progress-tracker__btn--completed {
+  background: #28a745;
+  color: #fff;
+  border-color: #28a745;
+}
+
+/* ===== v2: Curriculum modules on index ===== */
+
+.learn-modules {
+  margin: 32px 0;
+}
+
+.learn-module {
+  background: #fff;
+  border: 1px solid var(--learn-border);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin: 0 0 16px;
+}
+
+.learn-module__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 4px;
+}
+
+.learn-module__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--learn-heading);
+  margin: 0;
+}
+
+.learn-module__meta {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #666;
+}
+
+.learn-module__objective {
+  font-size: 15px;
+  color: #555;
+  margin: 4px 0 12px;
+  font-style: italic;
+}
+
+.learn-module__prereqs {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #888;
+  margin: 0 0 8px;
+}
+
+.learn-module__articles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.learn-module__articles li a {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--learn-code-bg);
+  border: 1px solid var(--learn-border);
+  border-radius: 3px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: var(--learn-text);
+  text-decoration: none;
+}
+
+.learn-module__articles li a:hover {
+  background: var(--learn-accent);
+  color: #fff;
+  border-color: var(--learn-accent);
+}
+
+.learn-module__progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e0e0d8;
+  border-radius: 3px;
+  margin: 12px 0 0;
+  overflow: hidden;
+}
+
+.learn-module__progress-fill {
+  height: 100%;
+  background: var(--learn-accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Progress summary header */
+.learn-progress-summary {
+  background: var(--learn-sidebar-bg);
+  border: 1px solid var(--learn-border);
+  border-radius: 4px;
+  padding: 12px 20px;
+  margin: 0 0 32px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Labs section */
+.learn-labs {
+  margin: 32px 0;
+}
+
+.learn-lab-card {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--learn-border);
+}
+
+.learn-lab-card__time {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .learn-sidebar {
@@ -278,5 +591,10 @@ body {
 
   .learn-content h1 {
     font-size: 26px;
+  }
+
+  .learn-module-nav {
+    flex-direction: column;
+    gap: 8px;
   }
 }

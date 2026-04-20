@@ -13,7 +13,14 @@ const knowledge = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/knowledge' }),
   schema: z.object({
     title: z.string(),
-    category: z.enum(['architecture', 'concept', 'technology', 'feature']),
+    category: z.enum([
+      'architecture',
+      'concept',
+      'technology',
+      'feature',
+      'lab',
+      'cs-fundamentals',
+    ]),
     summary: z.string(),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
     relatedConcepts: z.array(z.string()).default([]),
@@ -24,7 +31,7 @@ const knowledge = defineCollection({
         z.object({
           title: z.string(),
           url: z.string(),
-          type: z.enum(['article', 'video', 'docs', 'talk', 'repo']),
+          type: z.enum(['article', 'video', 'docs', 'talk', 'repo', 'book']),
         }),
       )
       .default([]),
@@ -32,6 +39,22 @@ const knowledge = defineCollection({
     order: z.number().optional(),
     dateAdded: z.date().optional(),
     lastUpdated: z.date().optional(),
+    // v2 fields
+    prerequisites: z.array(z.string()).default([]),
+    learningObjectives: z.array(z.string()).default([]),
+    exercises: z
+      .array(
+        z.object({
+          question: z.string(),
+          hint: z.string().optional(),
+          answer: z.string(),
+          type: z.enum(['predict', 'explain', 'do', 'debug']).default('explain'),
+        }),
+      )
+      .default([]),
+    estimatedMinutes: z.number().optional(),
+    module: z.string().optional(),
+    moduleOrder: z.number().optional(),
   }),
 });
 

@@ -386,11 +386,75 @@ Both produce the same artifact: a markdown file in `src/content/knowledge/`.
 
 | Category | Count | Depth | Authorship |
 |---|---|---|---|
-| Architecture | 6 docs | Deep (~1000-2000 words) — code excerpts, diagrams, decision rationale | Collaborative |
-| Concepts | 7 docs | Transferable (~800-1500 words) — what, why, external refs | Mix |
-| Technologies | 5 docs | Reference + "how we use it" (~600-1200 words) | Fast-mode drafts |
-| Features | 4 docs | Walkthrough linking to arch + concepts (~500-1000 words) | Fast-mode drafts |
-| **Total** | **22 docs** | **~20,000-30,000 words** | Rolling effort |
+| Architecture | 6 docs | Deep (~1500-2500 words) — code excerpts, diagrams, decision rationale, trade-off analysis | Collaborative |
+| Concepts | 13 docs (7 original + 6 foundational) | Transferable (~1000-1800 words) — what, why, history, broader context, external refs | Mix |
+| Technologies | 5 docs | Reference + "how we use it" + alternatives comparison (~800-1400 words) | Fast-mode drafts |
+| Features | 4 docs | Walkthrough linking to arch + concepts (~600-1000 words) | Fast-mode drafts |
+| **Total** | **28 docs** | **~30,000-40,000 words** | Rolling effort |
+
+### 7. Content Quality Standards
+
+Every knowledge article must meet these standards. This applies to initial content, enrichments, and all future articles created as part of new features.
+
+#### Article Structure (all categories)
+
+1. **"Why should I care?" opening** — The first paragraph explains what this concept enables and why a working engineer needs to understand it. Never open with a dry definition.
+2. **Mental model** — At least one analogy, diagram, or visualization that builds intuition *before* diving into implementation details. The reader should have an "aha" moment before seeing code.
+3. **How it works here** — Concrete code from THIS codebase with actual file paths. Not generic examples — real references to `src/components/desktop/Window.tsx`, etc.
+4. **Broader context** — History, alternatives, where this pattern appears in the wild. Connect to CS fundamentals. Every concept exists in a lineage — show the lineage.
+5. **Edge cases & gotchas** — Where does this break? What's the failure mode? What surprised you? These are often the most valuable parts of an article.
+6. **"What if we'd done it differently?"** — At least one alternative approach and why it was rejected. Understanding rejected alternatives deepens understanding of chosen ones. (Required for architecture/concept articles; optional for technology/feature.)
+7. **Mermaid diagram** — At least one per article. Flowcharts for processes, sequence diagrams for interactions, comparison diagrams for trade-offs. Diagrams are rendered client-side by Mermaid.
+8. **External references** — 3–6 curated links per article. Must include diverse types (articles, docs, videos/talks, repos). Prioritize: (a) the canonical/foundational resource, (b) the best explanatory video/talk, (c) official docs, (d) deep-dive articles.
+
+#### Category-Specific Requirements
+
+**Architecture articles** (1500–2500 words):
+- Must include at least one sequence diagram or data flow diagram
+- Must reference actual source files and explain non-obvious implementation choices
+- Must include a "What if we'd done it differently?" section
+- Must connect decisions back to the architectural principles from `docs/architecture-guidelines.md`
+
+**Concept articles** (1000–1800 words):
+- Must explain the concept's history and lineage (where did this idea come from?)
+- Must show how the concept appears beyond this project (2+ real-world examples)
+- Must include at least one "before/after" or "with/without" comparison
+- Must link to related concepts in other articles via `relatedConcepts`
+
+**Technology articles** (800–1400 words):
+- Must include a comparison to at least 2 alternatives and why this was chosen
+- Must cover the most common gotchas/pitfalls
+- Must show both "how it works in general" and "how we use it specifically"
+- Must link to official docs AND at least one tutorial/talk
+
+**Feature articles** (600–1000 words):
+- Must walk through the most interesting implementation detail (not just describe what it does)
+- Must link to the architecture/concept articles that explain the patterns used
+- Must include at least one diagram (component structure, data flow, or interaction flow)
+
+#### Quality Checklist (applied to every article before merge)
+
+- [ ] Opens with motivation, not definition
+- [ ] Has ≥1 Mermaid diagram
+- [ ] References actual source files from this codebase
+- [ ] Connects to ≥1 broader CS concept or pattern
+- [ ] Includes ≥1 "what goes wrong without this" scenario
+- [ ] Has 3–6 external references with diverse types (articles, docs, video/talk)
+- [ ] Meets minimum word count for its category
+- [ ] Cross-links to related articles via `relatedConcepts` frontmatter
+- [ ] All referenced file paths (`relatedFiles`) exist in the current codebase
+
+#### Research Process (mandatory for AI-authored content)
+
+Most knowledge articles are written by AI agents. To ensure accuracy and depth, the agent must conduct thorough research before writing — never generate content from training data alone.
+
+1. **Read the source code.** Open and read every file listed in `relatedFiles`. Understand the *actual* implementation — variable names, function signatures, control flow, edge cases. Quote real code, don't paraphrase from memory.
+2. **Consult official documentation.** For every technology mentioned, read the current documentation pages. APIs change between versions; training data goes stale. Verify function signatures, configuration options, and behavior against the actual docs.
+3. **Search the web.** Find authoritative blog posts, conference talks, and tutorials. Prioritize primary sources (framework authors, spec editors, core contributors). Use search to discover the best external references — don't link to URLs from memory without verifying they exist and are relevant.
+4. **Analyze the codebase architecture.** Read `docs/architecture-guidelines.md`, related feature docs in `docs/features/`, and trace actual data flows through the code. Understand *why* decisions were made, not just *what* was built.
+5. **Read related knowledge articles.** Before writing, read the articles listed in `relatedConcepts` to avoid contradictions and find natural cross-reference points.
+6. **Synthesize across sources.** Cross-reference documentation, source code, web resources, and architecture docs to produce accurate, nuanced explanations. If sources disagree, investigate and note the discrepancy.
+7. **Verify every factual claim.** If you state that a library is X KB, check it. If you say a function returns a specific type, read the source. If you claim a CSS property triggers layout, verify against browser rendering docs. Do not guess.
 
 ## Resolved Questions
 
