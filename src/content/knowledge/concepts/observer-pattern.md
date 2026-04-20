@@ -7,6 +7,7 @@ relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/signals-vs-vdom
   - concepts/javascript-proxies
+  - cs-fundamentals/trees-and-traversal
 relatedFiles:
   - src/components/desktop/store/desktop-store.ts
   - src/components/desktop/store/context.tsx

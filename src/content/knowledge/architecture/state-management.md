@@ -7,6 +7,7 @@ relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/observer-pattern
   - concepts/javascript-proxies
+  - cs-fundamentals/hash-maps-and-lookup
 relatedFiles:
   - src/components/desktop/store/desktop-store.ts
   - src/components/desktop/store/types.ts

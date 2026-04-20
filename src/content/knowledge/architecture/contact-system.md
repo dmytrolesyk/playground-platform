@@ -6,6 +6,7 @@ difficulty: intermediate
 relatedConcepts:
   - concepts/islands-architecture
   - concepts/progressive-enhancement
+  - cs-fundamentals/networking-fundamentals
 relatedFiles:
   - src/pages/api/contact.ts
   - src/components/desktop/apps/EmailApp.tsx

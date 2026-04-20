@@ -8,6 +8,7 @@ relatedConcepts:
   - concepts/browser-rendering-pipeline
   - concepts/event-loop-and-microtasks
   - concepts/progressive-enhancement
+  - cs-fundamentals/concurrency-models
 relatedFiles:
   - src/components/desktop/Window.tsx
   - src/components/desktop/styles/window.css

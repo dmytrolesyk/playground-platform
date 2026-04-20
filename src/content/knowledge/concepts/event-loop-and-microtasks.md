@@ -7,6 +7,7 @@ relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/observer-pattern
   - concepts/browser-rendering-pipeline
+  - cs-fundamentals/concurrency-models
 relatedFiles:
   - src/components/desktop/Window.tsx
   - src/components/desktop/apps/games/Snake.tsx

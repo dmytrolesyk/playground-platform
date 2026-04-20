@@ -9,6 +9,7 @@ relatedConcepts:
   - concepts/javascript-proxies
   - concepts/event-loop-and-microtasks
   - concepts/browser-rendering-pipeline
+  - cs-fundamentals/hash-maps-and-lookup
 relatedFiles:
   - src/components/desktop/store/desktop-store.ts
   - src/components/desktop/store/context.tsx
