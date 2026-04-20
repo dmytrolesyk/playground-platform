@@ -115,9 +115,23 @@ export const NODES: ArchNode[] = [
     y: 30,
     width: 120,
     height: 50,
-    description: 'Static knowledge base pages rendered from content collection.',
-    knowledgeSlug: 'architecture/overview',
-    sourceFiles: ['src/pages/learn/'],
+    description:
+      'Static knowledge base pages. Curriculum index with modules, progress tracking, and per-article learning objectives, exercises, and module navigation.',
+    knowledgeSlug: 'architecture/data-flow',
+    sourceFiles: ['src/pages/learn/index.astro', 'src/pages/learn/[...slug].astro'],
+  },
+  {
+    id: 'knowledge-collection',
+    label: 'Knowledge Collection',
+    category: 'astro',
+    x: 830,
+    y: 100,
+    width: 160,
+    height: 50,
+    description:
+      'Markdown articles in 6 categories: architecture, concepts, technologies, features, CS fundamentals, labs. Zod-validated frontmatter with exercises, prerequisites, and module assignments.',
+    knowledgeSlug: 'architecture/data-flow',
+    sourceFiles: ['src/content/knowledge/', 'src/content.config.ts'],
   },
 
   // SolidJS island layer (middle)
@@ -502,6 +516,20 @@ export const EDGES: ArchEdge[] = [
     to: 'learn-routes',
     label: 'iframe',
     type: 'data-flow',
+  },
+
+  // Knowledge system
+  {
+    from: 'knowledge-collection',
+    to: 'learn-routes',
+    label: 'builds into',
+    type: 'data-flow',
+  },
+  {
+    from: 'content-collections',
+    to: 'knowledge-collection',
+    label: 'same pattern',
+    type: 'dependency',
   },
 
   // Concept → implementation dependencies
