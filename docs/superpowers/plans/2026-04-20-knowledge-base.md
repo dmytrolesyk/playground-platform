@@ -10,6 +10,11 @@
 
 **Spec:** `docs/features/knowledge-base.md`
 
+**Content Authorship:** The human developer wants to be involved in writing knowledge articles. Two modes:
+- **Collaborative mode (default for architecture docs):** Have a conversation about the concepts — explain, ask questions, discuss — then distill into a markdown doc together. Do NOT silently generate architecture articles.
+- **Fast mode (for technology/feature docs):** Generate comprehensive drafts. The developer reviews and edits. Use this when the developer says "just draft it" or for factual/reference content.
+- **Always ask** before writing content for Task 11 (initial articles). For seed content in Task 3, generate drafts since they're needed to test the infrastructure.
+
 ---
 
 ## File Map
