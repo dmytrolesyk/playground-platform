@@ -6,9 +6,9 @@ order: 4
 ## Technical Skills
 
 - **Languages:** JavaScript, TypeScript, Python
-- **Frontend:** React, Next.js, Astro, HTML & CSS, SCSS, CSS-in-JS, Tailwind
+- **Frontend:** React, Next.js, Astro, SolidJS, HTML & CSS, SCSS, CSS-in-JS, Tailwind
 - **State Management:** Redux, Zustand, RxJS
-- **Backend:** Node.js, Fastify, REST API
+- **Backend:** Node.js, Fastify, REST API, gRPC (ConnectRPC)
 - **Databases:** MongoDB, PostgreSQL, Redis
 - **Testing:** Cypress
 - **Build Tools:** Webpack
