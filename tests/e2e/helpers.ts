@@ -44,9 +44,7 @@ export class ConsoleErrorCollector {
  */
 export async function openApp(page: Page, appLabel: string): Promise<void> {
   const icon = page.locator('.desktop-icon', { hasText: appLabel });
-  const isMobile = await page.evaluate(() =>
-    window.matchMedia('(max-width: 768px)').matches,
-  );
+  const isMobile = await page.evaluate(() => window.matchMedia('(max-width: 768px)').matches);
   if (isMobile) {
     await icon.tap();
   } else {

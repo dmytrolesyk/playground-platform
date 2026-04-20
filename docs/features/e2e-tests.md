@@ -1,7 +1,7 @@
 # Feature: E2E & Visual Regression Test Suite
 
 ## Status
-Design
+Complete
 
 ## Motivation
 Recent commits on this branch reveal a pattern: visual and interaction bugs on mobile are invisible until someone manually tests on a real device. The hydration mismatch that killed all mobile icons, the window-layer blocking clicks, the taskbar hidden behind browser chrome — none of these were caught by the existing unit-test-only `pnpm verify`. A production-build E2E suite running against real browser viewports would catch all three categories automatically.

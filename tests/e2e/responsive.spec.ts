@@ -65,6 +65,7 @@ test.describe('Responsive — mobile behavior', () => {
     const box = await win.boundingBox();
 
     expect(box).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: guarded by toBeTruthy above
     expect(box!.width).toBe(viewport.width);
 
     // Window should use position: fixed on mobile

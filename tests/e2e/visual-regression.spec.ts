@@ -25,10 +25,15 @@ test.describe('Visual Regression', () => {
 
     await openApp(page, 'View CV');
     // Wait for content to load inside the browser app
-    await page.locator('.window.win-container').first().locator('text=Dmytro Lesyk').first().waitFor({
-      state: 'visible',
-      timeout: 10_000,
-    });
+    await page
+      .locator('.window.win-container')
+      .first()
+      .locator('text=Dmytro Lesyk')
+      .first()
+      .waitFor({
+        state: 'visible',
+        timeout: 10_000,
+      });
 
     await expect(page).toHaveScreenshot('window-view-cv.png');
   });

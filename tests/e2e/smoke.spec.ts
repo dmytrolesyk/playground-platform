@@ -10,9 +10,9 @@ test.describe('App Smoke Tests', () => {
   test('View CV — opens and shows CV content', async ({ page }) => {
     await openApp(page, 'View CV');
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window.locator('.title-bar-text')).toContainText('View CV');
-    await expect(window).toContainText('Dmytro Lesyk');
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('View CV');
+    await expect(win).toContainText('Dmytro Lesyk');
 
     await closeTopWindow(page);
   });
@@ -20,9 +20,9 @@ test.describe('App Smoke Tests', () => {
   test('Export CV — opens and shows download links', async ({ page }) => {
     await openApp(page, 'Export CV');
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window.locator('.title-bar-text')).toContainText('Export CV');
-    await expect(window.locator('a[download]')).toHaveCount(2);
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('Export CV');
+    await expect(win.locator('a[download]')).toHaveCount(2);
 
     await closeTopWindow(page);
   });
@@ -30,10 +30,10 @@ test.describe('App Smoke Tests', () => {
   test('Contact Me — opens and shows contact options', async ({ page }) => {
     await openApp(page, 'Contact Me');
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window.locator('.title-bar-text')).toContainText('Contact Me');
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('Contact Me');
     // "Send Email" is always present; "Telegram" depends on PUBLIC_TELEGRAM_USERNAME env var
-    await expect(window).toContainText('Send Email');
+    await expect(win).toContainText('Send Email');
 
     await closeTopWindow(page);
   });
@@ -41,10 +41,10 @@ test.describe('App Smoke Tests', () => {
   test('Terminal — opens and shows terminal container', async ({ page }) => {
     await openApp(page, 'Terminal');
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window.locator('.title-bar-text')).toContainText('Terminal');
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('Terminal');
     // Terminal lazy-loads xterm — wait for the container to appear
-    await expect(window.locator('.terminal-app__container')).toBeVisible({ timeout: 10_000 });
+    await expect(win.locator('.terminal-app__container')).toBeVisible({ timeout: 10_000 });
 
     await closeTopWindow(page);
   });
@@ -52,18 +52,16 @@ test.describe('App Smoke Tests', () => {
   test('Snake — opens and shows canvas', async ({ page }) => {
     await openApp(page, 'Snake');
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window.locator('.title-bar-text')).toContainText('Snake');
-    await expect(window.locator('canvas')).toBeVisible();
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('Snake');
+    await expect(win.locator('canvas')).toBeVisible();
 
     await closeTopWindow(page);
   });
 
   test('Knowledge Base — opens and shows library app', async ({ page }, testInfo) => {
     // On mobile, Knowledge Base redirects to /learn — skip this test
-    const isMobile = await page.evaluate(() =>
-      window.matchMedia('(max-width: 768px)').matches,
-    );
+    const isMobile = await page.evaluate(() => window.matchMedia('(max-width: 768px)').matches);
     if (isMobile) {
       testInfo.skip();
       return;
@@ -71,9 +69,9 @@ test.describe('App Smoke Tests', () => {
 
     await openApp(page, 'Knowledge Base');
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window.locator('.title-bar-text')).toContainText('Knowledge Base');
-    await expect(window.locator('.library-app')).toBeVisible();
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('Knowledge Base');
+    await expect(win.locator('.library-app')).toBeVisible();
 
     await closeTopWindow(page);
   });
@@ -81,9 +79,9 @@ test.describe('App Smoke Tests', () => {
   test('Architecture Explorer — opens and shows canvas', async ({ page }) => {
     await openApp(page, 'Architecture');
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window.locator('.title-bar-text')).toContainText('Architecture');
-    await expect(window.locator('.arch-explorer__canvas')).toBeVisible();
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('Architecture');
+    await expect(win.locator('.arch-explorer__canvas')).toBeVisible();
 
     await closeTopWindow(page);
   });
@@ -109,9 +107,9 @@ test.describe('Start Menu', () => {
     await page.locator('.taskbar__start-btn').click();
     await page.locator('.start-menu__item', { hasText: 'View CV' }).click();
 
-    const window = page.locator('.window.win-container').first();
-    await expect(window).toBeVisible();
-    await expect(window.locator('.title-bar-text')).toContainText('View CV');
+    const win = page.locator('.window.win-container').first();
+    await expect(win).toBeVisible();
+    await expect(win.locator('.title-bar-text')).toContainText('View CV');
 
     await closeTopWindow(page);
   });
@@ -124,9 +122,7 @@ test.describe('Taskbar', () => {
   });
 
   test('shows task button when window is open (desktop)', async ({ page }, testInfo) => {
-    const isMobile = await page.evaluate(() =>
-      window.matchMedia('(max-width: 768px)').matches,
-    );
+    const isMobile = await page.evaluate(() => window.matchMedia('(max-width: 768px)').matches);
     if (isMobile) {
       testInfo.skip();
       return;
@@ -142,9 +138,7 @@ test.describe('Taskbar', () => {
   });
 
   test('shows active app name when window is open (mobile)', async ({ page }, testInfo) => {
-    const isMobile = await page.evaluate(() =>
-      window.matchMedia('(max-width: 768px)').matches,
-    );
+    const isMobile = await page.evaluate(() => window.matchMedia('(max-width: 768px)').matches);
     if (!isMobile) {
       testInfo.skip();
       return;
