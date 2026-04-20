@@ -182,7 +182,7 @@ export function Window(props: WindowProps): JSX.Element {
               left: '0',
               width: '100%',
               height: state.isMobile
-                ? `calc(100vh - ${TASKBAR_HEIGHT}px)`
+                ? `calc(100dvh - ${TASKBAR_HEIGHT}px - env(safe-area-inset-bottom, 0px))`
                 : `calc(100% - ${TASKBAR_HEIGHT}px)`,
               transform: 'none',
             }
@@ -194,6 +194,7 @@ export function Window(props: WindowProps): JSX.Element {
         'z-index': props.window.zIndex,
         display: props.window.isMinimized ? 'none' : 'flex',
         'flex-direction': 'column',
+        'pointer-events': 'auto',
       }}
       role="dialog"
       aria-labelledby={`win-title-${props.window.id}`}

@@ -30,7 +30,10 @@ export function WindowManager(): JSX.Element {
   };
 
   return (
-    <div class="window-layer" style={{ position: 'absolute', inset: '0' }}>
+    <div
+      class="window-layer"
+      style={{ position: 'absolute', inset: '0', 'pointer-events': 'none' }}
+    >
       <For each={openWindows()}>
         {(win: WindowState) => {
           const AppComponent = resolveAppComponent(win.app);

@@ -1,4 +1,4 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, type JSX } from 'solid-js';
 import { Clock } from './Clock';
 import { StartMenu } from './StartMenu';
 import { useDesktop } from './store/context';
@@ -56,44 +56,43 @@ export function Taskbar(): JSX.Element {
         <strong>Start</strong>
       </button>
       <div class="taskbar__divider" />
-      <Show when={!state.isMobile}>
-        <div class="taskbar__tasks">
-          <For each={openWindows()}>
-            {(win: WindowState) => (
-              <button
-                type="button"
-                class="taskbar__task-btn"
-                classList={{
-                  'taskbar__task-btn--active': actions.isTopWindow(win.id) && !win.isMinimized,
-                }}
-                onClick={() => handleTaskButtonClick(win.id)}
-                title={win.title}
-              >
-                {win.icon && (
-                  <img
-                    src={win.icon}
-                    alt=""
-                    width={20}
-                    height={20}
-                    style={{ 'image-rendering': 'pixelated' }}
-                    draggable={false}
-                  />
-                )}
-                <span class="taskbar__task-text">{win.title}</span>
-              </button>
-            )}
-          </For>
-        </div>
-      </Show>
-      <Show when={state.isMobile}>
-        <div class="taskbar__tasks taskbar__tasks--mobile">
-          {openWindows().length > 0 && (
-            <span class="taskbar__active-app">
-              {openWindows().find((w) => !w.isMinimized)?.title ?? ''}
-            </span>
+      {/* Both branches always rendered — CSS media queries toggle visibility.
+         Using <Show> with isMobile causes a hydration mismatch because the
+         server SSRs with isMobile=false while mobile clients hydrate with true. */}
+      <div class="taskbar__tasks taskbar__tasks--desktop">
+        <For each={openWindows()}>
+          {(win: WindowState) => (
+            <button
+              type="button"
+              class="taskbar__task-btn"
+              classList={{
+                'taskbar__task-btn--active': actions.isTopWindow(win.id) && !win.isMinimized,
+              }}
+              onClick={() => handleTaskButtonClick(win.id)}
+              title={win.title}
+            >
+              {win.icon && (
+                <img
+                  src={win.icon}
+                  alt=""
+                  width={20}
+                  height={20}
+                  style={{ 'image-rendering': 'pixelated' }}
+                  draggable={false}
+                />
+              )}
+              <span class="taskbar__task-text">{win.title}</span>
+            </button>
           )}
-        </div>
-      </Show>
+        </For>
+      </div>
+      <div class="taskbar__tasks taskbar__tasks--mobile">
+        {openWindows().length > 0 && (
+          <span class="taskbar__active-app">
+            {openWindows().find((w) => !w.isMinimized)?.title ?? ''}
+          </span>
+        )}
+      </div>
       <div class="taskbar__tray">
         <Clock />
       </div>
