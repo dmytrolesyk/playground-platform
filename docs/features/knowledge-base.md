@@ -74,14 +74,14 @@ const knowledge = defineCollection({
     category: z.enum(['architecture', 'concept', 'technology', 'feature']),
     summary: z.string(),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
-    relatedConcepts: z.array(z.string()).optional(),
-    relatedFiles: z.array(z.string()).optional(),
-    technologies: z.array(z.string()).optional(),
+    relatedConcepts: z.array(z.string()).default([]),
+    relatedFiles: z.array(z.string()).default([]),
+    technologies: z.array(z.string()).default([]),
     externalReferences: z.array(z.object({
       title: z.string(),
       url: z.string(),
       type: z.enum(['article', 'video', 'docs', 'talk', 'repo']),
-    })).optional(),
+    })).default([]),
     diagramRef: z.string().optional(),
     order: z.number().optional(),
     dateAdded: z.date().optional(),
@@ -203,9 +203,11 @@ A SolidJS app rendering an interactive SVG diagram of the entire system.
 
 - **Click a node** → detail panel slides in with summary + link to full `/learn/` article
 - **Hover a node** → connected edges highlight, showing dependencies and data flow
-- **Click a category group** → all nodes in that group highlight
 - **Toggle layers** → show/hide edge types: data flow, dependencies, renders, lazy-load boundaries
-- **Zoom into subsystems** → click "App Registry" → expanded view showing internal flow
+
+**Deferred to polish pass (after first use):**
+- Click a category group → all nodes in that group highlight
+- Zoom into subsystems → click "App Registry" → expanded view showing internal flow
 
 #### Data Structure
 

@@ -15,6 +15,23 @@
 - **Fast mode (for technology/feature docs):** Generate comprehensive drafts. The developer reviews and edits. Use this when the developer says "just draft it" or for factual/reference content.
 - **Always ask** before writing content for Task 11 (initial articles). For seed content in Task 3, generate drafts since they're needed to test the infrastructure.
 
+**Codebase Orientation:** Before starting implementation, read these files to understand existing patterns:
+- `AGENTS.md` — project rules, non-discoverable conventions
+- `src/components/desktop/apps/app-manifest.ts` — how apps are registered (follow this exact pattern)
+- `src/components/desktop/apps/BrowserApp.tsx` — reference toolbar + iframe pattern for LibraryApp
+- `src/components/desktop/apps/ExplorerApp.tsx` — reference toolbar pattern
+- `src/content.config.ts` — existing content collection pattern to follow
+- `src/pages/index.astro` — how CV data is serialized (follow for knowledge-index)
+
+**Linter/TypeScript Strictness:** This project enforces strict rules that will bite you:
+- `useExplicitType: "error"` (biome nursery) — every function needs an explicit return type
+- `verbatimModuleSyntax: true` — use `import type { X }` for type-only imports
+- `noPropertyAccessFromIndexSignature: true` — use bracket notation on `Record<string, X>` types
+- `noImplicitBoolean: "error"` — write `disabled={true}` not just `disabled`
+- Always run `pnpm verify` (biome check + astro check + vitest) before committing
+
+**Spec vs Plan Schema Difference (intentional):** The spec uses `.optional()` for array frontmatter fields. The plan uses `.default([])` instead — this is a deliberate improvement that avoids `undefined` checks everywhere. Do NOT "fix" this to match the spec.
+
 ---
 
 ## File Map
@@ -1005,9 +1022,12 @@ git commit -m "feat(knowledge): add /learn index and article routes"
 
 A pixel-art book or help icon — retro Win95 style. Should be 32×32 PNG with transparent background and the chunky pixel aesthetic matching the existing icons (browser_icon.png, folder_icon.png, etc.). Think: Win95 Help book (yellow pages with question mark) or a small bookshelf.
 
-Use an image generation tool or create manually. Save to `public/icons/library_icon.png`.
+Approach options (in preference order):
+1. **Download a retro icon** from a free Win95 icon pack (e.g., [win95icons.com](https://win95icons.com), [iconarchive.com](https://iconarchive.com)) and save as 32×32 PNG
+2. **Generate with an image tool** if available in the environment
+3. **Create a simple placeholder** using ImageMagick: `convert -size 32x32 xc:transparent -fill '#c0c000' -draw 'rectangle 4,4 28,28' -fill '#000080' -draw 'rectangle 6,6 26,26' public/icons/library_icon.png` (a rough book shape — replace later with proper pixel art)
 
-Also create a 48×48 variant at the same path (the desktop grid renders at 48×48 via the `img` element).
+The desktop grid renders icons at 48×48 via CSS `image-rendering: pixelated`, so 32×32 source is fine.
 
 - [ ] **Step 2: Create architecture explorer icon (32×32)**
 
@@ -1444,7 +1464,31 @@ registerApp({
 });
 ```
 
-- [ ] **Step 7: Run dev server and test**
+- [ ] **Step 7: Implement mobile bypass for Library app**
+
+On mobile, opening the Library app should navigate directly to `/learn/` instead of opening an iframe-in-a-window (which is awkward on small screens).
+
+In `LibraryApp.tsx`, add a mobile check at the top of the component:
+
+```typescript
+import { useDesktop } from '../../store/context';
+
+export function LibraryApp(props: LibraryAppProps): JSX.Element {
+  const [state] = useDesktop();
+
+  // On mobile, bypass the iframe and open /learn directly
+  if (state.isMobile) {
+    window.location.href = props.initialUrl ?? '/learn';
+    return <div style={{ padding: '16px' }}>Redirecting to Knowledge Base...</div>;
+  }
+
+  // ... rest of component
+}
+```
+
+Alternative approach: handle this in the `openWindow` action itself — if `isMobile && appId === 'library'`, open URL in new tab instead. But keeping it in the component is simpler and doesn't pollute the platform.
+
+- [ ] **Step 8: Run dev server and test**
 
 ```bash
 pnpm dev
@@ -1458,7 +1502,7 @@ Verify:
 - "New Tab" opens in actual browser tab
 - Back/Forward navigation works
 
-- [ ] **Step 8: Run full verification**
+- [ ] **Step 9: Run full verification**
 
 ```bash
 pnpm verify
@@ -1466,7 +1510,7 @@ pnpm verify
 
 Expected: All pass.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 10: Commit**
 
 ```bash
 git add src/components/desktop/apps/library/ src/components/desktop/apps/app-manifest.ts src/pages/index.astro
@@ -1686,6 +1730,14 @@ export const NODES: ArchNode[] = [
     description: 'Knowledge base reader. Iframe browser for /learn/* routes.',
     sourceFiles: ['src/components/desktop/apps/library/LibraryApp.tsx'],
   },
+  {
+    id: 'architecture-explorer-app',
+    label: 'ArchExplorer',
+    category: 'app',
+    x: 860, y: 430, width: 120, height: 45,
+    description: 'Interactive architecture diagram. SVG nodes, edges, layers.',
+    sourceFiles: ['src/components/desktop/apps/architecture-explorer/ArchitectureExplorer.tsx'],
+  },
 
   // CSS layer
   {
@@ -1733,6 +1785,8 @@ export const EDGES: ArchEdge[] = [
   { from: 'app-registry', to: 'terminal-app', label: 'lazy()', type: 'lazy-load' },
   { from: 'app-registry', to: 'snake-game', label: 'lazy()', type: 'lazy-load' },
   { from: 'app-registry', to: 'library-app', label: 'lazy()', type: 'lazy-load' },
+  { from: 'app-registry', to: 'architecture-explorer-app', label: 'lazy()', type: 'lazy-load' },
+  { from: 'library-app', to: 'learn-routes', label: 'iframe', type: 'data-flow' },
 ];
 
 // Category colors for node backgrounds
@@ -2388,6 +2442,12 @@ Verify:
 - Pan by dragging background, zoom with scroll wheel
 - "Read Full Article" button in panel opens Library app at the right URL
 
+**Note — deferred explorer interactions:** The spec describes two additional interactions that are NOT implemented in this phase:
+1. **Category group click highlighting** — clicking a category label to highlight all nodes in that group
+2. **Zoom into subsystems** — clicking a node with `children` to expand into a sub-diagram
+
+The `children` field is in the `ArchNode` interface to support this later. These will be added in a polish pass after the developer has used the explorer and knows what interactions feel missing.
+
 - [ ] **Step 4: Run full verification**
 
 ```bash
@@ -2471,7 +2531,26 @@ Compare against:
 ls src/content/knowledge/**/*.md | sed 's|src/content/knowledge/||;s|\.md||'
 ```
 
-- [ ] **Step 7: Build and verify**
+- [ ] **Step 7: Update "Start Here" path in index page**
+
+Now that all content exists, update the `startHere` array in `src/pages/learn/index.astro` to include the full 10-item reading path from the spec:
+
+```typescript
+const startHere = [
+  'architecture/overview',
+  'technologies/astro',
+  'technologies/solidjs',
+  'architecture/data-flow',
+  'architecture/state-management',
+  'architecture/window-manager',
+  'architecture/app-registry',
+  'concepts/fine-grained-reactivity',
+  'technologies/98css',
+  'features/crt-monitor-frame',
+];
+```
+
+- [ ] **Step 8: Build and verify**
 
 ```bash
 pnpm verify
@@ -2480,10 +2559,10 @@ pnpm build
 
 Expected: All pass. All `/learn/*` routes render. All sidebar links work.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
-git add src/content/knowledge/
+git add src/content/knowledge/ src/pages/learn/index.astro
 git commit -m "feat(knowledge): add complete initial knowledge base content (22 articles)"
 ```
 
