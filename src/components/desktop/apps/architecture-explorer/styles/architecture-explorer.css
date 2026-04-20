@@ -1,0 +1,103 @@
+/* Architecture Explorer — interactive SVG diagram */
+
+.arch-explorer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: -8px;
+  background: #f8f8f6;
+}
+
+/* Toolbar with layer toggles */
+.arch-explorer__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+.arch-explorer__toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.arch-explorer__toolbar input[type="checkbox"] {
+  margin: 0;
+}
+
+/* SVG canvas container */
+.arch-explorer__canvas {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+}
+
+.arch-explorer__canvas--dragging {
+  cursor: grabbing;
+}
+
+.arch-explorer__canvas svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Detail panel — slides in from the right */
+.arch-explorer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100%;
+  background: #fff;
+  border-left: 2px solid #808080;
+  padding: 12px;
+  overflow-y: auto;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.arch-explorer__panel h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #000080;
+}
+
+.arch-explorer__panel p {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.arch-explorer__panel ul {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+
+.arch-explorer__panel li {
+  margin: 2px 0;
+  font-size: 12px;
+}
+
+.arch-explorer__panel button {
+  margin-top: 8px;
+}
+
+.arch-explorer__panel-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  color: #666;
+}

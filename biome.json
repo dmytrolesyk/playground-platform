@@ -107,6 +107,18 @@
           }
         }
       }
+    },
+    {
+      "includes": ["**/architecture-explorer/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noInteractiveElementToNoninteractiveRole": "off",
+            "useSemanticElements": "off",
+            "noStaticElementInteractions": "off"
+          }
+        }
+      }
     }
   ]
 }
