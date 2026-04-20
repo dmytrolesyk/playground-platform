@@ -1,4 +1,4 @@
-# Architecture Guidelines — Retro CV Website
+# Architecture Guidelines - Retro CV Website
 
 > A Windows 95/98 desktop metaphor as a personal CV/portfolio site.
 > Built with Astro + SolidJS + 98.css. Static-first. Minimal dependencies.
@@ -35,16 +35,16 @@
 - Content is readable and accessible to recruiters who may not "get" the gimmick
 - Site loads fast and works without JavaScript for basic content access (progressive enhancement where feasible)
 - CV content is authored in Markdown and rendered at build time
-- Exports (PDF/DOC) are pre-built static assets — no client-side generation
+- Exports (PDF/DOC) are pre-built static assets - no client-side generation
 - Contact form works via a single serverless endpoint
 - Nice-to-haves (games, terminal) exist but never compromise core load performance
 
 ### Non-Goals
 - Not a general-purpose window manager or OS simulator
-- Not pixel-perfect Windows 95 reproduction — "feels like it" is enough
-- Not a SPA — Astro's static output is the foundation
+- Not pixel-perfect Windows 95 reproduction - "feels like it" is enough
+- Not a SPA - Astro's static output is the foundation
 - No user accounts, authentication, or persistent server-side state
-- No CMS — Markdown files in the repo are the content layer
+- No CMS - Markdown files in the repo are the content layer
 - No analytics platform integration in MVP
 
 ---
@@ -76,7 +76,7 @@
 | Contact backend | **Resend** (via Astro API route) | Minimal serverless, your existing choice |
 | Styling | **Vanilla CSS** + 98.css | No Tailwind. Custom CSS only for layout. |
 
-### SolidJS vs Svelte — Detailed Comparison
+### SolidJS vs Svelte - Detailed Comparison
 
 Both are excellent Astro island candidates. Here's why SolidJS wins for this specific project:
 
@@ -87,13 +87,13 @@ Both are excellent Astro island candidates. Here's why SolidJS wins for this spe
 | **Window drag/position updates** | Signals update individual properties without re-rendering siblings. `x` changes → only that window's transform updates. | Each state change triggers component-level re-render (efficient, but less granular). |
 | **Nested store** | `createStore` handles `windows[id].x` updates without cloning the whole tree | Svelte stores work but require more manual subscription wiring for nested state |
 | **Shared state across components** | Context + signals. Taskbar reads `windows` store directly. | Svelte stores work, but cross-component subscription is slightly more boilerplate |
-| **Astro integration** | `@astrojs/solid-js` — mature, well-tested | `@astrojs/svelte` — also mature |
+| **Astro integration** | `@astrojs/solid-js` - mature, well-tested | `@astrojs/svelte` - also mature |
 | **JSX vs template** | JSX (familiar if you know React) | Template syntax (own learning curve) |
 | **Ecosystem for this use case** | Smaller ecosystem, but we need almost nothing from ecosystem | Larger component ecosystem, but irrelevant here |
 
 **Recommendation: SolidJS.**
 
-**Why:** The core technical challenge of this project is a window manager — dozens of rapid, fine-grained state updates (drag position, z-index, focus) across multiple windows. SolidJS's signal-based reactivity is purpose-built for this. When you drag a window, only that window's `transform` CSS updates — no diffing, no component re-render. This is a meaningful performance advantage for the primary interaction pattern.
+**Why:** The core technical challenge of this project is a window manager - dozens of rapid, fine-grained state updates (drag position, z-index, focus) across multiple windows. SolidJS's signal-based reactivity is purpose-built for this. When you drag a window, only that window's `transform` CSS updates - no diffing, no component re-render. This is a meaningful performance advantage for the primary interaction pattern.
 
 **Tradeoff:** If you're more familiar with Svelte's syntax, the DX advantage might outweigh the reactivity advantage. But for a window manager, SolidJS signals are the more natural primitive.
 
@@ -140,7 +140,7 @@ Desktop icons, windows, and the taskbar all share state:
 - Clicking a taskbar button → focuses/minimizes a window
 - Closing a window → removes the taskbar button
 
-Splitting these into separate islands would require a cross-island messaging system (CustomEvents, BroadcastChannel, etc.) — added complexity for no benefit. A single SolidJS island with context-provided state is simpler, faster, and easier to reason about.
+Splitting these into separate islands would require a cross-island messaging system (CustomEvents, BroadcastChannel, etc.) - added complexity for no benefit. A single SolidJS island with context-provided state is simpler, faster, and easier to reason about.
 
 ---
 
@@ -164,7 +164,7 @@ Desktop (root SolidJS component)
 │               └── resolveApp(window.app, window.appProps)
 │                   // WindowBody calls APP_REGISTRY[app].component
 │                   // to render the correct app. Apps are just
-│                   // SolidJS components — add one to the registry
+│                   // SolidJS components - add one to the registry
 │                   // and it's instantly available everywhere.
 │
 │           Registered apps (MVP):
@@ -201,7 +201,7 @@ Desktop (root SolidJS component)
 | `BrowserApp` | Mostly static content | Reads pre-rendered CV HTML, displays in scrollable area |
 | `ExplorerApp` | Minimal interactivity | File icons that are download links |
 | `EmailApp` | Interactive | Form state, submission to API endpoint |
-| `GameApp` | Interactive (lazy) | Generic canvas/container for any game — resolves sub-game by type |
+| `GameApp` | Interactive (lazy) | Generic canvas/container for any game - resolves sub-game by type |
 | `Taskbar` | Interactive | Reflects open windows, start menu toggle |
 | `StartMenu` | Interactive | Reads `APP_REGISTRY` for Programs submenu items |
 | `Clock` | Interactive | `setInterval` updates time display |
@@ -217,7 +217,7 @@ The window manager is the central interactive system. It must handle:
 ```typescript
 interface WindowState {
   id: string;             // unique, e.g., "browser-1", "explorer-1"
-  app: string;            // registry key — e.g., "browser", "explorer", "snake"
+  app: string;            // registry key - e.g., "browser", "explorer", "snake"
   title: string;          // displayed in title bar and taskbar
   icon?: string;          // icon path for title bar + taskbar (from registry)
   x: number;              // left position in px
@@ -238,7 +238,7 @@ interface WindowState {
 |---|---|---|
 | **Open** | Desktop icon double-click, Start menu click | Add `WindowState` to store, assign next z-index, position with cascade offset |
 | **Close** | Title bar × button | Remove from store entirely |
-| **Minimize** | Title bar − button, or click active taskbar button | Set `isMinimized: true`, window hidden via CSS |
+| **Minimize** | Title bar - button, or click active taskbar button | Set `isMinimized: true`, window hidden via CSS |
 | **Restore** | Click minimized window's taskbar button | Set `isMinimized: false`, bring to front |
 | **Maximize** | Title bar □ button | Save current bounds to `prevBounds`, set to viewport size |
 | **Unmaximize** | Click □ again when maximized | Restore from `prevBounds` |
@@ -289,11 +289,11 @@ This mimics how Windows 95 cascaded new windows.
 ### Window Singleton Behavior
 
 Some apps should be singletons (only one instance):
-- Browser (CV viewer) — singleton, re-focus if already open
-- Explorer (export) — singleton
-- Email — singleton
-- Terminal — allow multiple? Start with singleton for simplicity
-- Games — one per game type
+- Browser (CV viewer) - singleton, re-focus if already open
+- Explorer (export) - singleton
+- Email - singleton
+- Terminal - allow multiple? Start with singleton for simplicity
+- Games - one per game type
 
 On double-click of an icon whose app is already open: focus existing window instead of opening a new one.
 
@@ -347,7 +347,7 @@ The window manager needs to reason about all windows at once for:
 - Singleton checks (is this app already open?)
 - Start menu state (click outside → close)
 
-A single store with per-window entries is the simplest model that supports all these use cases. SolidJS's fine-grained store tracking means updating `windows["browser-1"].x` only re-renders that window's position — not the whole tree.
+A single store with per-window entries is the simplest model that supports all these use cases. SolidJS's fine-grained store tracking means updating `windows["browser-1"].x` only re-renders that window's position - not the whole tree.
 
 ---
 
@@ -357,7 +357,7 @@ The "fake OS" must be trivially extensible. Adding a new "app" (a game, a settin
 
 1. Create the app component (a `.tsx` file in `apps/`)
 2. Add one entry to the app registry
-3. Done — the app is now available on the desktop, in the start menu, and in the terminal
+3. Done - the app is now available on the desktop, in the start menu, and in the terminal
 
 No other files need to change. No switch statements to update. No router to configure.
 
@@ -409,7 +409,7 @@ export function registerApp(entry: AppRegistryEntry) {
 | `openWindow(appId)` | `APP_REGISTRY[appId]` | Gets title, icon, defaultSize, singleton flag |
 | Terminal `open` cmd | `APP_REGISTRY[arg]` | `open snake` works if "snake" is registered |
 
-### Adding a New App — The Full Recipe
+### Adding a New App - The Full Recipe
 
 ```typescript
 // src/components/desktop/apps/MyNewApp.tsx
@@ -506,7 +506,7 @@ Future categories ("Settings", "Games") populate automatically when apps registe
 
 ### Hydration Directive
 
-`client:load` — not `client:idle` or `client:visible`. The desktop IS the page. It needs to be interactive immediately. There's no "above the fold static content" to show first.
+`client:load` - not `client:idle` or `client:visible`. The desktop IS the page. It needs to be interactive immediately. There's no "above the fold static content" to show first.
 
 ### Data Flow: Astro → SolidJS
 
@@ -516,7 +516,7 @@ Build time:
 
 Rendered in index.astro:
   <script type="application/json" id="cv-data">
-    { "html": "<h2>Experience</h2>...", "title": "Dmytro Lesyk — CV" }
+    { "html": "<h2>Experience</h2>...", "title": "Dmytro Lesyk - CV" }
   </script>
 
 At runtime (SolidJS):
@@ -670,7 +670,7 @@ EmailApp (SolidJS)          Astro API Route           Resend API
 `src/pages/api/contact.ts`:
 
 ```typescript
-// Pseudocode — not implementation
+// Pseudocode - not implementation
 export async function POST({ request }) {
   const body = await request.json();
 
@@ -704,46 +704,45 @@ Styled as a 90s email client (Outlook Express / The Bat! vibes):
 
 Resend needs a server-side API key. This means:
 - Astro must be deployed with SSR enabled for at least the `/api/contact` route
-- Use Astro's `hybrid` rendering mode: static by default, SSR only for API routes
+- With `@astrojs/node` adapter, Astro defaults to hybrid rendering: static by default, SSR only for pages that opt in with `export const prerender = false`
 - Or use `server` mode with `prerender: true` on index.astro
 
-**Recommendation:** `hybrid` mode. The index page is prerendered (static). Only `/api/contact` runs server-side.
+**Recommendation:** Use the Node adapter (hybrid by default). The index page is prerendered (static). Only `/api/contact` runs server-side (`export const prerender = false`).
 
 ### Deployment Target: Railway
 
 The site deploys to Railway using the Astro Node adapter (`@astrojs/node` in standalone mode).
 
 **Build & runtime:**
-- Build command: `pnpm install --frozen-lockfile && pnpm build`
+- Railway builds via a multi-stage `Dockerfile` (node:24-slim), NOT nixpacks
 - Start command: `node dist/server/entry.mjs`
-- Railway auto-detects Node.js projects via nixpacks
 
 **Environment variables (must be set in Railway):**
 
-| Variable | Scope | Description |
-|---|---|---|
-| `RESEND_API_KEY` | Runtime (server) | Resend API key for sending emails |
-| `CONTACT_TO_EMAIL` | Runtime (server) | Destination email for contact form |
-| `CONTACT_FROM_EMAIL` | Runtime (server) | Sender address (must match verified Resend domain) |
-| `PUBLIC_TELEGRAM_USERNAME` | Build-time | Telegram handle (Astro inlines `PUBLIC_*` at build) |
-| `HOST` | Runtime | `0.0.0.0` (Railway requires binding to all interfaces) |
-| `PORT` | Runtime | Railway sets this automatically |
+| Variable | Scope | How accessed | Description |
+|---|---|---|---|
+| `RESEND_API_KEY` | Runtime (server) | `process.env` | Resend API key for sending emails |
+| `CONTACT_TO_EMAIL` | Runtime (server) | `process.env` | Destination email for contact form |
+| `CONTACT_FROM_EMAIL` | Runtime (server) | `process.env` | Sender address (must match verified Resend domain) |
+| `PUBLIC_TELEGRAM_USERNAME` | Build-time | `import.meta.env` | Telegram handle (Astro inlines `PUBLIC_*` at build) |
+| `HOST` | Runtime | Node adapter | `0.0.0.0` (Railway requires binding to all interfaces) |
+| `PORT` | Runtime | Node adapter | Railway sets this automatically |
 
-**Critical:** `PUBLIC_*` variables are inlined into the client bundle at build time. They must be present in Railway’s build environment, not just runtime.
+**Critical:** `PUBLIC_*` variables are inlined into the client bundle at build time. They must be present in Railway's build environment, not just runtime.
+
+**Critical:** Server-side runtime secrets (RESEND_API_KEY, CONTACT_TO/FROM_EMAIL) MUST be read via `process.env`, not `import.meta.env`. Vite inlines all `import.meta.env` values at build time — in Docker builds where secrets aren't present, they become empty strings.
 
 ### CI/CD: GitHub Actions
 
-Two workflows:
-1. **Quality gate** — runs `pnpm verify` + `pnpm build` on every push/PR
-2. **CV file staleness check** — runs `pnpm generate-cv` and verifies `public/downloads/` hasn’t changed (requires Chrome + pandoc in CI)
-
-Deployment is handled by Railway’s native GitHub integration (auto-deploy on push to `main`), not by GitHub Actions.
+Two workflow files:
+1. **`ci.yml` (quality gate)** — runs on all PRs and push to `main`. Jobs: `pnpm verify` + `pnpm build`, and CV file staleness check (`pnpm generate-cv` + git diff, requires Chrome + pandoc).
+2. **`deploy.yml` (deployment)** — runs on push to `main` only. Deploys to Railway via `railway up` using `RAILWAY_TOKEN` GitHub secret.
 
 ### CV File Generation
 
 `scripts/generate-cv.ts` reads all Markdown files from `src/content/cv/` and generates:
-- `public/downloads/cv.pdf` — via Chrome headless (styled HTML with sidebar layout)
-- `public/downloads/cv.docx` — via pandoc
+- `public/downloads/cv.pdf` - via Chrome headless (styled HTML with sidebar layout)
+- `public/downloads/cv.docx` - via pandoc
 
 Both include the photo and all content. The generated files are committed to the repo and served as static assets. Run `pnpm generate-cv` after editing any CV content.
 
@@ -757,7 +756,7 @@ A draggable window manager makes no sense on a 375px-wide phone screen. But the 
 
 ### Approach: Responsive Degradation, Not Full Redesign
 
-**Above 768px (desktop/tablet):** Full window manager experience — drag, overlap, z-index, taskbar.
+**Above 768px (desktop/tablet):** Full window manager experience - drag, overlap, z-index, taskbar.
 
 **Below 768px (mobile):**
 - Desktop icons become a clean vertical list/grid
@@ -770,7 +769,7 @@ A draggable window manager makes no sense on a 375px-wide phone screen. But the 
 ### Why This Works
 
 - The metaphor is preserved: you still "open apps" from a "desktop"
-- 98.css components look fine at any width — buttons, inputs, title bars are all naturally responsive
+- 98.css components look fine at any width - buttons, inputs, title bars are all naturally responsive
 - The CV content reflows normally in a full-screen window
 - The export links work identically
 - The contact form works identically
@@ -778,7 +777,7 @@ A draggable window manager makes no sense on a 375px-wide phone screen. But the 
 
 ### Implementation
 
-A single `isMobile` signal derived from a media query (via `matchMedia`). The same components render differently based on this signal — no separate mobile component tree.
+A single `isMobile` signal derived from a media query (via `matchMedia`). The same components render differently based on this signal - no separate mobile component tree.
 
 ```typescript
 const isMobile = createSignal(window.matchMedia("(max-width: 768px)").matches);
@@ -825,9 +824,9 @@ The `Window` shell (title bar, chrome, position) renders immediately. The `Windo
 1. **No top-level imports of heavy modules.** xterm.js and game engines must always be behind `import()`.
 2. **98.css in `<head>` as render-blocking.** It's only ~10KB and prevents FOUC.
 3. **Fonts:** Use 98.css's bundled Pixelated MS Sans Serif. No external font requests.
-4. **Images:** Desktop icons are small (32×32) PNGs. Already in `assets/icons/`. No lazy loading needed — total is <50KB.
+4. **Images:** Desktop icons are small (32×32) PNGs. Already in `assets/icons/`. No lazy loading needed - total is <50KB.
 5. **Pre-rendered CV:** No runtime Markdown processing. HTML is in the page from build time.
-6. **Prefetch exports:** `<link rel="prefetch" href="/downloads/cv.pdf">` — start downloading PDF in the background so it's instant when clicked.
+6. **Prefetch exports:** `<link rel="prefetch" href="/downloads/cv.pdf">` - start downloading PDF in the background so it's instant when clicked.
 
 ### Build-Time Checks
 
@@ -970,13 +969,13 @@ cv/
 
 ### Key Structural Decisions
 
-- **All SolidJS components live under `src/components/desktop/`** — they form a cohesive unit (the desktop environment). No scattering across `ui/`, `features/`, `shared/`.
+- **All SolidJS components live under `src/components/desktop/`** - they form a cohesive unit (the desktop environment). No scattering across `ui/`, `features/`, `shared/`.
 - **`apps/registry.ts` is the single point of extensibility.** Adding a new app = creating a component file + calling `registerApp()`. Desktop icons, start menu, and window manager all read from the registry.
-- **Store is co-located with components** — not in a top-level `src/store/`. It's specific to the desktop system.
-- **Apps are in a sub-folder** — `apps/` contains the content components rendered inside windows. This separates "window chrome" from "window content."
-- **Games get their own sub-folder** — `apps/games/` keeps game implementations isolated. Each game is a self-contained module.
-- **CSS is minimal** — 98.css handles 80% of styling. Custom CSS is only for layout positioning.
-- **`assets/` (root) vs `src/assets/`** — root `assets/` is for design source files. `src/assets/` is for files imported by Astro components (optimized at build time).
+- **Store is co-located with components** - not in a top-level `src/store/`. It's specific to the desktop system.
+- **Apps are in a sub-folder** - `apps/` contains the content components rendered inside windows. This separates "window chrome" from "window content."
+- **Games get their own sub-folder** - `apps/games/` keeps game implementations isolated. Each game is a self-contained module.
+- **CSS is minimal** - 98.css handles 80% of styling. Custom CSS is only for layout positioning.
+- **`assets/` (root) vs `src/assets/`** - root `assets/` is for design source files. `src/assets/` is for files imported by Astro components (optimized at build time).
 
 ---
 
@@ -1001,7 +1000,7 @@ cv/
 | `client:load` not `client:idle` | Desktop is immediately interactive | No progressive hydration savings |
 | No window resizing in MVP | Much simpler drag implementation | Less authentic window behavior |
 | Manual PDF/DOC for MVP | No build complexity | Must remember to update when CV changes |
-| `hybrid` rendering mode | Static pages + SSR API routes | Slightly more complex deploy than pure static |
+| Hybrid rendering (adapter default) | Static pages + SSR API routes | Slightly more complex deploy than pure static |
 
 ### Rejected Alternatives
 
@@ -1013,7 +1012,7 @@ cv/
 | **Web Components** for windows | Could work for the window shell, but state management across components is painful. No ecosystem benefit over SolidJS. |
 | **Tailwind CSS** | Contradicts the 98.css approach. Utility classes would fight with 98.css's semantic classes. Adds build complexity. |
 | **Client-side PDF generation** (jsPDF, html2pdf) | Adds ~280KB to bundle. Results look worse than headless browser rendering. No benefit over pre-built static files. |
-| **Zustand/Redux for state** | These are React-ecosystem tools. SolidJS has `createStore` built in — no extra dependency needed. |
+| **Zustand/Redux for state** | These are React-ecosystem tools. SolidJS has `createStore` built in - no extra dependency needed. |
 | **Full SSR for the desktop** | The desktop IS the client-side interaction. SSR adds complexity with no SEO benefit (it's a single-page desktop). |
 | **iframe-based windows** | Simpler isolation but terrible for state management, styling consistency, and performance. Each iframe loads a full document. |
 | **CSS-only draggable windows** | Fragile hacks with `resize` or `:active` pseudo-classes. Don't actually work for proper drag behavior. |
@@ -1099,7 +1098,7 @@ cv/
 | Lighthouse perf (desktop) | 90+ |
 | Runtime dependencies (MVP) | Astro, SolidJS, 98.css, Resend |
 | API endpoints | 1 (`/api/contact`) |
-| Astro rendering mode | `hybrid` (static + SSR for API) |
+| Astro rendering mode | Hybrid (default with Node adapter — static + SSR for API) |
 
 ### Decision Record
 

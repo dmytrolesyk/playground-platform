@@ -1,5 +1,15 @@
 # Implementation Plan — Retro CV Website
 
+> **Status: ✅ ALL PHASES COMPLETE (0–10).** This document is now a historical reference for how the project was built. The live site is deployed on Railway.
+>
+> **Post-completion notes:** Some implementation details diverged from the original plan during execution. Key differences:
+> - Astro 6.x doesn't need `output: 'hybrid'` — hybrid is the default with an adapter
+> - Railway deployment uses a `Dockerfile` (node:24-slim), not nixpacks (nixpacks had Node version incompatibility)
+> - Server-side env vars use `process.env` instead of `import.meta.env` (Vite inlines the latter at build time)
+> - CI is split into two workflows: `ci.yml` (verify) and `deploy.yml` (Railway deploy)
+> - Node 24 is used instead of Node 22
+> - CRT monitor frame was added as a visual wrapper (not in original plan)
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 > **Execution permissions:** You have full permission to run any shell command (install packages, run builds, run tests, start dev servers, execute scripts, etc.) without asking the user first. Do not pause to request confirmation before running commands. Execute the plan step by step, verify results, and move on.
