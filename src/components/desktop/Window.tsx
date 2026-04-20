@@ -1,12 +1,13 @@
 import type { JSX } from 'solid-js';
+import { APP_REGISTRY } from './apps/registry';
 import { useDesktop } from './store/context';
 import type { WindowState } from './store/types';
 import { TitleBar } from './TitleBar';
 import './styles/window.css';
 
 const TASKBAR_HEIGHT = 36;
-const MIN_WIDTH = 200;
-const MIN_HEIGHT = 150;
+const DEFAULT_MIN_WIDTH = 200;
+const DEFAULT_MIN_HEIGHT = 150;
 
 type ResizeEdge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
@@ -117,15 +118,19 @@ export function Window(props: WindowProps): JSX.Element {
     const dy = e.clientY - resizeStartY;
     let { x, y, w, h } = resizeStartBounds;
 
-    if (resizeEdge.includes('e')) w = Math.max(MIN_WIDTH, w + dx);
-    if (resizeEdge.includes('s')) h = Math.max(MIN_HEIGHT, h + dy);
+    const appEntry = APP_REGISTRY[props.window.app];
+    const minW = appEntry?.minSize?.width ?? DEFAULT_MIN_WIDTH;
+    const minH = appEntry?.minSize?.height ?? DEFAULT_MIN_HEIGHT;
+
+    if (resizeEdge.includes('e')) w = Math.max(minW, w + dx);
+    if (resizeEdge.includes('s')) h = Math.max(minH, h + dy);
     if (resizeEdge.includes('w')) {
-      const newW = Math.max(MIN_WIDTH, w - dx);
+      const newW = Math.max(minW, w - dx);
       x += w - newW;
       w = newW;
     }
     if (resizeEdge.includes('n')) {
-      const newH = Math.max(MIN_HEIGHT, h - dy);
+      const newH = Math.max(minH, h - dy);
       y += h - newH;
       h = newH;
     }
@@ -202,8 +207,8 @@ export function Window(props: WindowProps): JSX.Element {
         {props.children}
       </div>
 
-      {/* Resize handles — hidden when maximized or mobile */}
-      {!isFullScreen() && (
+      {/* Resize handles — hidden when maximized, mobile, or non-resizable */}
+      {!isFullScreen() && (APP_REGISTRY[props.window.app]?.resizable ?? true) && (
         <>
           {renderResizeHandle('n')}
           {renderResizeHandle('s')}

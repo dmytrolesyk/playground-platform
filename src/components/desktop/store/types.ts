@@ -26,6 +26,12 @@ export interface AppRegistryEntry {
   startMenuCategory?: string;
   singleton: boolean;
   defaultSize: { width: number; height: number };
+  /** Minimum window dimensions during resize. Falls back to platform defaults (200×150) if omitted. */
+  minSize?: { width: number; height: number };
+  /** Set to false to disable window resizing. Default: true. */
+  resizable?: boolean;
+  /** When true and this app's window is focused, desktop-level keyboard shortcuts yield to the app. */
+  captureKeyboard?: boolean;
   defaultProps?: Record<string, unknown>;
 }
 

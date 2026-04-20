@@ -1,6 +1,7 @@
 import type { JSX } from 'solid-js';
 // Import app manifest to register all apps before rendering
 import './apps/app-manifest';
+import { APP_REGISTRY } from './apps/registry';
 import { CrtMonitorFrame } from './CrtMonitorFrame';
 import { DesktopIconGrid } from './DesktopIconGrid';
 import { DesktopProvider, useDesktop } from './store/context';
@@ -19,6 +20,15 @@ function DesktopInner(): JSX.Element {
   };
 
   const handleKeyDown = (e: KeyboardEvent): void => {
+    // If the focused window's app captures keyboard, yield to it
+    const topWindowId =
+      state.windowOrder.length > 0 ? state.windowOrder[state.windowOrder.length - 1] : undefined;
+    const topWindow = topWindowId ? state.windows[topWindowId] : undefined;
+    if (topWindow && !topWindow.isMinimized) {
+      const appEntry = APP_REGISTRY[topWindow.app];
+      if (appEntry?.captureKeyboard) return;
+    }
+
     if (e.key === 'Escape') {
       if (state.startMenuOpen) {
         actions.closeStartMenu();

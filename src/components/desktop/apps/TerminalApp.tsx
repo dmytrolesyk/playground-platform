@@ -1,4 +1,5 @@
 import { createSignal, type JSX, onCleanup, onMount } from 'solid-js';
+import { APP_REGISTRY } from '../apps/registry';
 import { useDesktop } from '../store/context';
 import './styles/terminal-app.css';
 
@@ -79,18 +80,14 @@ function handleOpenCommand(
   writeLine: (text: string) => void,
   actions: { openWindow: (appId: string) => void },
 ): void {
-  const appMap: Record<string, { id: string; label: string }> = {
-    browser: { id: 'browser', label: 'CV Browser' },
-    email: { id: 'email', label: 'Contact app' },
-    explorer: { id: 'explorer', label: 'File Explorer' },
-  };
-  const app = appMap[target];
+  const app = APP_REGISTRY[target];
   if (app) {
     actions.openWindow(app.id);
-    writeLine(`Opening ${app.label}...`);
+    writeLine(`Opening ${app.title}...`);
   } else {
+    const available = Object.keys(APP_REGISTRY).join(', ');
     writeLine(`Unknown app: "${target}"`);
-    writeLine('Available: browser, email, explorer');
+    writeLine(`Available: ${available}`);
   }
 }
 
@@ -108,9 +105,7 @@ const HELP_TEXT = [
   '  about           Display info banner',
   '  cv              Print all CV sections',
   '  cv <section>    Print a specific CV section',
-  '  open browser    Open the CV Browser',
-  '  open email      Open the Contact app',
-  '  open explorer   Open the File Explorer',
+  '  open <app>      Open an app (e.g. open browser)',
   '  clear           Clear the terminal',
   '',
 ].join('\n');

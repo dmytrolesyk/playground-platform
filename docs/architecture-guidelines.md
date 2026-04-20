@@ -25,6 +25,7 @@
 16. [Folder Structure](#16-folder-structure)
 17. [Risks, Tradeoffs, and Rejected Alternatives](#17-risks-tradeoffs-and-rejected-alternatives)
 18. [Recommended Architecture Summary](#18-recommended-architecture-summary)
+19. [Experimentation Platform Analysis](#19-experimentation-platform-analysis)
 
 ---
 
@@ -1116,3 +1117,286 @@ cv/
 | How do you add a new app? | Create component + `registerApp()`. No other files change. |
 | What about accessibility? | ARIA roles, keyboard nav, `<noscript>` fallback with direct links |
 | Window resizing? | Deferred. Not in MVP. |
+
+---
+
+## 19. Experimentation Platform Analysis
+
+> Added post-MVP. The site is intended to evolve into a playground for web technology experiments — WebRTC video chat, em-dosbox/DOjS embedding, canvas drawing apps, and other ideas that fit the "retro OS" metaphor. This section evaluates the architecture's readiness and documents known extension points, pain points, and future mechanisms.
+
+### 19.1 Architecture Scorecard
+
+| Criterion | Score | Notes |
+|---|---|---|
+| **App isolation** | 🟢 9/10 | Each app is a self-contained component with its own CSS. No cross-contamination between apps. |
+| **Adding a new app** | 🟢 9/10 | 1 file + 1 `registerApp()` call. `app-manifest.ts` is the only friction (see §19.4.1). |
+| **Heavy dependency management** | 🟢 10/10 | `lazy()` + `<Suspense>` = zero-config lazy loading per app. |
+| **Platform stability** | 🟢 9/10 | Store, Window, Desktop code won't change when adding apps. |
+| **Diverse app types** (canvas, WASM, video, iframes) | 🟢 8/10 | `WindowBody` renders anything via `<Dynamic>`. Minor additions needed for min-size/keyboard capture (see §19.5). |
+| **Server-side extensibility** | 🟡 7/10 | One API route today. Adding more is trivial in Astro, but WebSocket signaling is a different story. |
+| **Inter-app communication** | 🟡 6/10 | Not needed yet. `appProps` covers basics. Pub/sub would be additive (see §19.6). |
+| **Store complexity** | 🟢 9/10 | ~200 lines, zero app-specific logic. Will stay stable as apps grow. |
+
+### 19.2 The Universal "Add an Experiment" Recipe
+
+Every experiment follows the same pattern, regardless of complexity:
+
+```
+1. Create   src/components/desktop/apps/MyExperiment.tsx   (or apps/my-experiment/ for multi-file)
+2. Add      registerApp({ id: 'my-experiment', component: lazy(() => import(...)), ... })
+            in app-manifest.ts
+3. Done.    Desktop icon, start menu, terminal, window chrome — all work automatically.
+```
+
+The platform doesn't care what's inside the window body. Canvas, `<video>`, WASM, iframes, WebGL — all are valid.
+
+### 19.3 Target Experiments — Feasibility Assessment
+
+#### 🟢 em-dosbox / DOjS Embedding (DOS Emulator)
+
+**What it needs:** A `<canvas>` + WASM module (~2–5 MB), keyboard/mouse capture, audio context.
+
+**Fits?** Yes, perfectly.
+
+```
+apps/DosBoxApp.tsx     → lazy(() => import('./DosBoxApp'))
+apps/dosbox/           → emscripten glue, ROM files, config
+```
+
+- The Window component already supports canvas apps (Snake proves this pattern)
+- `lazy()` handles the heavy WASM load; `<Suspense>` shows loading while WASM initializes
+- Each DOS game registers separately: `registerApp({ id: 'doom', startMenuCategory: 'Games', ... })`
+- A shared `DosBoxHost` component can be reused across games, parameterized via `appProps` (e.g., which ROM to load)
+- **No platform changes needed.**
+
+#### 🟢 Drawing App (Canvas-based, or via DOS Emulation)
+
+**What it needs:** A `<canvas>`, tool state (brush, color, eraser), possibly layers.
+
+**Fits?** Perfectly. Same pattern as Snake — a canvas component with internal state.
+
+```
+apps/PaintApp.tsx      → registerApp({ id: 'paint', ... })
+```
+
+- Tool state stays local to `PaintApp` (no store leakage)
+- If done via DOS emulation, it's just another DOjS/dosbox instance
+- **No platform changes needed.**
+
+#### 🟡 WebRTC Video Chat
+
+**What it needs:** `getUserMedia`, `RTCPeerConnection`, signaling server, `<video>` elements, retro overlay on video.
+
+**Fits with one caveat:**
+
+The app itself is self-contained — a `VideoChatApp.tsx` with its own `<video>` elements, connection logic, and retro overlay styling. Registration is trivial.
+
+**However:**
+- **Signaling server** — WebRTC requires a signaling channel to exchange SDP offers/answers. Options:
+  - Add a new Astro SSR API route with Server-Sent Events or long-polling
+  - Use a third-party signaling service (PeerJS, Firebase Realtime Database, or a hosted TURN/signaling server)
+  - Add a lightweight WebSocket server alongside the Astro Node adapter
+- **This is the only listed experiment that requires server-side infrastructure changes.** The Astro hybrid model supports adding API routes, but real-time signaling is a step beyond simple request/response.
+- The retro overlay on `<video>` is pure CSS/canvas compositing — no platform concern.
+
+**Platform changes needed:** One or more new API routes or an external signaling service. No Window/Desktop/Store changes.
+
+#### 🟢 Any Future Canvas/WASM/WebGL App
+
+The pattern is always the same: create component → lazy import → register. The platform is an inert shell.
+
+### 19.4 Known Pain Points
+
+#### 19.4.1 `app-manifest.ts` as a Manual Registration File
+
+Currently all `registerApp()` calls live in `app-manifest.ts`, and `Desktop.tsx` imports it as a side-effect:
+
+```ts
+import './apps/app-manifest';
+```
+
+This works today with 6 apps. With 20+ apps (10 DOS games, paint, video chat, etc.), this file becomes a growing list of imports and registrations.
+
+**Risk:** Low — it's just a list. But it's the one place that technically violates "no other files change when adding an app."
+
+**Mitigation options (in order of preference):**
+
+| Option | How | Tradeoff |
+|---|---|---|
+| **A: Keep the manifest** (recommended now) | One file with all imports + registerApp calls | Simple, explicit, readable up to ~30 apps |
+| **B: Self-registering modules** | Each app calls `registerApp()` at module scope; manifest just re-exports: `export * from './DosBoxApp'` | Each app is 100% self-contained, but manifest still lists exports |
+| **C: Dynamic glob import** | `import.meta.glob('./apps/**/register.ts', { eager: true })` auto-discovers registrations | Zero maintenance, but less explicit, harder to control load order |
+
+**Current recommendation:** Stay with Option A until you have 15+ apps. Then evaluate B or C.
+
+#### 19.4.2 Terminal `open` Command is Hardcoded
+
+In `TerminalApp.tsx`, the `open` command has a hardcoded `appMap`:
+
+```ts
+const appMap: Record<string, { id: string; label: string }> = {
+  browser: { id: 'browser', label: 'CV Browser' },
+  email: { id: 'email', label: 'Contact app' },
+  explorer: { id: 'explorer', label: 'File Explorer' },
+};
+```
+
+New apps are not automatically openable from the terminal. This should read from `APP_REGISTRY` instead:
+
+```ts
+import { APP_REGISTRY } from './registry';
+const app = APP_REGISTRY[target];
+if (app) { actions.openWindow(app.id); ... }
+```
+
+**Status:** Should be fixed before adding new apps.
+
+#### 19.4.3 Window Sizing for Diverse Apps
+
+`defaultSize: { width, height }` works for most apps, but some experiments need:
+- **Minimum size** — a DOS game with fixed 640×480 canvas shouldn't resize below that
+- **Fixed aspect ratio** — video chat with retro overlay
+- **No resize** — simple dialogs, about boxes
+
+Currently the Window component hardcodes `MIN_WIDTH: 200` and `MIN_HEIGHT: 150`.
+
+**Fix:** Add optional fields to `AppRegistryEntry`:
+
+```ts
+minSize?: { width: number; height: number };
+resizable?: boolean;  // default: true
+```
+
+The Window component reads these from the registry entry for the current app and respects them during resize. Backward-compatible — existing apps don't need to set these.
+
+**Status:** Should be added before the first fixed-resolution app (dosbox, paint).
+
+#### 19.4.4 Global Keyboard Handling for Games/Emulators
+
+The Snake game handles keyboard events on its container div via `onKeyDown`. This works because the user clicks the canvas to focus it. But:
+
+- DOS emulators need **full keyboard capture** (including Tab, Escape, function keys that the browser or desktop shell normally intercepts)
+- Two games open simultaneously could fight over keyboard input
+- Escape currently closes the start menu at the Desktop level
+
+**Mitigation options:**
+
+| Option | How | Tradeoff |
+|---|---|---|
+| **A: `stopPropagation` in the app** (works today) | The app's keydown handler calls `e.stopPropagation()` for keys it consumes | Simple, no platform change, but each app must remember to do it |
+| **B: `captureKeyboard` registry flag** | Add `captureKeyboard?: boolean` to `AppRegistryEntry`. When the focused window's app has this flag, the Desktop-level keydown handler yields. | Cleaner, centralized, but adds a concept to the platform |
+
+**Current recommendation:** Start with A (apps manage their own keyboard). Move to B if it becomes a recurring problem across multiple emulator apps.
+
+**Status:** No action needed until the first emulator app.
+
+### 19.5 Recommended Pre-Experimentation Improvements
+
+Small, surgical changes to make the platform ready. Do these before the first non-trivial experiment:
+
+| # | Change | Effort | Unlocks |
+|---|---|---|---|
+| 1 | **Terminal `open` reads from `APP_REGISTRY`** (§19.4.2) | 15 min | Every new app is auto-openable from terminal |
+| 2 | **Add `minSize?` and `resizable?` to `AppRegistryEntry`** (§19.4.3) | 30 min | DOS games with fixed resolution, non-resizable dialogs |
+| 3 | **Add `captureKeyboard?` to `AppRegistryEntry`** (§19.4.4, Option B) | 30 min | DOS emulators and games that need full keyboard capture |
+
+Total: ~75 minutes. Everything else should wait until a specific experiment demands it.
+
+### 19.6 Future Mechanisms (Not Needed Now)
+
+Documented here for when they become relevant. **Do not build these preemptively.**
+
+#### 19.6.1 App-to-App Communication (Event Bus / Pub-Sub)
+
+Currently apps are fully isolated — they can't talk to each other except through `useDesktop()` actions (`openWindow`, `closeWindow`). This is a strength. But some future scenarios might need cross-app messaging:
+
+- A terminal that sends commands to a running DOS game
+- A file manager that "opens" a file in a drawing app
+- A video chat that spawns a shared whiteboard
+
+**Current capability:** An app can call `actions.openWindow('paint', { file: 'drawing.bmp' })` via `appProps`. This covers the simplest case ("open app X with data Y").
+
+**If more is needed:** Add a lightweight event bus to the store:
+
+```ts
+// Hypothetical — DO NOT BUILD YET
+interface DesktopActions {
+  // ... existing actions ...
+  publish: (topic: string, payload: unknown) => void;
+  subscribe: (topic: string, handler: (payload: unknown) => void) => () => void;
+}
+```
+
+Apps subscribe to topics, other apps publish. The store mediates. This keeps apps decoupled (they communicate by topic, not by direct reference).
+
+**Trigger:** Build this when two apps genuinely need to coordinate at runtime beyond the "open with props" pattern.
+
+#### 19.6.2 App Lifecycle Hooks
+
+Some experiments might need to react to window events:
+
+- Pause a game when its window loses focus or is minimized
+- Stop a webcam stream when the video chat window closes
+- Save drawing state before the window is closed
+
+Currently apps use SolidJS `onMount`/`onCleanup` for setup and teardown, and can read `props.window.isMinimized` (if passed through). But they don't get notified of focus/blur or pre-close events.
+
+**If needed:** Extend `AppRegistryEntry` or pass lifecycle callbacks through context:
+
+```ts
+// Hypothetical — DO NOT BUILD YET
+interface AppLifecycle {
+  onWindowFocus?: () => void;
+  onWindowBlur?: () => void;
+  onBeforeClose?: () => boolean;  // return false to cancel close
+}
+```
+
+Or more simply: pass the `WindowState` as a prop to every app, letting it react to `isMinimized`, `zIndex` changes, etc.
+
+**Trigger:** Build this when an app needs to react to window-level events that `onMount`/`onCleanup` can't cover.
+
+#### 19.6.3 Shared Services (Audio, Filesystem Abstraction)
+
+Multiple apps might need shared browser APIs:
+
+- **Audio context** — DOS emulator, games, and notification sounds all need `AudioContext`. Browsers limit how many active audio contexts you can have.
+- **Virtual filesystem** — DOS emulator, drawing app (save/load), and file manager could share an IndexedDB-backed virtual FS.
+
+**If needed:** Create shared service singletons (not in the store — these are infrastructure, not UI state):
+
+```
+services/
+├── audio-service.ts      // single AudioContext, apps request channels
+└── virtual-fs.ts         // IndexedDB wrapper, apps read/write files
+```
+
+Apps import these directly. No platform coupling.
+
+**Trigger:** Build the audio service when a second app needs sound. Build the virtual FS when you want file persistence across apps.
+
+#### 19.6.4 Window-Level Feature Flags
+
+Some window features only matter for certain app types:
+
+- **Status bar** — Some apps (Explorer, Paint) have a status bar at the bottom of the window; others don't.
+- **Menu bar** — Some apps (Notepad, Paint) have a File/Edit/View menu bar below the title bar.
+- **Toolbar** — Browser-style forward/back/address bar.
+
+Currently these are built into individual app components (BrowserApp has its own toolbar). This is correct — apps own their chrome below the title bar. But if multiple apps need the same menu bar pattern, extract a reusable `<MenuBar>` component into `components/desktop/` (not the registry).
+
+**Trigger:** Build shared chrome components when two or more apps need the same sub-window UI pattern.
+
+### 19.7 What Not to Change
+
+These patterns are load-bearing and should remain as-is:
+
+| Pattern | Why it works | Don't... |
+|---|---|---|
+| `registerApp()` as single entry point | Desktop icons, start menu, terminal `open` — all derived from registry | ...add a second registration mechanism |
+| `lazy()` + `<Suspense>` per app | Heavy apps load on demand, window chrome renders instantly | ...eagerly import WASM/heavy deps |
+| `WindowState.appProps` for passing data | Apps receive config without store pollution | ...add app-specific fields to `WindowState` |
+| `<Dynamic component={...} />` in WindowManager | Platform doesn't know or care what's inside | ...add switch statements or type checks in WindowManager |
+| Single store with zero app-specific logic | ~200 lines, stable regardless of app count | ...leak app state into `DesktopState` |
+| One SolidJS island | Simple state management, no cross-island sync | ...create additional `client:*` islands |
+| CSS isolation (each app has own CSS file) | No style conflicts between apps | ...use global classes for app-specific styling |
