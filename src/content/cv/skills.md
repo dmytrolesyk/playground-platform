@@ -5,9 +5,19 @@ order: 4
 
 ## Technical Skills
 
-- **Languages:** TypeScript, JavaScript, Python, Go
-- **Frontend:** React, SolidJS, Astro, HTML/CSS
-- **Backend:** Node.js, Fastify, Express
-- **Databases:** PostgreSQL, Redis, MongoDB
-- **DevOps:** Docker, Kubernetes, CI/CD, AWS
-- **Tools:** Git, Linux, Vim
+- **Languages:** JavaScript, TypeScript, Python
+- **Frontend:** React, Next.js, HTML & CSS, SCSS, CSS-in-JS
+- **State Management:** Redux, Zustand, RxJS
+- **Backend:** Node.js, REST API
+- **Databases:** MongoDB, PostgreSQL, Redis
+- **Testing:** Cypress
+- **Build Tools:** Webpack
+- **UI Libraries:** Material UI, Ant Design
+- **Design:** Figma
+- **Principles:** SOLID, GRASP
+- **Version Control:** Git
+
+## Languages
+
+- **Ukrainian** — Native speaker
+- **English** — Advanced

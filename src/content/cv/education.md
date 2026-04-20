@@ -5,7 +5,12 @@ order: 3
 
 ## Education
 
-### Bachelor of Computer Science
-*University Name, 2015 – 2019*
+### Master's Degree — V.N.Karazin Kharkiv National University, Kharkiv
+*September 2012 — February 2018*
 
-Focused on software engineering, algorithms, and distributed systems.
+Faculty of Foreign Languages
+
+## Courses
+
+### Algorithms — Projector
+*March 2022 — June 2022*

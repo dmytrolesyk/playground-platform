@@ -96,7 +96,8 @@ function handleOpenCommand(
 
 const ASCII_BANNER = [
   '',
-  '  Dmytro Lesyk - Software Engineer',
+  '  Dmytro Lesyk - Frontend Engineer',
+  '  Kyiv, Ukraine',
   "  Type 'help' for available commands.",
   '',
 ].join('\n');

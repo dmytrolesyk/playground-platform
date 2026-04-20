@@ -9,8 +9,8 @@ interface FileEntry {
 }
 
 const FILES: FileEntry[] = [
-  { name: 'CV.pdf', icon: '/icons/pdf_icon.png', href: '/downloads/cv.pdf', size: '88 KB' },
-  { name: 'CV.docx', icon: '/icons/doc_icon.png', href: '/downloads/cv.docx', size: '11 KB' },
+  { name: 'CV.pdf', icon: '/icons/pdf_icon.png', href: '/downloads/cv.pdf', size: '113 KB' },
+  { name: 'CV.docx', icon: '/icons/doc_icon.png', href: '/downloads/cv.docx', size: '13 KB' },
 ];
 
 export function ExplorerApp(): JSX.Element {
