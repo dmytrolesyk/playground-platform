@@ -736,6 +736,44 @@ Resend needs a server-side API key. This means:
 
 **Recommendation:** `hybrid` mode. The index page is prerendered (static). Only `/api/contact` runs server-side.
 
+### Deployment Target: Railway
+
+The site deploys to Railway using the Astro Node adapter (`@astrojs/node` in standalone mode).
+
+**Build & runtime:**
+- Build command: `pnpm install --frozen-lockfile && pnpm build`
+- Start command: `node dist/server/entry.mjs`
+- Railway auto-detects Node.js projects via nixpacks
+
+**Environment variables (must be set in Railway):**
+
+| Variable | Scope | Description |
+|---|---|---|
+| `RESEND_API_KEY` | Runtime (server) | Resend API key for sending emails |
+| `CONTACT_TO_EMAIL` | Runtime (server) | Destination email for contact form |
+| `CONTACT_FROM_EMAIL` | Runtime (server) | Sender address (must match verified Resend domain) |
+| `PUBLIC_TELEGRAM_USERNAME` | Build-time | Telegram handle (Astro inlines `PUBLIC_*` at build) |
+| `HOST` | Runtime | `0.0.0.0` (Railway requires binding to all interfaces) |
+| `PORT` | Runtime | Railway sets this automatically |
+
+**Critical:** `PUBLIC_*` variables are inlined into the client bundle at build time. They must be present in Railway’s build environment, not just runtime.
+
+### CI/CD: GitHub Actions
+
+Two workflows:
+1. **Quality gate** — runs `pnpm verify` + `pnpm build` on every push/PR
+2. **CV file staleness check** — runs `pnpm generate-cv` and verifies `public/downloads/` hasn’t changed (requires Chrome + pandoc in CI)
+
+Deployment is handled by Railway’s native GitHub integration (auto-deploy on push to `main`), not by GitHub Actions.
+
+### CV File Generation
+
+`scripts/generate-cv.ts` reads all Markdown files from `src/content/cv/` and generates:
+- `public/downloads/cv.pdf` — via Chrome headless (styled HTML with sidebar layout)
+- `public/downloads/cv.docx` — via pandoc
+
+Both include the photo and all content. The generated files are committed to the repo and served as static assets. Run `pnpm generate-cv` after editing any CV content.
+
 ---
 
 ## 13. Mobile Strategy

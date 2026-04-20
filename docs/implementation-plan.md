@@ -50,6 +50,7 @@ The following skills **MUST** be loaded and followed when working on the corresp
 | **Phase 7** | Terminal app (xterm.js) | Medium | Large | ❌ Nice-to-have |
 | **Phase 8** | Retro games (90s Snake + WASM scaffold) | Low | Large | ❌ Nice-to-have |
 | **Phase 9** | Automated PDF/DOC generation | Low | Medium | ❌ Nice-to-have |
+| **Phase 10** | CI/CD & Deployment (Railway + GitHub Actions) | Medium | Medium | ✅ Production |
 
 ---
 
@@ -1674,7 +1675,218 @@ git commit -m "feat: add automated DOCX generation from CV Markdown"
 
 ---
 
-## Suggested Order for Codex-Driven Sessions
+## Phase 10: CI/CD & Deployment (Railway + GitHub Actions)
+
+> **Skills:** `use-railway`, `astro`
+
+**Goal:** Automated quality checks on every push/PR, automated deployment to Railway from `main` branch, and CV file generation in CI.
+
+**Estimated time:** 2-3 hours
+
+**Dependency:** All previous phases complete. The site builds and runs locally.
+
+**Risk:** Medium — Railway adapter configuration and env var wiring need to be exact. GitHub Actions Chrome/pandoc setup may need trial and error.
+
+### Task 10.1: GitHub Actions — Quality Gate
+
+**Files:**
+- Create: `.github/workflows/ci.yml`
+
+- [ ] **Step 1: Create CI workflow**
+
+Triggered on push to `main` and on pull requests. Runs:
+1. `pnpm install`
+2. `pnpm verify` (lint + typecheck + tests)
+3. `pnpm build` (ensure production build succeeds)
+
+```yaml
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm verify
+      - run: pnpm build
+```
+
+- [ ] **Step 2: Commit**
+```bash
+git add -A
+git commit -m "ci: add GitHub Actions quality gate workflow"
+```
+
+### Task 10.2: GitHub Actions — Generate CV Files
+
+**Files:**
+- Modify: `.github/workflows/ci.yml` (add generate-cv job)
+
+The `generate-cv` script requires Chrome and pandoc. Ubuntu runners ship with `google-chrome-stable`. Pandoc needs to be installed.
+
+- [ ] **Step 1: Add CV generation step to CI**
+
+After the build step, add:
+```yaml
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
+      - name: Generate CV files
+        run: pnpm generate-cv
+```
+
+This ensures PDF and DOCX are always up-to-date with the Markdown source. The generated files are committed to the repo (they live in `public/downloads/`) so the static site serves them. If they changed, the workflow should either:
+- (a) Commit them back automatically (via a bot commit), or
+- (b) Fail CI if they're stale (developer must run `pnpm generate-cv` locally before pushing)
+
+**Recommendation:** Option (b) — fail CI. This avoids bot commits and keeps the developer in control. Add a check:
+```yaml
+      - name: Check CV files are up-to-date
+        run: |
+          pnpm generate-cv
+          git diff --exit-code public/downloads/ || (echo "CV files are stale. Run 'pnpm generate-cv' locally and commit." && exit 1)
+```
+
+- [ ] **Step 2: Commit**
+```bash
+git add -A
+git commit -m "ci: add CV file generation and staleness check"
+```
+
+### Task 10.3: Railway Deployment Setup
+
+**Files:**
+- Verify: `astro.config.mjs` (Node adapter already configured)
+- Create: `railway.toml` (optional, Railway can auto-detect)
+
+- [ ] **Step 1: Verify Astro Node adapter configuration**
+
+The project already uses `@astrojs/node` with `output: 'hybrid'`. Verify `astro.config.mjs` has:
+```javascript
+import node from '@astrojs/node';
+
+export default defineConfig({
+  output: 'hybrid',
+  adapter: node({ mode: 'standalone' }),
+  // ...
+});
+```
+
+Railway runs `pnpm build` then starts the Node server. The Astro Node adapter in standalone mode creates a `dist/server/entry.mjs` that listens on `HOST`/`PORT`.
+
+- [ ] **Step 2: Set Railway environment variables**
+
+In the Railway dashboard (or via `railway` CLI), set:
+```
+RESEND_API_KEY=re_...
+CONTACT_TO_EMAIL=dmitriylesik@gmail.com
+CONTACT_FROM_EMAIL=noreply@send.dmytrolesyk.dev
+PUBLIC_TELEGRAM_USERNAME=lesykd
+HOST=0.0.0.0
+PORT=3000
+```
+
+**Critical:** `PUBLIC_TELEGRAM_USERNAME` is a build-time env var (Astro inlines `PUBLIC_*` vars at build). It must be set in Railway's build environment, not just runtime.
+
+- [ ] **Step 3: Configure Railway build command**
+
+Railway should run:
+- **Build:** `pnpm install && pnpm build`
+- **Start:** `node dist/server/entry.mjs`
+
+If Railway doesn't auto-detect, create `railway.toml`:
+```toml
+[build]
+builder = "nixpacks"
+buildCommand = "pnpm install --frozen-lockfile && pnpm build"
+
+[deploy]
+startCommand = "node dist/server/entry.mjs"
+healthcheckPath = "/"
+restartPolicyType = "on_failure"
+```
+
+- [ ] **Step 4: Deploy and verify**
+
+- Push to `main` → Railway auto-deploys
+- Verify: homepage loads, CV browser works, email sends, terminal loads
+- Verify: PDF/DOCX downloads work
+- Verify: Telegram link works
+
+- [ ] **Step 5: Set up custom domain (optional)**
+
+In Railway dashboard: add custom domain (e.g., `cv.dmytrolesyk.dev`), configure DNS.
+
+- [ ] **Step 6: Commit any config changes**
+```bash
+git add -A
+git commit -m "feat: add Railway deployment configuration"
+```
+
+### Task 10.4: GitHub Actions — Deploy to Railway (Optional)
+
+**Files:**
+- Modify: `.github/workflows/ci.yml` (add deploy job)
+
+If you prefer deploying via GitHub Actions instead of Railway's auto-deploy:
+
+- [ ] **Step 1: Add deploy job**
+
+```yaml
+  deploy:
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Deploy to Railway
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: cv-website
+```
+
+Alternatively, use Railway's native GitHub integration (connect repo in Railway dashboard) and skip this task.
+
+- [ ] **Step 2: Commit**
+```bash
+git add -A
+git commit -m "ci: add Railway deployment via GitHub Actions"
+```
+
+### Phase 10 Verification Gate
+
+- [ ] **Run `pnpm verify`** — must pass
+- [ ] **Push to `main`** — GitHub Actions CI passes (green checkmark)
+- [ ] **Railway deployment** — site is live at Railway URL
+- [ ] **Test live site:**
+  - [ ] Homepage loads (CRT monitor frame, desktop icons)
+  - [ ] CV browser shows real content with photo
+  - [ ] PDF and DOCX download correctly
+  - [ ] Contact Me → Send Email → message arrives in inbox
+  - [ ] Contact Me → Telegram → opens t.me/lesykd
+  - [ ] Terminal works (lazy loads xterm.js)
+  - [ ] Snake game works
+  - [ ] Mobile responsive (test on phone or DevTools)
+
+---
 
 Each session should be one phase or sub-phase. Keep sessions focused.
 
@@ -1689,12 +1901,13 @@ Each session should be one phase or sub-phase. Keep sessions focused.
 | **Session 5** | Phase 3 (Explorer app) | 30 min | `astro`, `vercel-composition-patterns` | Quick win. |
 | **Session 6** | Phase 4 (Email app + Resend) | 1-1.5 hr | `resend`, `resend-cli`, `test-driven-development`, `typescript-magician` | Backend integration. Test with real Resend key. Use `resend-cli` to verify domain and send test emails. |
 | **Session 7** | Phase 5 (Mobile) | 1-1.5 hr | `web-design-guidelines` | Responsive work. Test on real devices. |
-| **Session 8** | Phase 6 (Polish + a11y + perf) | 1-2 hr | `web-design-guidelines`, `astro` | Final MVP quality pass. **Deploy after this.** |
+| **Session 8** | Phase 6 (Polish + a11y + perf) | 1-2 hr | `web-design-guidelines`, `astro` | Final MVP quality pass. |
 | **Session 9** | Phase 7 (Terminal) | 3-4 hr | `test-driven-development` | Terminal is the most impressive. |
 | **Session 10** | Phase 8 Tasks 8.1-8.2 (Snake + game infra) | 3-4 hr | `test-driven-development` | 90s-style Snake. TDD the engine. |
 | **Session 11** | Phase 8 Task 8.3 (WASM scaffold) | 1-2 hr | `test-driven-development` | Build the host. No actual WASM game yet — just the infrastructure. |
 | **Session 12** | Phase 9 (automated PDF/DOC) | 2-3 hr | `astro` | Build-time generation. |
-| **Session 13+** | Add more games (Tetris, Doom, etc.) | 2-4 hr each | `test-driven-development` | Each game is independent. WASM games need a `.wasm` binary to be sourced. |
+| **Session 13** | Phase 10 (CI/CD + Railway deployment) | 2-3 hr | `use-railway`, `astro` | GitHub Actions quality gate + Railway deploy. **Site goes live.** |
+| **Session 14+** | Add more games (Tetris, Doom, etc.) | 2-4 hr each | `test-driven-development` | Each game is independent. WASM games need a `.wasm` binary to be sourced. |
 
 ---
 

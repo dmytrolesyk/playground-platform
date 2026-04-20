@@ -56,4 +56,12 @@ The implementation plan (`docs/implementation-plan.md`) has a "Required Skills R
 
 ## Secrets
 
-Environment variables are in `.env` (gitignored). See Task 0.0 in the implementation plan for the full list: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `TELEGRAM_USERNAME`, `HOST`.
+Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST`. See architecture guidelines §12 for full details.
+
+## CV File Generation
+
+PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by `pnpm generate-cv`. This script requires Chrome and pandoc. After editing any CV markdown, run the script and commit the updated files. CI checks for staleness.
+
+## Deployment
+
+Target: Railway. Astro Node adapter in standalone mode. `PUBLIC_*` env vars must be set at build time in Railway (they're inlined by Astro). See Phase 10 in the implementation plan for the full setup.
