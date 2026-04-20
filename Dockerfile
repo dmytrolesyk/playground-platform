@@ -9,6 +9,12 @@ RUN pnpm install --frozen-lockfile
 
 # Build
 COPY . .
+
+# PUBLIC_* vars must be present at build time for Astro/Vite to inline them.
+# Railway passes service variables as build args automatically.
+ARG PUBLIC_TELEGRAM_USERNAME
+ENV PUBLIC_TELEGRAM_USERNAME=$PUBLIC_TELEGRAM_USERNAME
+
 RUN pnpm build
 
 # Production
