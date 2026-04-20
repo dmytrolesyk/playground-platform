@@ -40,6 +40,18 @@ learningObjectives:
   - "Name and describe the five pipeline stages: Parse, Style, Layout, Paint, Composite"
   - "Classify CSS properties by which pipeline stages they trigger"
   - "Explain why compositor-only changes (transform, opacity) are cheaper than layout-triggering changes"
+exercises:
+  - question: "Which pipeline stages fire when you change only the opacity of a window from 1.0 to 0.8?"
+    type: predict
+    hint: "Opacity doesn't change the element's size or position."
+    answer: "Only Paint and Composite fire. Opacity doesn't affect the element's geometry (size, position), so Layout is skipped. The browser repaints the element with the new opacity and composites it. If the element is already on its own compositor layer (due to will-change or other reasons), only Composite fires — the GPU can apply opacity changes directly without repainting."
+  - question: "Why are CSS animations using transform smoother than animations using width or margin-left?"
+    type: explain
+    answer: "transform runs on the compositor thread, which operates independently of the main thread. Even if JavaScript is running a long task on the main thread, the compositor can still update transform animations at 60fps. width and margin-left trigger Layout on the main thread, so they compete with JavaScript for main thread time. If a task takes 50ms, the animation visibly stutters because Layout can't run until the task completes."
+  - question: "Open the Chrome Performance panel, record yourself dragging a window for 3 seconds, then examine the flame chart. How much time is spent in Layout vs Composite?"
+    type: do
+    hint: "Look for purple (Layout) and green (Composite) blocks in the main thread row."
+    answer: "With the transform-based implementation, you should see very little or no purple (Layout) during drag. The green (Composite) and yellow (Script — pointermove handler) blocks dominate. If you see significant purple Layout blocks, something is triggering forced reflows. The GPU rasterization row shows the compositor thread work happening in parallel with the main thread."
 ---
 
 ## Why Should I Care?

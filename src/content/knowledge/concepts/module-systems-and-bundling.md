@@ -40,6 +40,17 @@ learningObjectives:
   - "Trace the evolution from CommonJS to ES Modules and explain key differences"
   - "Explain how bundlers use the import graph for tree-shaking and code splitting"
   - "Describe why dynamic import() is essential for the lazy loading boundary in this project"
+exercises:
+  - question: "What happens if you use require() instead of import() in an ES Module file?"
+    type: predict
+    hint: "ES Modules and CommonJS have different module loading semantics."
+    answer: "In a browser ES Module context, require() is not defined — you get a ReferenceError. In Node.js with type: 'module', require() must be explicitly created via createRequire(). In a Vite/Rollup bundler context, require() is flagged as a CommonJS import and may not be tree-shakeable. ES Modules use import/export exclusively. The bundler treats import() as an async chunk boundary but cannot do so with require()."
+  - question: "How does tree-shaking work with ES Modules but fail with CommonJS?"
+    type: explain
+    answer: "ES Module imports/exports are static — the bundler can analyze them at build time without executing code. If a function is exported but never imported, the bundler can safely remove it. CommonJS uses dynamic require() and module.exports which can be computed at runtime (e.g., module.exports[condition ? 'a' : 'b'] = fn). The bundler can't statically determine which exports are used, so it must include everything. This is why Vite/Rollup require ESM for tree-shaking."
+  - question: "Why does Vite inline import.meta.env values at build time instead of reading them at runtime?"
+    type: explain
+    answer: "Vite replaces import.meta.env.X with the literal string value during build, which enables dead code elimination. If import.meta.env.DEV is false, the bundler can remove entire if (import.meta.env.DEV) {} blocks. Runtime env vars would prevent this optimization because the bundler can't know the value. The tradeoff: all env vars must be present at build time, which is the 'landmine' in Docker builds where secrets are only available at runtime."
 ---
 
 ## Why Should I Care?

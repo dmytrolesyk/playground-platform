@@ -39,6 +39,18 @@ learningObjectives:
   - "Compare the update strategies of React (VDOM diffing) and SolidJS (direct signal bindings)"
   - "Explain why VDOM reconciliation has O(n) overhead that signals avoid"
   - "Identify scenarios where each approach has advantages"
+exercises:
+  - question: "In a list of 1000 items where one item's text changes, how many DOM operations happen with SolidJS signals vs React VDOM?"
+    type: predict
+    hint: "Think about what each framework must check to find the change."
+    answer: "SolidJS: exactly 1 DOM operation — update the specific text node bound to that item's signal. The signal directly knows which DOM node to update. React: at minimum, React must re-run the parent component, diff 1000 virtual DOM list items, identify the one difference, then perform 1 DOM operation. The diffing work is O(n) even though only 1 item changed. SolidJS skips the diffing entirely."
+  - question: "Why does React need 'key' props on list items but SolidJS's <For> component doesn't need them for correct updates?"
+    type: explain
+    answer: "React's VDOM diffing algorithm uses keys to match old and new virtual nodes — without keys, it falls back to index-based matching which breaks on reorders. SolidJS's <For> tracks each item by reference identity and maintains a direct binding between each item and its DOM nodes. When the list changes, SolidJS moves or removes the actual DOM nodes — it doesn't diff a virtual tree, so it doesn't need keys to match nodes across renders."
+  - question: "When does React's VDOM approach actually outperform SolidJS's signals?"
+    type: predict
+    hint: "Think about bulk updates that change many things at once."
+    answer: "VDOM can batch large structural changes more efficiently. If 80% of a complex UI changes at once (e.g., a route transition replacing the entire page), VDOM diffs the whole tree and applies changes in one pass. Signals would fire hundreds of individual updates. In practice, this rarely matters because route transitions are infrequent and browsers batch DOM mutations. Signals win in the common case: frequent, small, localized updates like drag, typing, and animations."
 ---
 
 ## Why Should I Care?

@@ -47,6 +47,18 @@ learningObjectives:
   - "Describe the complete drag lifecycle from pointerdown to pointerup"
   - "Explain z-index stacking and why a global counter works"
   - "Predict what breaks if setPointerCapture is removed"
+exercises:
+  - question: "What happens during a fast drag if setPointerCapture() is removed from the pointerdown handler?"
+    type: predict
+    hint: "Think about what happens when the pointer moves faster than the window follows."
+    answer: "The drag breaks when the pointer leaves the title bar element. Without pointer capture, pointermove events stop firing on the title bar once the cursor moves over another element (like the desktop or another window). The window 'sticks' mid-drag and the user must click the title bar again. setPointerCapture() forces all pointer events to route to the capturing element regardless of cursor position."
+  - question: "Open Chrome DevTools Performance panel, start recording, drag a window quickly for 2 seconds, then stop. What's the dominant activity during the drag?"
+    type: do
+    hint: "Look at the Main thread flame chart for green (paint) vs purple (layout) vs yellow (scripting)."
+    answer: "You should see mostly yellow (scripting — pointermove handlers updating store state) and green (composite — GPU applying the transform). There should be minimal or zero purple (layout), because transform: translate() skips the layout stage entirely. If you see layout, something is triggering a forced reflow."
+  - question: "Why does the window manager use a monotonically increasing z-index counter instead of recalculating z-indices based on focus order?"
+    type: explain
+    answer: "A global counter is O(1) — just increment and assign. Recalculating z-indices would require sorting all windows by focus order and updating every window's z-index (O(n) updates), which would trigger re-renders for all windows, not just the focused one. The counter can theoretically overflow, but at one focus change per second, it would take 285 million years to hit Number.MAX_SAFE_INTEGER."
 ---
 
 ## Why Should I Care?

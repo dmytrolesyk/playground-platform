@@ -40,6 +40,17 @@ learningObjectives:
   - "Describe the classic Observer pattern from GoF and its push/pull variants"
   - "Trace the evolution from Observer to reactive signals"
   - "Explain how SolidJS createEffect implements the Observer pattern internally"
+exercises:
+  - question: "In a diamond dependency graph where signal A feeds into memos B and C, and both B and C feed into effect D, how many times does D execute when A changes once?"
+    type: predict
+    hint: "SolidJS uses topological sorting with a clock-based system."
+    answer: "D executes exactly once. SolidJS prevents 'glitches' (double-execution) by using a push-pull system with a global clock. When A changes, it marks B and C as stale and schedules a microtask. B and C recompute lazily. When D's turn comes, it reads from B and C (pulling their values), and both are already up-to-date. Without glitch prevention, D would fire twice — once when B updates and again when C updates."
+  - question: "What's the key evolution from the Gang of Four Observer pattern to modern reactive signals?"
+    type: explain
+    answer: "GoF Observer is explicit: you manually call subject.subscribe(observer) and subject.unsubscribe(observer). The subject pushes updates to all observers. Reactive signals automate subscription via tracking: when an effect runs, it automatically discovers which signals it reads and subscribes to them. Subscriptions are re-evaluated on each execution, so conditional reads (if/else branches) only subscribe to the signals actually accessed. This eliminates manual subscription management and stale-subscription bugs."
+  - question: "Why does the Observer pattern use 'one-to-many' rather than 'one-to-one' relationships?"
+    type: explain
+    answer: "A signal (observable) represents shared state that multiple independent consumers need. For example, state.windows['browser-1'].isMinimized is read by Window.tsx (to hide itself), Taskbar.tsx (to style the button), and potentially keyboard shortcuts (to handle Alt+Tab). Each consumer has a different reaction to the same change. One-to-one would require the signal to know about each consumer, breaking decoupling. One-to-many lets consumers subscribe independently."
 ---
 
 ## Why Should I Care?

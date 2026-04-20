@@ -35,6 +35,18 @@ learningObjectives:
   - "Explain how dynamic import() splits code at bundler boundaries"
   - "Describe how SolidJS lazy() wraps dynamic import with Suspense integration"
   - "Identify which apps in this codebase are lazy-loaded and why"
+exercises:
+  - question: "If you remove lazy() from the TerminalApp import and use a regular static import instead, what happens to the initial page load?"
+    type: predict
+    hint: "xterm.js is about 300KB. Think about what goes into the initial bundle."
+    answer: "The entire xterm.js library (~300KB) gets bundled into the initial JavaScript payload, even though most users never open the terminal. The initial page load gets 300KB heavier, and the browser must parse and compile all of xterm.js before the desktop becomes interactive. With lazy(), xterm.js is split into a separate chunk that loads only when the user clicks the Terminal icon."
+  - question: "Open the browser's Network tab (JS filter), click the Terminal icon on the desktop, and observe what loads. What files appear that weren't there before?"
+    type: do
+    hint: "Look for new JavaScript chunks that appear after the click."
+    answer: "You'll see one or more new JS chunks load after clicking the Terminal icon. These contain the TerminalApp component and the xterm.js library. The chunk names are hashed (e.g., TerminalApp-abc123.js). Before the click, these files weren't loaded. The Suspense fallback shows a loading indicator while these chunks download and parse. This is code splitting in action."
+  - question: "Why does the Suspense fallback show during lazy loading instead of a blank screen?"
+    type: explain
+    answer: "SolidJS lazy() returns a component that throws a Promise during its first render (before the chunk loads). The nearest <Suspense> boundary catches this Promise and renders its fallback content while the Promise is pending. When the chunk finishes loading, the Promise resolves and Suspense re-renders with the actual component. Without Suspense, the thrown Promise would propagate up and crash the app."
 ---
 
 ## Why Should I Care?

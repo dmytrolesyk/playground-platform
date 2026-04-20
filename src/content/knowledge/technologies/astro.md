@@ -45,6 +45,18 @@ learningObjectives:
   - "Explain Astro's build pipeline: static rendering with targeted island hydration"
   - "Describe how content collections and Zod schemas validate Markdown frontmatter"
   - "Configure a new Astro page with proper prerender behavior for hybrid mode"
+exercises:
+  - question: "What happens if you add export const prerender = false to a new page in this project?"
+    type: predict
+    hint: "The project uses Astro 6.x with the Node adapter."
+    answer: "The page switches from static (pre-rendered at build time) to server-side rendered on each request. Without the adapter, this would fail. With the @astrojs/node adapter, the page is rendered by the Node.js server at runtime. Only the /api/contact endpoint uses this in the current project. Adding more SSR pages means more server load and slower response times vs static files."
+  - question: "Run pnpm build and examine the output. How many static HTML files are generated, and where is the server entry point?"
+    type: do
+    hint: "Check the dist/ directory structure after building."
+    answer: "Static HTML files are in dist/client/ (one per prerendered page — index.html, learn/*.html). The server entry is dist/server/entry.mjs. The /api/contact route is handled by the server at runtime, not pre-rendered. You can count static pages by running find dist/client -name '*.html' | wc -l. The separation is clear: client/ has static assets, server/ has the runtime."
+  - question: "Why does Astro need an adapter (like @astrojs/node) for SSR but not for static pages?"
+    type: explain
+    answer: "Static pages are just HTML files served by any web server or CDN — no runtime needed. SSR requires a JavaScript runtime to execute the page's server-side code on each request (reading process.env, calling APIs, etc.). The adapter provides the HTTP server integration (Node.js, Cloudflare Workers, Vercel, etc.) that receives requests and calls Astro's rendering pipeline. Without an adapter, Astro can only output static files."
 ---
 
 ## Why Should I Care?

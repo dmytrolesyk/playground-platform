@@ -43,6 +43,18 @@ learningObjectives:
   - "Add a new app to the platform using only registerApp() and a component file"
   - "Explain how the registry achieves the Open/Closed Principle"
   - "Describe which consumers read from APP_REGISTRY and what they use"
+exercises:
+  - question: "What happens if two apps call registerApp() with the same id value?"
+    type: predict
+    hint: "APP_REGISTRY is a Record<string, AppRegistryEntry>."
+    answer: "The second registration silently overwrites the first — it's a plain object property assignment. The first app disappears from the desktop, start menu, and terminal. There's no error or warning. This is a design tradeoff: simplicity over safety. A production registry might validate uniqueness, but for a known set of apps, the simplicity wins."
+  - question: "How does the terminal's 'open' command resolve 'open browser' to the correct app?"
+    type: explain
+    answer: "The terminal iterates over Object.values(APP_REGISTRY) and finds the entry whose 'name' or 'id' matches the argument (case-insensitive). When it finds a match, it calls actions.openWindow(entry.id) with the registry entry's ID. The terminal never imports or references any specific app component — it only knows about the registry."
+  - question: "Open the file src/components/desktop/apps/app-manifest.ts and count how many registerApp() calls there are. Then check DesktopIconGrid.tsx — does it import any specific app component?"
+    type: do
+    hint: "The key insight is what DesktopIconGrid does NOT import."
+    answer: "app-manifest.ts has one registerApp() call per app (typically 7-8). DesktopIconGrid.tsx does NOT import any app component — it imports only getDesktopApps() from the registry and renders icons based on the returned metadata. The component is completely decoupled from any specific app. This is the Open/Closed Principle: the grid is closed for modification but open for extension via the registry."
 ---
 
 ## Why Should I Care?

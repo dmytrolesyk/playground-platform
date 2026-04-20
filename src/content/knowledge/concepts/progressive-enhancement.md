@@ -37,6 +37,18 @@ learningObjectives:
   - "Define progressive enhancement and contrast it with graceful degradation"
   - "Explain how Astro's static-first model makes progressive enhancement the default"
   - "Identify where this project applies progressive enhancement (learn pages, CV content)"
+exercises:
+  - question: "If JavaScript fails to load on the /learn/architecture/overview page, what content is still accessible to the user?"
+    type: predict
+    hint: "The /learn pages are statically rendered by Astro."
+    answer: "All article content is fully accessible: the title, summary, article body text, code blocks, headings, navigation links, and the sidebar category list all render as static HTML. What breaks: Mermaid diagrams (they need JS to render SVG), the progress tracking 'Mark as understood' button, and any interactive exercises. The core learning content is 100% available without JS."
+  - question: "Why is progressive enhancement easier to achieve with Astro than with a full React/Next.js SPA?"
+    type: explain
+    answer: "Astro renders static HTML by default — you have to explicitly opt into JavaScript with client:* directives. The progressive enhancement happens automatically: HTML content is always there, JS enhances it. In React/Next.js, the default is JS-rendered UI. Even with SSR, React needs to hydrate the entire component tree, and if hydration fails (network error, JS crash), the page may become unresponsive. Astro's zero-JS default means content pages are resilient by architecture, not by effort."
+  - question: "Disable JavaScript in your browser (DevTools → Settings → Debugger → Disable JavaScript) and visit two pages: the main desktop (/) and any /learn article. Compare what you see."
+    type: do
+    hint: "One page is a static Astro page, the other is a SolidJS island."
+    answer: "The /learn page displays its full article content because it's static HTML. The main desktop page (/) shows almost nothing useful — just the CRT monitor frame and empty containers, because the entire desktop UI is a SolidJS island that requires JavaScript. This demonstrates the tradeoff: interactive app pages sacrifice progressive enhancement, but content pages get it for free."
 ---
 
 ## Why Should I Care?

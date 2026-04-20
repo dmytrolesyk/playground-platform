@@ -34,6 +34,18 @@ learningObjectives:
   - "Explain the fast-mouse problem and how pointer capture solves it"
   - "Describe the difference between pointer events and mouse events"
   - "Predict what breaks in drag handling without setPointerCapture()"
+exercises:
+  - question: "You're dragging a window and move the mouse very quickly. Without pointer capture, the cursor leaves the title bar and enters another window. What happens to the pointermove events?"
+    type: predict
+    hint: "Events fire on the element under the cursor, not the element that started the drag."
+    answer: "The pointermove events stop firing on the title bar and start firing on whatever element is under the cursor (the other window, the desktop background, etc.). The drag handler in Window.tsx never receives the events, so the window stops moving mid-drag. The user has to release and re-grab the title bar. setPointerCapture() prevents this by routing ALL pointer events to the capturing element regardless of cursor position."
+  - question: "Why does this project use pointer events instead of the older mouse events API?"
+    type: explain
+    answer: "Pointer events unify mouse, touch, and pen input into one API. With mouse events, you'd need separate touch event handlers (touchstart/touchmove/touchend) for mobile, with different coordinate systems and behavior. Pointer events also provide setPointerCapture() (mouse events have setCapture() but it's non-standard), pressure sensitivity, tilt angle, and getCoalescedEvents() for high-frequency input. One handler works across all input devices."
+  - question: "Open DevTools, start a window drag, and check which element has pointer capture. In the Elements panel, search for the element with the 'touch-action: none' style."
+    type: do
+    hint: "The capturing element is the title bar div."
+    answer: "The title bar element has pointer capture during drag. You can verify by typing document.querySelector('[style*=touch-action]') in the console during a drag, or by adding a breakpoint in the pointerdown handler and inspecting the setPointerCapture() call. The touch-action: none CSS prevents the browser's default touch behaviors (scrolling, zooming) from interfering with the drag."
 ---
 
 ## Why Should I Care?

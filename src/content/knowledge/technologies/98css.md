@@ -39,6 +39,18 @@ learningObjectives:
   - "Apply 98.css semantic classes to create authentic Win98 UI elements"
   - "Explain the project rule: never write custom CSS for elements 98.css already styles"
   - "Identify which components use 98.css classes and which need custom layout CSS"
+exercises:
+  - question: "You want to change the appearance of buttons inside a window title bar. Should you write custom CSS or modify 98.css classes?"
+    type: predict
+    hint: "Remember the project rule about 98.css."
+    answer: "Neither — you should NOT write custom CSS for elements 98.css already styles. The title bar buttons use 98.css's built-in button styling. If you add custom CSS, you'll break the authentic Win98 look and create maintenance burden when 98.css updates. Custom CSS is only for layout positioning (grid, flexbox, transform) that 98.css doesn't handle. If the 98.css buttons don't look right, check that you're using the correct semantic HTML (button elements with proper classes)."
+  - question: "Open DevTools and inspect a window's title bar. What CSS classes does 98.css apply? What creates the 3D beveled border effect?"
+    type: do
+    hint: "Look at the box-shadow property."
+    answer: "The title bar uses classes like 'title-bar' and 'title-bar-text'. The 3D beveled border effect is created with box-shadow using multiple inset and outset shadows in specific colors (white for the top-left highlight, gray for the bottom-right shadow). This is how Win98 created the illusion of 3D raised/sunken surfaces. 98.css also uses background gradients for the active title bar's blue-to-dark-blue effect."
+  - question: "Why does 98.css use box-shadow for the beveled border effect instead of CSS border?"
+    type: explain
+    answer: "Win98's 3D effect requires different colors on each side (light top-left, dark bottom-right) with precise pixel widths. CSS border can do this but the interaction with border-radius and other properties is complex. box-shadow can stack multiple shadows (inset and outset) with pixel-perfect offsets. 98.css uses a combination like: box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px grey, inset 2px 2px #dfdfdf. This creates the classic 4-color beveled look."
 ---
 
 ## Why Should I Care?

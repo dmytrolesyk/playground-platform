@@ -35,6 +35,18 @@ learningObjectives:
   - "Explain how islands architecture delivers static HTML with targeted JavaScript hydration"
   - "Describe why this site uses exactly one island and what the trade-offs are"
   - "Compare islands to full SPA and SSR-everywhere approaches"
+exercises:
+  - question: "What would happen if this site used two separate client:load islands instead of one (e.g., Taskbar as a separate island from Desktop)?"
+    type: predict
+    hint: "Think about shared state — how would the Taskbar know which windows are open?"
+    answer: "The Taskbar and Desktop would be separate SolidJS applications with no shared state. The Taskbar couldn't read window state from the Desktop's store, so it couldn't show which windows are open or handle minimize/restore clicks. You'd need a cross-island communication mechanism (custom events, shared localStorage, or a global state library), adding complexity. One island avoids this entirely — all components share one createStore via context."
+  - question: "Disable JavaScript in your browser's DevTools settings and visit the /learn page. What still works? What breaks?"
+    type: do
+    hint: "The /learn pages are statically rendered by Astro."
+    answer: "All /learn pages still display their full content — articles, headings, code blocks, and navigation links all work because they're static HTML rendered at build time. What breaks: the progress tracking (localStorage), the 'Mark as understood' button, and Mermaid diagrams (which need JS to render). The desktop page shows nothing useful because it's a single interactive island. This demonstrates progressive enhancement — content pages degrade gracefully, the app page doesn't."
+  - question: "Why do the /learn/* pages work without JavaScript but the desktop doesn't?"
+    type: explain
+    answer: "The /learn/* pages are pure Astro — statically rendered HTML with no client:load directive. Their content is pre-rendered at build time into complete HTML documents. The desktop page uses client:load on the <Desktop /> component, which is a SolidJS island that requires JavaScript to render anything. Without JS, the island never hydrates and the desktop is empty. This is the fundamental islands tradeoff: static pages get free progressive enhancement, interactive islands require JS."
 ---
 
 ## Why Should I Care?

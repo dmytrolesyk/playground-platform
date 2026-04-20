@@ -40,6 +40,18 @@ learningObjectives:
   - "Describe the browser event loop phases: call stack, task queue, microtask queue, rendering"
   - "Explain why SolidJS batches signal updates using microtasks"
   - "Predict the execution order of mixed setTimeout, Promise, and queueMicrotask calls"
+exercises:
+  - question: "What's the output order? console.log('1'); setTimeout(() => console.log('2'), 0); Promise.resolve().then(() => console.log('3')); queueMicrotask(() => console.log('4')); console.log('5');"
+    type: predict
+    hint: "Synchronous code runs first, then microtasks, then macrotasks."
+    answer: "Output: 1, 5, 3, 4, 2. Synchronous code runs first (1, 5). Then the microtask queue drains: Promise.then (3) and queueMicrotask (4) in order. Finally, the macrotask queue runs: setTimeout (2). Microtasks always run before the next macrotask, even if the macrotask was scheduled first."
+  - question: "Why does SolidJS batch signal updates using microtasks instead of executing them synchronously?"
+    type: explain
+    answer: "Batching prevents redundant work. If a handler changes 3 signals, synchronous execution would update the DOM 3 times. With microtask batching, all 3 signal changes happen synchronously, then SolidJS processes all updates once in a microtask — computing the final state and making one DOM update. Microtasks are ideal because they run after the current synchronous code but before the browser renders, so the user never sees an intermediate state."
+  - question: "Open the browser console and run this experiment: let order = []; setTimeout(() => order.push('timeout')); requestAnimationFrame(() => order.push('raf')); Promise.resolve().then(() => order.push('microtask')); After 100ms, log the order array. What's the order, and why?"
+    type: do
+    hint: "requestAnimationFrame runs before the next paint, but after microtasks."
+    answer: "The order is: ['microtask', 'raf', 'timeout'] or ['microtask', 'timeout', 'raf']. Microtask always runs first. The order of setTimeout vs rAF depends on timing: rAF fires before the next repaint (~16ms), setTimeout(0) fires after a minimum delay (~4ms in most browsers). In practice, setTimeout often fires first because its minimum delay is shorter than the next frame. But the spec doesn't guarantee their relative order."
 ---
 
 ## Why Should I Care?

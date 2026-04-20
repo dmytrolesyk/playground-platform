@@ -34,6 +34,18 @@ learningObjectives:
   - "Describe how the terminal integrates with the app registry to list available commands"
   - "Explain the lazy loading strategy for xterm.js and its impact on initial bundle size"
   - "Trace the lifecycle of a terminal command from user input to rendered output"
+exercises:
+  - question: "What happens if the user types 'open browser' while xterm.js is still loading (the Suspense fallback is showing)?"
+    type: predict
+    hint: "Think about what's rendered during the lazy loading phase."
+    answer: "The user can't type at all because xterm.js hasn't loaded yet. The Suspense fallback shows a loading indicator, not a functional terminal. The xterm.js Terminal instance (which handles keyboard input, cursor rendering, and text display) doesn't exist until the lazy chunk finishes loading. Once loaded, the terminal initializes and the user can start typing. There's no input buffer that captures keystrokes during loading."
+  - question: "How does the terminal's 'open' command discover available apps without importing them directly?"
+    type: explain
+    answer: "The terminal imports getStartMenuApps() or Object.values(APP_REGISTRY) from the registry module. When the user types 'open browser', the terminal searches the registry entries for a matching name or ID. It then calls actions.openWindow(matchedEntry.id) to open the app window. The terminal never imports BrowserApp, TerminalApp, or any specific component — it only knows about registry entries and the openWindow action."
+  - question: "Open the terminal and type 'help'. Read the output, then open app-manifest.ts and registry.ts. Trace how the list of available commands is generated."
+    type: do
+    hint: "The 'help' output includes commands like 'open' and lists available apps."
+    answer: "The 'help' command is handled in TerminalApp.tsx's command processor. It has a hardcoded list of built-in commands (help, clear, about, etc.) and dynamically lists available apps by reading from APP_REGISTRY. For each registered app, it shows the app name as an argument to the 'open' command. The list updates automatically when new apps are registered — no manual help text maintenance needed."
 ---
 
 ## Why Should I Care?

@@ -41,6 +41,18 @@ learningObjectives:
   - "Explain how JavaScript Proxy traps intercept property get/set operations"
   - "Describe how SolidJS stores use Proxies to track nested property access"
   - "Predict what happens when you destructure a store property outside a tracking scope"
+exercises:
+  - question: "A component has this code at the top level: const { x, y } = store.windows['win-1']; return <div style={`transform: translate(${x}px, ${y}px)`} />. When the window is dragged, the div doesn't move. Why?"
+    type: debug
+    hint: "Destructuring reads the property values immediately."
+    answer: "Destructuring reads x and y from the Proxy once and stores the raw values. The Proxy get trap fires during destructuring, but there's no active tracking scope (no createEffect or JSX expression running). The values become plain numbers that never update. The fix: read from the store inside the JSX expression: <div style={`transform: translate(${store.windows['win-1'].x}px, ...)`} /> so the Proxy read happens inside a tracked context."
+  - question: "Why do SolidJS stores use Proxy get traps instead of Object.defineProperty (like Vue 2 used)?"
+    type: explain
+    answer: "Object.defineProperty requires knowing all property names in advance — you define getters/setters for each known key. When new properties are added (like opening a new window with a dynamic ID), defineProperty can't intercept them without a special $set method (Vue 2's Vue.set()). Proxy intercepts ALL property access, including new keys, nested access, and iteration. SolidJS stores can track access to state.windows[dynamicId].x without pre-declaring dynamicId."
+  - question: "What happens if you pass store.windows['win-1'] as a prop to a child component and the child reads .x from props?"
+    type: predict
+    hint: "Think about whether the Proxy is preserved when passed as a prop."
+    answer: "It works correctly — the Proxy is preserved through props. When the child reads props.window.x inside a JSX expression, the Proxy get trap fires within the child's reactive scope, creating a subscription. The child will update when x changes. This is why SolidJS components should NOT destructure props: const { window } = props would break reactivity, but reading props.window.x preserves it."
 ---
 
 ## Why Should I Care?

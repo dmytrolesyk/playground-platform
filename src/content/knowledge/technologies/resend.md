@@ -36,6 +36,19 @@ learningObjectives:
   - "Initialize the Resend SDK and send an email with correct error handling (check error, don't try/catch)"
   - "Explain why process.env is used instead of import.meta.env for the API key"
   - "Describe the email delivery chain: API call → Resend servers → recipient MX"
+exercises:
+  - question: "If the Resend API key's verified domain is 'example.com' but you send from 'noreply@other.com', what happens?"
+    type: predict
+    hint: "Resend validates the from address domain against your verified domains."
+    answer: "Resend returns an error in the { data, error } response: the from domain must match a verified domain on your Resend account. The email is never sent. This is a security requirement — Resend needs to prove domain ownership via DNS records (SPF, DKIM) before allowing sends. Using a mismatched domain would fail email authentication and likely get flagged as spam."
+  - question: "A developer writes: try { await resend.emails.send(payload) } catch (e) { return error(500) }. The API returns { data: null, error: 'Invalid API key' } but the catch block never fires. Why?"
+    type: debug
+    hint: "The Resend SDK has an unusual error contract."
+    answer: "The Resend SDK does NOT throw exceptions for API errors. It returns { data, error } where error contains the error object if the API call failed. try/catch only catches network-level failures (DNS resolution, TCP timeout). To handle API errors, you must check: const { data, error } = await resend.emails.send(payload); if (error) return error(500). This is explicitly documented in Resend's SDK."
+  - question: "Read src/pages/api/contact.ts and identify: (1) the honeypot field name, (2) how the API key is accessed, and (3) how the error is handled."
+    type: do
+    hint: "Look for process.env, the hidden field check, and the Resend response destructuring."
+    answer: "(1) The honeypot field is 'website' — a hidden form field that bots fill out. (2) The API key is accessed via process.env['RESEND_API_KEY'] (NOT import.meta.env). (3) Error handling uses: const { error } = await resend.emails.send(...); if (error) return Response with error status. It does not use try/catch because Resend doesn't throw on API errors."
 ---
 
 ## Why Should I Care?

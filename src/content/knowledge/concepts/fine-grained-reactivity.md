@@ -43,6 +43,18 @@ learningObjectives:
   - "Explain what fine-grained reactivity means and how it differs from coarse-grained (VDOM) approaches"
   - "Describe the signal/computation/effect dependency graph that SolidJS builds at runtime"
   - "Predict which DOM nodes update when a specific signal changes value"
+exercises:
+  - question: "If a signal changes from 5 to 5 (same value), does the effect re-run in SolidJS?"
+    type: predict
+    hint: "SolidJS compares old and new values before notifying."
+    answer: "No, the effect does not re-run. SolidJS performs an equality check (===) before propagating changes. If the new value is identical to the old value, no subscribers are notified. This is a key optimization that prevents unnecessary DOM updates — unlike React's useState which always triggers a re-render even if the new state equals the old state (unless you use React.memo)."
+  - question: "How does automatic dependency tracking avoid re-rendering the entire component tree when a single signal changes?"
+    type: explain
+    answer: "Each reactive expression (effect, memo, JSX binding) tracks exactly which signals it reads during execution. When a signal changes, SolidJS only re-runs the specific expressions that are subscribed to that signal — not the component function, not parent components, not sibling expressions. A component rendering state.windows['win-1'].x creates a subscription from that specific JSX expression to that specific store path. Changing win-2's x doesn't trigger it."
+  - question: "Open the SolidJS tutorial (solidjs.com/tutorial), create a counter with createSignal, and add a console.log at the top of the component function. Click the button 5 times. How many times does the log appear?"
+    type: do
+    hint: "Compare this to what React would do."
+    answer: "The console.log appears exactly once — when the component first renders. In SolidJS, component functions run once and never re-execute. Only the specific JSX expression bound to count() updates when the signal changes. In React, the entire component function would re-run on every click (6 logs total), and React would diff the virtual DOM to find what changed."
 ---
 
 ## Why Should I Care?

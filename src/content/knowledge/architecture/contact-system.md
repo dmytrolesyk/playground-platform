@@ -39,6 +39,18 @@ learningObjectives:
   - "Trace a contact form submission from browser to email inbox"
   - "Explain the process.env vs import.meta.env landmine and why it matters in Docker builds"
   - "Describe the Resend error handling pattern (check error, don't try/catch)"
+exercises:
+  - question: "If you replace process.env['RESEND_API_KEY'] with import.meta.env.RESEND_API_KEY in the contact endpoint, what happens in a Docker build where the env var is only available at runtime?"
+    type: predict
+    hint: "Think about when Vite resolves import.meta.env values."
+    answer: "Vite inlines import.meta.env values at build time. If RESEND_API_KEY isn't in the Docker build environment, it gets replaced with an empty string in the compiled code. At runtime, the Resend SDK receives an empty API key and every email send fails with an authentication error. process.env reads the value at runtime from the actual environment, so it works correctly in Docker."
+  - question: "Why does the honeypot check return HTTP 200 with {ok: true} instead of HTTP 400 with an error?"
+    type: explain
+    answer: "Returning 200 fools the bot into thinking the submission succeeded. If you returned 400 or any error status, sophisticated bots could detect that the honeypot was triggered and adapt — trying again without filling the hidden field. A silent success gives bots no signal that they were caught, making the honeypot more effective over time."
+  - question: "Open src/pages/api/contact.ts and find the Resend error handling. Is it using try/catch or checking the return value? Why?"
+    type: do
+    hint: "The Resend SDK has an unusual error contract."
+    answer: "It uses return value checking: const { data, error } = await resend.emails.send(...), then checks if (error). The Resend SDK does NOT throw exceptions on API errors — it returns { data: null, error: ResendError }. Using try/catch would miss all API errors (invalid key, domain mismatch, rate limits) because they don't throw. Only network failures throw."
 ---
 
 ## Why Should I Care?

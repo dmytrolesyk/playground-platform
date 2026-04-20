@@ -38,6 +38,18 @@ learningObjectives:
   - "Describe how CV Markdown becomes pre-rendered HTML embedded in a script tag"
   - "Explain why innerHTML is safe here but dangerous in general"
   - "Trace the data path from Markdown file to rendered CV in the browser"
+exercises:
+  - question: "What happens if you add a new Markdown file to src/content/cv/ with a title but no 'order' field?"
+    type: predict
+    hint: "Content collections validate at build time."
+    answer: "The build fails with a Zod validation error because the cv collection schema requires order: z.number(). Astro's content collections enforce schemas at build time, not runtime. You'll see an error like 'Expected number, received undefined' pointing to the exact file. This compile-time guarantee means every Markdown file in the collection is valid if the build succeeds."
+  - question: "Why is using innerHTML safe for the CV content but dangerous for user-submitted content?"
+    type: explain
+    answer: "The CV content is controlled by the developer — it comes from Markdown files in the repository, rendered by Astro at build time. There's no user input in the pipeline, so no XSS attack vector. innerHTML with user-submitted content (like a comment form) is dangerous because a user could inject <script> tags or event handlers. The CV pipeline is safe because the content author IS the developer, and Astro's Markdown renderer doesn't pass through raw HTML by default."
+  - question: "Right-click the page, choose View Source, and find the script tag with id='cv-data'. What's the structure of the JSON inside it?"
+    type: do
+    hint: "Search for 'cv-data' in the page source."
+    answer: "The JSON is an array of objects, each with: title (string, like 'Work Experience'), order (number for sorting), and html (string containing the pre-rendered HTML from Markdown). The html field contains full HTML markup (headings, paragraphs, lists) ready to be injected via innerHTML. The array is sorted by order in the rendering code. This is the serialization boundary — Astro produced this at build time."
 ---
 
 ## Why Should I Care?

@@ -41,6 +41,18 @@ learningObjectives:
   - "Explain why CSS transform runs on the compositor thread while left/top triggers layout"
   - "Describe the GPU layer promotion model and when will-change is beneficial vs harmful"
   - "Predict the rendering cost of moving a window using transform vs left/top"
+exercises:
+  - question: "You replace transform: translate(x, y) with position: absolute; left: x; top: y for window positioning. What additional rendering pipeline stages fire during each drag frame?"
+    type: predict
+    hint: "Check csstriggers.com for left and top properties."
+    answer: "left/top triggers Layout → Paint → Composite on every frame (three stages). transform: translate() triggers only Composite (one stage). Layout recalculates the position of the element AND all siblings that might be affected. Paint redraws the affected pixels. With transform, the browser skips Layout and Paint entirely because the GPU compositor can move the layer without involving the main thread. During 60fps drag, that's 60 layout+paint operations per second eliminated."
+  - question: "Why is will-change: transform added only during active drag and removed afterwards?"
+    type: explain
+    answer: "will-change: transform tells the browser to promote the element to its own GPU layer in advance, avoiding the one-frame delay of layer creation. But each layer consumes GPU memory (the element's pixels are rasterized to a separate texture). If every window permanently had will-change, the GPU memory usage would scale with the number of open windows. Adding it on pointerdown and removing on pointerup means only the actively dragged window uses extra GPU memory."
+  - question: "Open Chrome DevTools Layers panel (More tools → Layers), drag a window, and check how many layers exist. Does the dragged window get its own layer?"
+    type: do
+    hint: "The Layers panel shows each compositing layer with its memory cost."
+    answer: "During drag, the dragged window gets promoted to its own compositing layer (you'll see it highlighted in the Layers panel). You can see the layer's memory cost and reason for compositing (will-change: transform or transform with animation). Other windows may or may not have their own layers depending on their CSS. After the drag ends, the will-change is removed and the browser may de-promote the layer."
 ---
 
 ## Why Should I Care?

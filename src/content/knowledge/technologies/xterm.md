@@ -40,6 +40,18 @@ learningObjectives:
   - "Explain how xterm.js renders terminal output using a canvas element"
   - "Describe the lazy loading strategy for xterm.js and why it matters for initial load"
   - "Trace how a terminal command is processed from keypress to output"
+exercises:
+  - question: "What happens to the initial page bundle size if xterm.js is imported at the top level of app-manifest.ts instead of behind lazy()?"
+    type: predict
+    hint: "xterm.js is approximately 300KB."
+    answer: "The initial JavaScript bundle grows by ~300KB because the bundler includes xterm.js in the main chunk. Every user pays this cost on first load, even if they never open the terminal. With lazy(), xterm.js is split into a separate async chunk that loads only on demand. This violates the project's lazy loading boundary rule in AGENTS.md: 'xterm.js, games, WASM modules must always be behind dynamic import()'. The rule exists precisely to prevent this."
+  - question: "Why does xterm.js use a canvas element for rendering instead of DOM elements (one span per character)?"
+    type: explain
+    answer: "A terminal with 80 columns and 24 rows has 1,920 cells. Rendering each as a DOM element means 1,920+ nodes to create, style, and update. Canvas draws all cells as pixels in a single element with GPU-accelerated 2D rendering. For operations like scrolling 1000 lines, canvas redraws in one paint operation, while DOM would require reflowing 1000+ removed/added elements. Canvas also handles monospace character alignment and cursor rendering more precisely."
+  - question: "Open the terminal app, type 'help', and then inspect the terminal's DOM structure. How many DOM elements represent the terminal output area?"
+    type: do
+    hint: "Look for a canvas element, not a grid of spans."
+    answer: "You'll find a single canvas element for the terminal viewport, plus a small number of helper elements (a textarea for input, some accessibility elements). There are NOT individual DOM elements per character or line. xterm.js renders everything to the canvas. If you check the canvas dimensions, they'll be set to match the terminal's character grid size multiplied by the font metrics. This is why xterm.js is performant even with thousands of lines of output."
 ---
 
 ## Why Should I Care?

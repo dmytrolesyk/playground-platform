@@ -44,6 +44,18 @@ learningObjectives:
   - "Explain how createStore with produce() enables fine-grained nested state updates"
   - "Describe the DesktopContext provider pattern and why all state is in one store"
   - "Predict which components re-render when a specific store path changes"
+exercises:
+  - question: "If you change only the title of window 'browser-1' via setState, which components re-render: Window, TitleBar, DesktopIconGrid, or Taskbar?"
+    type: predict
+    hint: "Think about which components read the title property path."
+    answer: "Only TitleBar and Taskbar re-render the specific expressions that read the title. Window.tsx renders the title bar but the title text is read inside TitleBar. DesktopIconGrid doesn't read window state at all — it reads from the app registry. SolidJS tracks at the property path level, so only expressions reading state.windows['browser-1'].title get notified."
+  - question: "Why does the desktop store use produce() instead of direct path-based setState calls for multi-property updates?"
+    type: explain
+    answer: "produce() batches multiple nested changes into a single reactive update. Without it, you'd need verbose path syntax like setState('windows', id, 'x', newX) for each property, and each call would trigger separate notifications. With produce(), you write natural mutable-style code (s.windows[id] = newWindow; s.windowOrder.push(id)) and SolidJS batches all changes, notifying subscribers once after all mutations complete."
+  - question: "Open DevTools, find the desktop store in the SolidJS DevTools panel (or via window.__SOLID_DEV__), and change a window's isMinimized value. What happens visually?"
+    type: do
+    hint: "If SolidJS DevTools aren't installed, you can use the console to dispatch a minimize action."
+    answer: "The window disappears from the screen (display: none or equivalent), and its taskbar button changes appearance to show it's minimized. Only the specific Window component and Taskbar button for that window ID update — no other windows or UI elements re-render. This demonstrates fine-grained reactivity: changing one path in the store only affects subscribers of that exact path."
 ---
 
 ## Why Should I Care?

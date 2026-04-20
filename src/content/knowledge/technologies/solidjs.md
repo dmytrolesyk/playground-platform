@@ -44,6 +44,18 @@ learningObjectives:
   - "List the core SolidJS primitives (createSignal, createEffect, createMemo, createStore) and their roles"
   - "Explain why SolidJS components run once and never re-execute"
   - "Use the SolidJS tutorial to build a simple counter and understand what happens under the hood"
+exercises:
+  - question: "What happens if you call a SolidJS component function directly like const result = MyComponent() instead of using <MyComponent /> in JSX?"
+    type: predict
+    hint: "SolidJS components are setup functions that run once."
+    answer: "Calling the function directly actually works — it returns the DOM elements. But you bypass SolidJS's ownership tracking and disposal system. Effects created inside the component won't be cleaned up when the parent re-evaluates, creating memory leaks. JSX compilation wraps components in a tracking owner so that onCleanup and child effects are properly associated. Never call component functions directly in SolidJS."
+  - question: "Why don't SolidJS components re-run when state changes, unlike React components?"
+    type: explain
+    answer: "In SolidJS, the component function is a setup function that runs once to create DOM nodes and bind reactive expressions. The actual DOM updates happen through fine-grained subscriptions created during that single execution. In React, components are render functions called on every state change to produce a new virtual DOM tree for diffing. SolidJS compiles JSX to direct DOM creation + signal subscriptions, not to createElement() calls that produce virtual nodes."
+  - question: "Open the SolidJS playground (playground.solidjs.com), create a component with createSignal and createEffect that logs the signal value. Change the signal. Verify the component function doesn't re-run but the effect does."
+    type: do
+    hint: "Add a console.log at the top of the component function AND inside createEffect."
+    answer: "The component-level console.log appears once on initial render. The createEffect log appears once on initial render AND once per signal change. This proves that the component function runs once (setup), while effects are re-run when their dependencies change. This is the fundamental difference from React, where the entire component function re-runs on state change."
 ---
 
 ## Why Should I Care?

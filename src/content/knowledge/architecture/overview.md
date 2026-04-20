@@ -48,6 +48,18 @@ learningObjectives:
   - "Describe the three-layer architecture (Astro, SolidJS, App Registry) and each layer's responsibility"
   - "Trace the data flow from Markdown files to rendered pixels in the browser"
   - "Explain why a single SolidJS island was chosen over multiple islands"
+exercises:
+  - question: "If you added a seventh app to the platform, which files would you need to create or modify? List them."
+    type: predict
+    hint: "Think about the registry pattern — what's the single extensibility point?"
+    answer: "You would create one component file in src/components/desktop/apps/ and add one registerApp() call in app-manifest.ts. No other files need changes — Desktop.tsx, WindowManager.tsx, Taskbar.tsx, and StartMenu.tsx all read from the registry automatically."
+  - question: "Why does the platform use client:load instead of client:idle or client:visible for the Desktop island?"
+    type: explain
+    answer: "The desktop IS the entire page — there is no static content 'above the fold' to show first. The user needs interactivity immediately (clicking icons, opening windows). client:idle would delay hydration until the browser is idle, causing a noticeable lag. client:visible wouldn't trigger until the element scrolls into view, which doesn't apply to a full-viewport component."
+  - question: "Open the browser's Network tab, reload the page, and find the CV content. Is it loaded via a fetch request or embedded in the HTML? What format is it in?"
+    type: do
+    hint: "Look at the page source, not the network requests."
+    answer: "The CV content is embedded directly in the HTML as a <script type='application/json' id='cv-data'> tag. There is no fetch request. The SolidJS component reads it with JSON.parse(document.getElementById('cv-data').textContent). This is zero-overhead: no runtime request, no loading state."
 ---
 
 ## Why Should I Care?

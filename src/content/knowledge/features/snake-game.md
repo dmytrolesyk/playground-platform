@@ -39,6 +39,18 @@ learningObjectives:
   - "Explain the separation between the pure game engine and the SolidJS wrapper"
   - "Describe how the game loop uses requestAnimationFrame for smooth updates"
   - "Identify what makes the snake engine independently testable"
+exercises:
+  - question: "If the snake engine's tick() function receives a very large deltaTime (e.g., 5 seconds because the browser tab was backgrounded), what happens to the game state?"
+    type: predict
+    hint: "Think about how many grid cells the snake moves per tick."
+    answer: "With a fixed-timestep game loop, the engine runs multiple small steps to catch up, so the snake moves many cells at once (potentially through walls or into itself). With a variable timestep, the snake could jump 5 seconds worth of movement in one frame, likely flying off the grid. The engine should clamp deltaTime to prevent this. This is the 'spiral of death' problem from game programming — background tabs cause huge delta times."
+  - question: "Why is the game engine a pure function module (snake-engine.ts) separate from the SolidJS component (Snake.tsx)?"
+    type: explain
+    answer: "Separation enables unit testing without any UI framework. snake-engine.ts exports pure functions (create game state, tick, change direction) that take state and return new state — no DOM, no SolidJS, no canvas. Tests can verify game logic (collision detection, scoring, growth) directly. The SolidJS component only handles rendering (canvas drawing) and input (keyboard events). If you swapped SolidJS for React, only Snake.tsx changes — the engine is framework-agnostic."
+  - question: "Open the snake game, inspect the canvas element in DevTools, and check its width/height attributes vs its CSS width/height. Are they the same? Why or why not?"
+    type: do
+    hint: "Canvas has both HTML attributes (pixel buffer size) and CSS properties (display size)."
+    answer: "The canvas HTML attributes (width/height) define the drawing buffer resolution. The CSS width/height control the display size on screen. They may differ — the buffer might be set to the grid size times cell pixel size (e.g., 20x20 grid * 15px = 300x300), while CSS stretches it to fill the window. If the CSS size is larger than the buffer, pixels appear blocky (which fits the retro aesthetic). This is how games control rendering resolution independently of display size."
 ---
 
 ## Why Should I Care?

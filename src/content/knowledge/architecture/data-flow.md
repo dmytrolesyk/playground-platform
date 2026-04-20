@@ -44,6 +44,18 @@ learningObjectives:
   - "Trace the complete pipeline from a Markdown file edit to visible content on screen"
   - "Explain why there is zero runtime Markdown processing on the client"
   - "Describe how the knowledge base content collection differs from the CV collection"
+exercises:
+  - question: "What happens if you add a new Markdown file to src/content/cv/ but forget to include the 'order' field in the frontmatter?"
+    type: predict
+    hint: "Think about when validation happens — build time or runtime?"
+    answer: "The Astro build fails with a Zod validation error. The content collection schema requires both 'title' (string) and 'order' (number). This is a compile-time guarantee: if the build succeeds, every content file conforms to the schema. You'll never hit a runtime 'undefined is not a number' error."
+  - question: "Open the browser, right-click the page, choose View Page Source, and search for 'cv-data'. What do you find?"
+    type: do
+    hint: "It's a script tag with a specific type attribute."
+    answer: "You'll find a <script type='application/json' id='cv-data'> tag containing a JSON array of objects, each with 'title', 'order', and 'html' fields. The HTML is the pre-rendered Markdown content. This is the serialization boundary — Astro rendered it at build time, and SolidJS reads it at runtime with zero Markdown processing."
+  - question: "Why is there no loading spinner when the CV content appears in the BrowserApp?"
+    type: explain
+    answer: "The CV content is already in the HTML page as a JSON script tag — it was embedded at build time. The SolidJS component calls JSON.parse() synchronously during initialization, so the content is available immediately. There's no network request, no async fetch, no promise to await. The data is already on the page before any JavaScript runs."
 ---
 
 ## Why Should I Care?

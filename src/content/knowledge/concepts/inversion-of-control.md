@@ -38,6 +38,17 @@ learningObjectives:
   - "Explain the Inversion of Control principle and its relationship to the Dependency Inversion Principle"
   - "Identify where IoC appears in the app registry pattern"
   - "Apply IoC thinking to design extensible systems"
+exercises:
+  - question: "If you delete the registerApp() call for the browser app from app-manifest.ts, what specifically breaks — and what still works?"
+    type: predict
+    hint: "Think about which consumers read from APP_REGISTRY dynamically."
+    answer: "The browser app disappears from: the desktop icon grid, the start menu, and the terminal's 'open' command. No code throws an error — the registry simply doesn't contain a 'browser' entry, so filter operations return fewer results. The rest of the desktop works perfectly. This is IoC in action: removing an app requires zero changes to consumers because they never referenced it directly."
+  - question: "What's the difference between Inversion of Control, Dependency Injection, and the Service Locator pattern?"
+    type: explain
+    answer: "IoC is the broad principle: the framework calls you, you don't call the framework. DI is a specific IoC technique where dependencies are passed in (constructor, props, function parameters). Service Locator is another IoC technique where a component asks a central registry for what it needs. The app registry uses Service Locator: DesktopIconGrid calls getDesktopApps() to look up available apps, rather than having them injected. DI would mean someone passes the app list as a prop."
+  - question: "How does the app registry demonstrate the Hollywood Principle ('Don't call us, we'll call you')?"
+    type: explain
+    answer: "Apps don't call the desktop, start menu, or terminal to register themselves in each consumer. Instead, apps call registerApp() once (registering themselves), and the framework (Desktop, StartMenu, Terminal) calls into the registry when it needs app information. The app doesn't know or care which consumers exist. If a new consumer is added tomorrow (e.g., a search bar), it can read from the same registry without any app changes."
 ---
 
 ## Why Should I Care?

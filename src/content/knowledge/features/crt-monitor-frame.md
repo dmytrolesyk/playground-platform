@@ -37,6 +37,18 @@ learningObjectives:
   - "Describe the CSS techniques used for scanlines, vignette, and glass reflections"
   - "Explain how the CRT frame uses compositor-friendly properties for performance"
   - "Identify which CSS properties cause layout vs paint vs composite-only updates in the CRT frame"
+exercises:
+  - question: "What happens if you remove pointer-events: none from the CRT overlay layers (scanlines, vignette, glass reflection)?"
+    type: predict
+    hint: "The overlay layers sit on top of the desktop content."
+    answer: "All clicks and mouse interactions with the desktop stop working. The CRT overlay layers are positioned absolutely on top of the entire screen content. Without pointer-events: none, they capture all click, hover, and drag events. Users can't click icons, drag windows, or interact with anything. pointer-events: none makes the overlays visually present but 'transparent' to mouse/touch input, letting events pass through to the desktop beneath."
+  - question: "How does repeating-linear-gradient create the scanline effect in the CRT monitor?"
+    type: explain
+    answer: "repeating-linear-gradient creates a pattern of alternating transparent and semi-transparent dark lines. Something like: repeating-linear-gradient(to bottom, transparent 0px, transparent 1px, rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px). This creates a 2px repeating unit: 1px transparent, 1px darkened. Applied to a full-screen overlay, it simulates the horizontal scanlines of a CRT display where the electron beam illuminated every other line. The gradient is purely compositor-friendly — no layout, no JavaScript."
+  - question: "Open DevTools, find the CRT overlay elements, and toggle their visibility one by one (uncheck 'visibility' or 'display' in Styles). Identify which layer creates the scanlines, which creates the vignette, and which creates the glass reflection."
+    type: do
+    hint: "Look for elements positioned over the screen area with z-index values."
+    answer: "You'll find separate pseudo-elements or overlay divs: one with repeating-linear-gradient (scanlines — horizontal lines), one with radial-gradient darkening the edges (vignette — darker corners), and one with a positioned gradient or light effect (glass reflection — diagonal light streak). Toggling each off shows exactly what visual effect it contributes. All use background gradients and are compositor-friendly (no layout cost)."
 ---
 
 ## Why Should I Care?
