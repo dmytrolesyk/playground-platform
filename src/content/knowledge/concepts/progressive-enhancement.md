@@ -28,6 +28,15 @@ externalReferences:
   - title: "Understanding Progressive Enhancement — Aaron Gustafson"
     url: "https://alistapart.com/article/understandingprogressiveenhancement/"
     type: article
+module: foundation
+moduleOrder: 2
+estimatedMinutes: 10
+prerequisites:
+  - architecture/overview
+learningObjectives:
+  - "Define progressive enhancement and contrast it with graceful degradation"
+  - "Explain how Astro's static-first model makes progressive enhancement the default"
+  - "Identify where this project applies progressive enhancement (learn pages, CV content)"
 ---
 
 ## Why Should I Care?

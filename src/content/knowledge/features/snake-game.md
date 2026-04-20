@@ -29,6 +29,16 @@ externalReferences:
   - title: "Fix Your Timestep! — Gaffer On Games"
     url: "https://gafferongames.com/post/fix_your_timestep/"
     type: article
+module: extensibility
+moduleOrder: 5
+estimatedMinutes: 12
+prerequisites:
+  - architecture/app-registry
+  - concepts/lazy-loading-and-code-splitting
+learningObjectives:
+  - "Explain the separation between the pure game engine and the SolidJS wrapper"
+  - "Describe how the game loop uses requestAnimationFrame for smooth updates"
+  - "Identify what makes the snake engine independently testable"
 ---
 
 ## Why Should I Care?

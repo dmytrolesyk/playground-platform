@@ -31,6 +31,15 @@ externalReferences:
   - title: "Reactivity with Signals – Ryan Carniato"
     url: "https://www.youtube.com/watch?v=PpMFJMEhbRg"
     type: talk
+module: reactivity
+moduleOrder: 4
+estimatedMinutes: 15
+prerequisites:
+  - concepts/fine-grained-reactivity
+learningObjectives:
+  - "Describe the classic Observer pattern from GoF and its push/pull variants"
+  - "Trace the evolution from Observer to reactive signals"
+  - "Explain how SolidJS createEffect implements the Observer pattern internally"
 ---
 
 ## Why Should I Care?

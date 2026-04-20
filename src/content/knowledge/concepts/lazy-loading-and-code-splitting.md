@@ -26,6 +26,15 @@ externalReferences:
   - title: "Reduce JavaScript payloads with code splitting — web.dev"
     url: "https://web.dev/articles/reduce-javascript-payloads-with-code-splitting"
     type: article
+module: extensibility
+moduleOrder: 3
+estimatedMinutes: 12
+prerequisites:
+  - concepts/module-systems-and-bundling
+learningObjectives:
+  - "Explain how dynamic import() splits code at bundler boundaries"
+  - "Describe how SolidJS lazy() wraps dynamic import with Suspense integration"
+  - "Identify which apps in this codebase are lazy-loaded and why"
 ---
 
 ## Why Should I Care?

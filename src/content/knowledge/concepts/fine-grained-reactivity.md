@@ -35,6 +35,14 @@ externalReferences:
   - title: "Knockout.js — Observables"
     url: "https://knockoutjs.com/documentation/observables.html"
     type: docs
+module: reactivity
+moduleOrder: 1
+estimatedMinutes: 20
+prerequisites: []
+learningObjectives:
+  - "Explain what fine-grained reactivity means and how it differs from coarse-grained (VDOM) approaches"
+  - "Describe the signal/computation/effect dependency graph that SolidJS builds at runtime"
+  - "Predict which DOM nodes update when a specific signal changes value"
 ---
 
 ## Why Should I Care?

@@ -25,6 +25,15 @@ externalReferences:
   - title: "getCoalescedEvents() — MDN"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/getCoalescedEvents"
     type: docs
+module: window-manager
+moduleOrder: 2
+estimatedMinutes: 15
+prerequisites:
+  - architecture/window-manager
+learningObjectives:
+  - "Explain the fast-mouse problem and how pointer capture solves it"
+  - "Describe the difference between pointer events and mouse events"
+  - "Predict what breaks in drag handling without setPointerCapture()"
 ---
 
 ## Why Should I Care?

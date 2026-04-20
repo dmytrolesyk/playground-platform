@@ -37,6 +37,16 @@ externalReferences:
   - title: "How CSS transforms work — web.dev"
     url: "https://web.dev/articles/animations-guide"
     type: article
+module: window-manager
+moduleOrder: 1
+estimatedMinutes: 25
+prerequisites:
+  - architecture/state-management
+  - concepts/pointer-events-and-capture
+learningObjectives:
+  - "Describe the complete drag lifecycle from pointerdown to pointerup"
+  - "Explain z-index stacking and why a global counter works"
+  - "Predict what breaks if setPointerCapture is removed"
 ---
 
 ## Why Should I Care?

@@ -33,6 +33,13 @@ externalReferences:
   - title: "xterm.js Addons Listing"
     url: "https://github.com/xtermjs/xterm.js/tree/master/addons"
     type: repo
+estimatedMinutes: 15
+prerequisites:
+  - concepts/lazy-loading-and-code-splitting
+learningObjectives:
+  - "Explain how xterm.js renders terminal output using a canvas element"
+  - "Describe the lazy loading strategy for xterm.js and why it matters for initial load"
+  - "Trace how a terminal command is processed from keypress to output"
 ---
 
 ## Why Should I Care?

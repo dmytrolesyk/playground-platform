@@ -31,6 +31,15 @@ externalReferences:
   - title: "HTML Living Standard — Event Loops"
     url: "https://html.spec.whatwg.org/multipage/webappapis.html#event-loops"
     type: docs
+module: reactivity
+moduleOrder: 6
+estimatedMinutes: 20
+prerequisites:
+  - concepts/fine-grained-reactivity
+learningObjectives:
+  - "Describe the browser event loop phases: call stack, task queue, microtask queue, rendering"
+  - "Explain why SolidJS batches signal updates using microtasks"
+  - "Predict the execution order of mixed setTimeout, Promise, and queueMicrotask calls"
 ---
 
 ## Why Should I Care?

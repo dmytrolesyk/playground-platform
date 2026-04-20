@@ -34,6 +34,16 @@ externalReferences:
   - title: "innerHTML and XSS Security"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
     type: docs
+module: foundation
+moduleOrder: 4
+estimatedMinutes: 15
+prerequisites:
+  - architecture/overview
+  - technologies/astro
+learningObjectives:
+  - "Trace the complete pipeline from a Markdown file edit to visible content on screen"
+  - "Explain why there is zero runtime Markdown processing on the client"
+  - "Describe how the knowledge base content collection differs from the CV collection"
 ---
 
 ## Why Should I Care?

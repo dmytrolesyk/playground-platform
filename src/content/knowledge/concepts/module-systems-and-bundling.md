@@ -31,6 +31,15 @@ externalReferences:
   - title: "V8 Blog: JavaScript Modules"
     url: "https://v8.dev/features/modules"
     type: article
+module: extensibility
+moduleOrder: 4
+estimatedMinutes: 18
+prerequisites:
+  - concepts/lazy-loading-and-code-splitting
+learningObjectives:
+  - "Trace the evolution from CommonJS to ES Modules and explain key differences"
+  - "Explain how bundlers use the import graph for tree-shaking and code splitting"
+  - "Describe why dynamic import() is essential for the lazy loading boundary in this project"
 ---
 
 ## Why Should I Care?

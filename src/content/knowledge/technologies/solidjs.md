@@ -35,6 +35,15 @@ externalReferences:
   - title: "Ryan Carniato — Thinking Granular: How is SolidJS so Performant?"
     url: "https://dev.to/ryansolid/thinking-granular-how-is-solidjs-so-performant-4g37"
     type: article
+module: reactivity
+moduleOrder: 2
+estimatedMinutes: 15
+prerequisites:
+  - concepts/fine-grained-reactivity
+learningObjectives:
+  - "List the core SolidJS primitives (createSignal, createEffect, createMemo, createStore) and their roles"
+  - "Explain why SolidJS components run once and never re-execute"
+  - "Use the SolidJS tutorial to build a simple counter and understand what happens under the hood"
 ---
 
 ## Why Should I Care?

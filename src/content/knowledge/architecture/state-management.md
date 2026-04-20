@@ -34,6 +34,16 @@ externalReferences:
   - title: "Ryan Carniato — SolidJS: Reactivity to Rendering"
     url: "https://www.youtube.com/watch?v=J70HXl1KhWE"
     type: talk
+module: reactivity
+moduleOrder: 3
+estimatedMinutes: 20
+prerequisites:
+  - concepts/fine-grained-reactivity
+  - technologies/solidjs
+learningObjectives:
+  - "Explain how createStore with produce() enables fine-grained nested state updates"
+  - "Describe the DesktopContext provider pattern and why all state is in one store"
+  - "Predict which components re-render when a specific store path changes"
 ---
 
 ## Why Should I Care?

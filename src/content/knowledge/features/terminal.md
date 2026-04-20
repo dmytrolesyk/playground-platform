@@ -26,6 +26,14 @@ externalReferences:
   - title: "SolidJS lazy() and Suspense"
     url: "https://docs.solidjs.com/reference/component-apis/lazy"
     type: docs
+estimatedMinutes: 12
+prerequisites:
+  - concepts/lazy-loading-and-code-splitting
+  - concepts/inversion-of-control
+learningObjectives:
+  - "Describe how the terminal integrates with the app registry to list available commands"
+  - "Explain the lazy loading strategy for xterm.js and its impact on initial bundle size"
+  - "Trace the lifecycle of a terminal command from user input to rendered output"
 ---
 
 ## Why Should I Care?

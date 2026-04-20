@@ -31,6 +31,16 @@ externalReferences:
   - title: "Building a Reactive Library from Scratch — Ryan Carniato"
     url: "https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p"
     type: article
+module: reactivity
+moduleOrder: 5
+estimatedMinutes: 18
+prerequisites:
+  - concepts/fine-grained-reactivity
+  - concepts/observer-pattern
+learningObjectives:
+  - "Explain how JavaScript Proxy traps intercept property get/set operations"
+  - "Describe how SolidJS stores use Proxies to track nested property access"
+  - "Predict what happens when you destructure a store property outside a tracking scope"
 ---
 
 ## Why Should I Care?

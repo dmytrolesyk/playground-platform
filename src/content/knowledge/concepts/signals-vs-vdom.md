@@ -30,6 +30,15 @@ externalReferences:
   - title: "Svelte — Rethinking Reactivity"
     url: "https://svelte.dev/blog/svelte-3-rethinking-reactivity"
     type: article
+module: reactivity
+moduleOrder: 2
+estimatedMinutes: 15
+prerequisites:
+  - concepts/fine-grained-reactivity
+learningObjectives:
+  - "Compare the update strategies of React (VDOM diffing) and SolidJS (direct signal bindings)"
+  - "Explain why VDOM reconciliation has O(n) overhead that signals avoid"
+  - "Identify scenarios where each approach has advantages"
 ---
 
 ## Why Should I Care?

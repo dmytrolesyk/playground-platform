@@ -32,6 +32,15 @@ externalReferences:
   - title: "will-change — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/will-change"
     type: docs
+module: window-manager
+moduleOrder: 3
+estimatedMinutes: 18
+prerequisites:
+  - concepts/pointer-events-and-capture
+learningObjectives:
+  - "Explain why CSS transform runs on the compositor thread while left/top triggers layout"
+  - "Describe the GPU layer promotion model and when will-change is beneficial vs harmful"
+  - "Predict the rendering cost of moving a window using transform vs left/top"
 ---
 
 ## Why Should I Care?

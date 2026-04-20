@@ -40,6 +40,14 @@ externalReferences:
   - title: "Railway Deployment Documentation"
     url: "https://docs.railway.com/"
     type: docs
+module: foundation
+moduleOrder: 1
+estimatedMinutes: 20
+prerequisites: []
+learningObjectives:
+  - "Describe the three-layer architecture (Astro, SolidJS, App Registry) and each layer's responsibility"
+  - "Trace the data flow from Markdown files to rendered pixels in the browser"
+  - "Explain why a single SolidJS island was chosen over multiple islands"
 ---
 
 ## Why Should I Care?

@@ -31,6 +31,15 @@ externalReferences:
   - title: "The Pixel Pipeline — Chrome Developers"
     url: "https://developer.chrome.com/docs/devtools/performance"
     type: docs
+module: window-manager
+moduleOrder: 4
+estimatedMinutes: 20
+prerequisites:
+  - concepts/compositor-pattern
+learningObjectives:
+  - "Name and describe the five pipeline stages: Parse, Style, Layout, Paint, Composite"
+  - "Classify CSS properties by which pipeline stages they trigger"
+  - "Explain why compositor-only changes (transform, opacity) are cheaper than layout-triggering changes"
 ---
 
 ## Why Should I Care?

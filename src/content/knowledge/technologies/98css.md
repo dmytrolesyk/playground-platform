@@ -30,6 +30,15 @@ externalReferences:
   - title: "XP.css — Windows XP-style CSS (98.css successor)"
     url: "https://botoxparty.github.io/XP.css/"
     type: docs
+module: aesthetics-performance
+moduleOrder: 1
+estimatedMinutes: 10
+prerequisites:
+  - architecture/overview
+learningObjectives:
+  - "Apply 98.css semantic classes to create authentic Win98 UI elements"
+  - "Explain the project rule: never write custom CSS for elements 98.css already styles"
+  - "Identify which components use 98.css classes and which need custom layout CSS"
 ---
 
 ## Why Should I Care?

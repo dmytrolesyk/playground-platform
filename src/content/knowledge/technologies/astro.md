@@ -36,6 +36,15 @@ externalReferences:
   - title: "Islands Architecture — Jason Miller"
     url: "https://jasonformat.com/islands-architecture/"
     type: article
+module: foundation
+moduleOrder: 2
+estimatedMinutes: 15
+prerequisites:
+  - architecture/overview
+learningObjectives:
+  - "Explain Astro's build pipeline: static rendering with targeted island hydration"
+  - "Describe how content collections and Zod schemas validate Markdown frontmatter"
+  - "Configure a new Astro page with proper prerender behavior for hybrid mode"
 ---
 
 ## Why Should I Care?

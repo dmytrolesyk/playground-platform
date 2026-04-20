@@ -27,6 +27,15 @@ externalReferences:
   - title: "Email Authentication Explained: SPF, DKIM, and DMARC"
     url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
     type: article
+module: full-stack
+moduleOrder: 2
+estimatedMinutes: 10
+prerequisites:
+  - architecture/contact-system
+learningObjectives:
+  - "Initialize the Resend SDK and send an email with correct error handling (check error, don't try/catch)"
+  - "Explain why process.env is used instead of import.meta.env for the API key"
+  - "Describe the email delivery chain: API call → Resend servers → recipient MX"
 ---
 
 ## Why Should I Care?

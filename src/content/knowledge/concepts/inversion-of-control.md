@@ -29,6 +29,15 @@ externalReferences:
   - title: "VS Code Extension Architecture"
     url: "https://code.visualstudio.com/api/get-started/extension-anatomy"
     type: docs
+module: extensibility
+moduleOrder: 2
+estimatedMinutes: 12
+prerequisites:
+  - architecture/app-registry
+learningObjectives:
+  - "Explain the Inversion of Control principle and its relationship to the Dependency Inversion Principle"
+  - "Identify where IoC appears in the app registry pattern"
+  - "Apply IoC thinking to design extensible systems"
 ---
 
 ## Why Should I Care?

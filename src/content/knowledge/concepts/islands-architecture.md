@@ -26,6 +26,15 @@ externalReferences:
   - title: "Islands of Interactivity — Katie Sylor-Miller (talk)"
     url: "https://www.youtube.com/watch?v=VH64-z1xOEo"
     type: talk
+module: foundation
+moduleOrder: 3
+estimatedMinutes: 12
+prerequisites:
+  - architecture/overview
+learningObjectives:
+  - "Explain how islands architecture delivers static HTML with targeted JavaScript hydration"
+  - "Describe why this site uses exactly one island and what the trade-offs are"
+  - "Compare islands to full SPA and SSR-everywhere approaches"
 ---
 
 ## Why Should I Care?

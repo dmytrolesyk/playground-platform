@@ -27,6 +27,16 @@ externalReferences:
   - title: "What Every Developer Should Know About GPU-based CSS Animations"
     url: "https://web.dev/articles/animations-guide"
     type: article
+module: aesthetics-performance
+moduleOrder: 2
+estimatedMinutes: 15
+prerequisites:
+  - technologies/98css
+  - concepts/compositor-pattern
+learningObjectives:
+  - "Describe the CSS techniques used for scanlines, vignette, and glass reflections"
+  - "Explain how the CRT frame uses compositor-friendly properties for performance"
+  - "Identify which CSS properties cause layout vs paint vs composite-only updates in the CRT frame"
 ---
 
 ## Why Should I Care?

@@ -29,6 +29,16 @@ externalReferences:
   - title: "SPF, DKIM, DMARC — Email Authentication"
     url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
     type: article
+module: full-stack
+moduleOrder: 1
+estimatedMinutes: 15
+prerequisites:
+  - architecture/overview
+  - technologies/resend
+learningObjectives:
+  - "Trace a contact form submission from browser to email inbox"
+  - "Explain the process.env vs import.meta.env landmine and why it matters in Docker builds"
+  - "Describe the Resend error handling pattern (check error, don't try/catch)"
 ---
 
 ## Why Should I Care?

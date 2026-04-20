@@ -33,6 +33,16 @@ externalReferences:
   - title: "Plugin Architecture — Patterns for Extensibility"
     url: "https://www.youtube.com/watch?v=iCE1bDoit9Q"
     type: talk
+module: extensibility
+moduleOrder: 1
+estimatedMinutes: 15
+prerequisites:
+  - architecture/overview
+  - concepts/inversion-of-control
+learningObjectives:
+  - "Add a new app to the platform using only registerApp() and a component file"
+  - "Explain how the registry achieves the Open/Closed Principle"
+  - "Describe which consumers read from APP_REGISTRY and what they use"
 ---
 
 ## Why Should I Care?

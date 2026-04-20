@@ -28,6 +28,16 @@ externalReferences:
   - title: "SolidJS onMount Lifecycle"
     url: "https://docs.solidjs.com/reference/lifecycle/on-mount"
     type: docs
+module: foundation
+moduleOrder: 5
+estimatedMinutes: 10
+prerequisites:
+  - architecture/data-flow
+  - concepts/islands-architecture
+learningObjectives:
+  - "Describe how CV Markdown becomes pre-rendered HTML embedded in a script tag"
+  - "Explain why innerHTML is safe here but dangerous in general"
+  - "Trace the data path from Markdown file to rendered CV in the browser"
 ---
 
 ## Why Should I Care?
