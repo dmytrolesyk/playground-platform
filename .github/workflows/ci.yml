@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
   verify:
@@ -44,16 +43,3 @@ jobs:
             echo "::error::CV files are stale. Run 'pnpm generate-cv' locally and commit the updated files."
             exit 1
           }
-
-  deploy:
-    needs: [verify, cv-staleness]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-      - name: Deploy to Railway
-        run: railway up --detach --service cv-website
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
