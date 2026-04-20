@@ -19,7 +19,7 @@
     "verify": "biome check . && astro check && vitest run --passWithNoTests",
     "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts",
     "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
-    "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots"
+    "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots all"
   },
   "dependencies": {
     "98.css": "^0.1.21",
