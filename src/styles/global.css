@@ -11,6 +11,25 @@
   --z-taskbar: 1000;
   --z-start-menu: 1001;
   --z-modal-overlay: 1002;
+
+  /* Colors — from docs/design-tokens.json */
+  --color-desktop: #008080;
+  --color-surface: #c0c0c0;
+  --color-surface-dark: #808080;
+  --color-surface-light: #dfdfdf;
+  --color-title-bar-active: #000080;
+  --color-title-bar-inactive: #808080;
+  --color-text-default: #000000;
+  --color-text-inverse: #ffffff;
+  --color-shadow-inner: #808080;
+  --color-shadow-outer: #0a0a0a;
+  --color-highlight-inner: #dfdfdf;
+  --color-highlight-outer: #ffffff;
+  --color-icon-select-bg: #000080;
+  --color-icon-select-text: #ffffff;
+  --color-icon-focus-ring: #000000;
+  --color-link-text: #0000ff;
+  --color-link-visited: #800080;
 }
 
 *,

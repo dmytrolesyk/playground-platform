@@ -8,7 +8,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #008080;
+  background-color: var(--color-desktop);
   overflow: hidden;
 }
 
@@ -42,7 +42,7 @@
 }
 
 .desktop-icon:focus {
-  outline: 1px dotted #fff;
+  outline: 1px dotted var(--color-text-inverse);
   outline-offset: -1px;
 }
 
@@ -55,7 +55,7 @@
 
 .desktop-icon__label {
   margin-top: 4px;
-  color: #fff;
+  color: var(--color-text-inverse);
   font-size: 12px;
   font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
   text-align: center;
@@ -68,14 +68,14 @@
 }
 
 .desktop-icon--selected .desktop-icon__label {
-  background-color: #000080;
-  color: #fff;
+  background-color: var(--color-icon-select-bg);
+  color: var(--color-icon-select-text);
   text-shadow: none;
 }
 
 .desktop-icon:active .desktop-icon__label {
-  background-color: #000080;
-  color: #fff;
+  background-color: var(--color-icon-select-bg);
+  color: var(--color-icon-select-text);
   text-shadow: none;
 }
 

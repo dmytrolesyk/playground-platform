@@ -9,9 +9,9 @@
 
 /* Toolbar */
 .email-toolbar {
-  background-color: #c0c0c0;
+  background-color: var(--color-surface);
   padding: 4px;
-  border-bottom: 1px solid #808080;
+  border-bottom: 1px solid var(--color-surface-dark);
   display: flex;
   gap: 4px;
   flex-shrink: 0;
@@ -30,24 +30,24 @@
   padding: 2px 8px;
   font-size: 13px;
   text-decoration: none;
-  color: #000;
-  background: silver;
+  color: var(--color-text-default);
+  background: var(--color-surface);
   box-shadow:
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #fff,
+    inset -1px -1px var(--color-shadow-outer),
+    inset 1px 1px var(--color-highlight-outer),
     inset -2px -2px grey,
-    inset 2px 2px #dfdfdf;
+    inset 2px 2px var(--color-highlight-inner);
 }
 
 .email-toolbar__telegram-btn:hover {
-  color: #000080;
+  color: var(--color-title-bar-active);
 }
 
 .email-toolbar__telegram-btn:active {
   box-shadow:
-    inset -1px -1px #fff,
-    inset 1px 1px #0a0a0a,
-    inset -2px -2px #dfdfdf,
+    inset -1px -1px var(--color-highlight-outer),
+    inset 1px 1px var(--color-shadow-outer),
+    inset -2px -2px var(--color-highlight-inner),
     inset 2px 2px grey;
 }
 
@@ -64,7 +64,7 @@
   align-items: center;
   padding: 3px 6px;
   gap: 6px;
-  border-bottom: 1px solid #dfdfdf;
+  border-bottom: 1px solid var(--color-highlight-inner);
 }
 
 .email-field__label {
@@ -73,7 +73,7 @@
   width: 60px;
   flex-shrink: 0;
   text-align: right;
-  color: #000;
+  color: var(--color-text-default);
 }
 
 .email-field__input {
@@ -98,15 +98,15 @@
   margin: 0;
   line-height: 1.4;
   overflow: auto;
-  background: #fff;
+  background: var(--color-highlight-outer);
   border: 2px inset;
   outline: none;
-  color: #000;
+  color: var(--color-text-default);
 }
 
 .email-body__editor:empty::before {
   content: "Write your message here...";
-  color: #808080;
+  color: var(--color-surface-dark);
   pointer-events: none;
 }
 
@@ -116,8 +116,8 @@
   align-items: center;
   gap: 2px;
   padding: 3px 4px;
-  background: #c0c0c0;
-  border-bottom: 1px solid #808080;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-surface-dark);
   flex-shrink: 0;
 }
 
@@ -152,7 +152,7 @@
 .email-format-divider {
   width: 1px;
   height: 18px;
-  background: #808080;
+  background: var(--color-surface-dark);
   margin: 0 3px;
   flex-shrink: 0;
 }
@@ -169,13 +169,13 @@
   min-width: 14px;
   min-height: 14px;
   padding: 0;
-  border: 1px solid #808080;
+  border: 1px solid var(--color-surface-dark);
   cursor: pointer;
   box-shadow: none;
 }
 
 .email-format-color:hover {
-  border-color: #000;
+  border-color: var(--color-text-default);
 }
 
 /* Dialog overlay */
