@@ -10,6 +10,11 @@ const SnakeGame = lazy(() => import('./games/Snake').then((m) => ({ default: m.S
 const LibraryApp = lazy(() =>
   import('./library/LibraryApp').then((m) => ({ default: m.LibraryApp })),
 );
+const ArchitectureExplorer = lazy(() =>
+  import('./architecture-explorer/ArchitectureExplorer').then((m) => ({
+    default: m.ArchitectureExplorer,
+  })),
+);
 
 // Register MVP apps
 registerApp({
@@ -95,4 +100,16 @@ registerApp({
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 700, height: 500 },
+});
+
+registerApp({
+  id: 'architecture-explorer',
+  title: 'Architecture Explorer',
+  icon: '/icons/blueprint_icon.png',
+  component: ArchitectureExplorer,
+  desktop: true,
+  startMenu: true,
+  startMenuCategory: 'Programs',
+  singleton: true,
+  defaultSize: { width: 900, height: 600 },
 });
