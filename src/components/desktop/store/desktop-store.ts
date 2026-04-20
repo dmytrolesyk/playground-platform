@@ -1,6 +1,7 @@
 import { onCleanup } from 'solid-js';
 import { createStore, produce } from 'solid-js/store';
 import { APP_REGISTRY } from '../apps/registry';
+import { Z_INDEX } from '../constants';
 import type { DesktopActions, DesktopState, WindowState } from './types';
 
 const CASCADE_BASE_X = 50;
@@ -26,7 +27,7 @@ export function createDesktopStore(): [DesktopState, DesktopActions] {
   const [state, setState] = createStore<DesktopState>({
     windows: {},
     windowOrder: [],
-    nextZIndex: 10,
+    nextZIndex: Z_INDEX.WINDOW_BASE,
     startMenuOpen: false,
     selectedDesktopIcon: null,
     isMobile: mediaQuery?.matches ?? false,

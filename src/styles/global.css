@@ -1,5 +1,18 @@
 /* Desktop environment layout — 98.css handles component aesthetics */
 
+/* Z-index layers — single source of truth (matches constants.ts + design-tokens.json) */
+:root {
+  --z-desktop-icons: 1;
+  --z-window-base: 10;
+  --z-dragging-icon: 100;
+  --z-crt-vignette: 997;
+  --z-crt-glass: 998;
+  --z-crt-scanlines: 999;
+  --z-taskbar: 1000;
+  --z-start-menu: 1001;
+  --z-modal-overlay: 1002;
+}
+
 *,
 *::before,
 *::after {

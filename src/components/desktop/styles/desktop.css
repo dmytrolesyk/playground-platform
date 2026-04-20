@@ -20,7 +20,7 @@
   position: absolute;
   inset: 0;
   bottom: 36px;
-  z-index: 1;
+  z-index: var(--z-desktop-icons);
 }
 
 .desktop-icon {
