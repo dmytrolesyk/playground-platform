@@ -56,7 +56,14 @@ for (const cat of Object.keys(categories)) {
   }
 }
 
-const categoryOrder = ['architecture', 'concept', 'technology', 'feature', 'cs-fundamentals', 'lab'];
+const categoryOrder = [
+  'architecture',
+  'concept',
+  'technology',
+  'feature',
+  'cs-fundamentals',
+  'lab',
+];
 const categoryLabels: Record<string, string> = {
   architecture: 'Architecture',
   concept: 'Concepts',
@@ -97,7 +104,8 @@ const moduleArticles = entry.data.module
   : [];
 const currentModuleIndex = moduleArticles.findIndex((e) => e.id === entry.id);
 const prevInModule = currentModuleIndex > 0 ? moduleArticles[currentModuleIndex - 1] : null;
-const nextInModule = currentModuleIndex < moduleArticles.length - 1 ? moduleArticles[currentModuleIndex + 1] : null;
+const nextInModule =
+  currentModuleIndex < moduleArticles.length - 1 ? moduleArticles[currentModuleIndex + 1] : null;
 
 const exerciseTypeLabels: Record<string, string> = {
   predict: '🔮 Predict',

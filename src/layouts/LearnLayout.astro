@@ -95,7 +95,7 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
     const container = document.getElementById('progress-tracker');
     if (!container) return;
 
-    const slug = container.dataset.slug;
+    const slug = container.dataset['slug'];
     if (!slug) return;
 
     const progress = loadProgress();
@@ -139,7 +139,7 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
     const progress = loadProgress();
 
     for (const bar of bars) {
-      const slugsStr = bar.dataset.moduleArticles;
+      const slugsStr = bar.dataset['moduleArticles'];
       if (!slugsStr) continue;
       const slugs = slugsStr.split(',').filter(Boolean);
       const completed = slugs.filter((s) => progress.articlesRead[s]?.completed).length;

@@ -339,10 +339,18 @@ body {
   border-left: 4px solid #666;
 }
 
-.exercise--predict { border-left-color: #9b59b6; }
-.exercise--explain { border-left-color: #3498db; }
-.exercise--do { border-left-color: #e67e22; }
-.exercise--debug { border-left-color: #e74c3c; }
+.exercise--predict {
+  border-left-color: #9b59b6;
+}
+.exercise--explain {
+  border-left-color: #3498db;
+}
+.exercise--do {
+  border-left-color: #e67e22;
+}
+.exercise--debug {
+  border-left-color: #e74c3c;
+}
 
 .exercise__label {
   font-family: Arial, Helvetica, sans-serif;

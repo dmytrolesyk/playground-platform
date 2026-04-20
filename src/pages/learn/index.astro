@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { MODULES } from '../../content/knowledge/modules';
 import LearnLayout from '../../layouts/LearnLayout.astro';
 
 export const prerender = true;
@@ -12,60 +13,73 @@ interface KnowledgeEntry {
     summary: string;
     difficulty?: string;
     order?: number;
+    module?: string;
+    moduleOrder?: number;
+    estimatedMinutes?: number;
+    prerequisites: string[];
   };
 }
 
 const entries = (await getCollection('knowledge')) as KnowledgeEntry[];
 
+// Group by category (for browse section)
 const categories: Record<string, KnowledgeEntry[]> = {};
 for (const entry of entries) {
   const cat = entry.data.category;
-  if (!categories[cat]) {
-    categories[cat] = [];
-  }
+  if (!categories[cat]) categories[cat] = [];
   categories[cat].push(entry);
 }
-
-// Sort each category by order, then title
 for (const cat of Object.keys(categories)) {
-  const items = categories[cat];
-  if (items) {
-    items.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
-  }
+  categories[cat]?.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 }
 
-const categoryOrder = ['architecture', 'concept', 'technology', 'feature'];
+const categoryOrder = [
+  'architecture',
+  'concept',
+  'technology',
+  'feature',
+  'cs-fundamentals',
+  'lab',
+];
 const categoryLabels: Record<string, string> = {
   architecture: '🏗️ Architecture',
   concept: '💡 Concepts',
   technology: '🔧 Technologies',
   feature: '✨ Features',
+  'cs-fundamentals': '🧠 CS Fundamentals',
+  lab: '🧪 Labs',
 };
 
-const startHere = [
-  'architecture/overview',
-  'technologies/astro',
-  'technologies/solidjs',
-  'concepts/progressive-enhancement',
-  'concepts/islands-architecture',
-  'architecture/data-flow',
-  'architecture/state-management',
-  'concepts/fine-grained-reactivity',
-  'concepts/observer-pattern',
-  'concepts/javascript-proxies',
-  'architecture/window-manager',
-  'architecture/app-registry',
-  'concepts/module-systems-and-bundling',
-  'concepts/lazy-loading-and-code-splitting',
-  'concepts/browser-rendering-pipeline',
-  'technologies/98css',
-  'features/crt-monitor-frame',
-];
+// Group articles by module
+const moduleArticles: Record<string, KnowledgeEntry[]> = {};
+for (const entry of entries) {
+  if (entry.data.module) {
+    if (!moduleArticles[entry.data.module]) moduleArticles[entry.data.module] = [];
+    moduleArticles[entry.data.module]!.push(entry);
+  }
+}
+for (const mod of Object.keys(moduleArticles)) {
+  moduleArticles[mod]?.sort((a, b) => (a.data.moduleOrder ?? 99) - (b.data.moduleOrder ?? 99));
+}
+
+// Labs for dedicated section
+const labs = entries
+  .filter((e) => e.data.category === 'lab')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
+// Sort modules by order
+const sortedModules = [...MODULES].sort((a, b) => a.order - b.order);
 ---
 
 <LearnLayout title="Knowledge Base">
   <div class="learn-page">
     <aside class="learn-sidebar">
+      <h3>Learning Path</h3>
+      <ul>
+        {sortedModules.map((mod) => (
+          <li><a href={`#module-${mod.id}`}>{mod.title}</a></li>
+        ))}
+      </ul>
       <h3>Categories</h3>
       <ul>
         {categoryOrder.map((cat) => (
@@ -77,29 +91,84 @@ const startHere = [
     <main class="learn-content">
       <h1>Knowledge Base</h1>
       <p class="learn-content__summary">
-        Everything about how this platform works — the architecture, the technologies, the patterns, and the decisions behind them.
+        A structured learning system for understanding this platform — the architecture, technologies, patterns, CS fundamentals, and hands-on experiments.
       </p>
 
-      <h2>🚀 Start Here</h2>
-      <p>Recommended reading order to understand the system top-to-bottom:</p>
-      <ol>
-        {startHere.map((slug) => {
-          const entry = entries.find((e) => e.id === slug);
-          return entry ? (
-            <li>
-              <a href={`/learn/${entry.id}`}>{entry.data.title}</a>
-              {' — '}<em>{entry.data.summary}</em>
-            </li>
-          ) : null;
-        })}
-      </ol>
+      {/* Progress summary — hydrated by client script */}
+      <div class="learn-progress-summary" id="progress-summary">
+        📊 Loading progress...
+      </div>
 
+      {/* ===== Learning Path ===== */}
+      <h2>🎓 Learning Path</h2>
+      <p>Work through these modules in order. Each builds on the previous ones.</p>
+
+      <div class="learn-modules">
+        {sortedModules.map((mod) => {
+          const articles = moduleArticles[mod.id] ?? [];
+          const articleSlugs = articles.map((a) => a.id).join(',');
+          const prereqNames = mod.prerequisites
+            .map((pid) => MODULES.find((m) => m.id === pid)?.title)
+            .filter(Boolean);
+          return (
+            <div class="learn-module" id={`module-${mod.id}`}>
+              <div class="learn-module__header">
+                <h3 class="learn-module__title">{mod.title}</h3>
+                <span class="learn-module__meta">~{mod.estimatedHours}h</span>
+              </div>
+              <p class="learn-module__objective">{mod.objective}</p>
+              {prereqNames.length > 0 && (
+                <p class="learn-module__prereqs">
+                  Builds on: {prereqNames.join(', ')}
+                </p>
+              )}
+              <ul class="learn-module__articles">
+                {articles.map((a) => (
+                  <li><a href={`/learn/${a.id}`}>{a.data.title}</a></li>
+                ))}
+              </ul>
+              <div class="learn-module__progress-bar" data-module-articles={articleSlugs}>
+                <div class="learn-module__progress-fill" style="width: 0%"></div>
+              </div>
+              <span class="learn-module__progress-label learn-module__meta" style="display:block;margin-top:4px">
+                0/{articles.length} completed
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ===== Labs ===== */}
+      {labs.length > 0 && (
+        <>
+          <h2 id="lab">🧪 Labs</h2>
+          <p>Guided hands-on experiments in your own codebase.</p>
+          <div class="learn-labs">
+            {labs.map((lab) => (
+              <div class="learn-lab-card">
+                <a href={`/learn/${lab.id}`}>{lab.data.title}</a>
+                {lab.data.estimatedMinutes && (
+                  <span class="learn-lab-card__time">{lab.data.estimatedMinutes} min</span>
+                )}
+                {lab.data.difficulty && (
+                  <span class={`learn-badge learn-badge--${lab.data.difficulty}`}>
+                    {lab.data.difficulty}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* ===== Browse by Category ===== */}
+      <h2>📚 Browse by Category</h2>
       {categoryOrder.map((cat) => {
         const items = categories[cat];
         if (!items?.length) return null;
         return (
           <>
-            <h2 id={cat}>{categoryLabels[cat]}</h2>
+            <h3 id={cat}>{categoryLabels[cat]}</h3>
             <ul>
               {items.map((entry) => (
                 <li>

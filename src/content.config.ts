@@ -13,7 +13,14 @@ const knowledge = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/knowledge' }),
   schema: z.object({
     title: z.string(),
-    category: z.enum(['architecture', 'concept', 'technology', 'feature', 'lab', 'cs-fundamentals']),
+    category: z.enum([
+      'architecture',
+      'concept',
+      'technology',
+      'feature',
+      'lab',
+      'cs-fundamentals',
+    ]),
     summary: z.string(),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
     relatedConcepts: z.array(z.string()).default([]),
