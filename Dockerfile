@@ -1,4 +1,4 @@
-FROM node:22-slim AS base
+FROM node:24-slim AS base
 RUN corepack enable
 
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY . .
 RUN pnpm build
 
 # Production
-FROM node:22-slim AS runtime
+FROM node:24-slim AS runtime
 WORKDIR /app
 
 COPY --from=base /app/dist ./dist
