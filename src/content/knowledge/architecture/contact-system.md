@@ -5,6 +5,7 @@ summary: "How the contact form sends email via Resend — the SSR endpoint, envi
 difficulty: intermediate
 relatedConcepts:
   - concepts/islands-architecture
+  - concepts/progressive-enhancement
 relatedFiles:
   - src/pages/api/contact.ts
   - src/components/desktop/apps/EmailApp.tsx
@@ -14,50 +15,222 @@ technologies:
   - astro
 order: 6
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-20
+externalReferences:
+  - title: "Resend Documentation"
+    url: "https://resend.com/docs"
+    type: docs
+  - title: "Astro Server Endpoints"
+    url: "https://docs.astro.build/en/guides/endpoints/"
+    type: docs
+  - title: "Vite Env Variables and Modes"
+    url: "https://vite.dev/guide/env-and-mode"
+    type: docs
+  - title: "SPF, DKIM, DMARC — Email Authentication"
+    url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
+    type: article
 ---
 
-## Architecture
+## Why Should I Care?
 
-The contact flow has three components:
+The contact system is the only server-side runtime code in the entire application. Everything else is static. Understanding why this one endpoint needs SSR — and the `import.meta.env` landmine that nearly broke it — teaches you about the boundary between build-time and runtime in Astro, and a Vite behavior that bites every project that deploys with environment variables.
 
-1. **ContactApp** — a chooser dialog ("Email" or "Telegram") that opens the appropriate channel
-2. **EmailApp** — a form with name, email, subject, and message fields
-3. **/api/contact** — an SSR endpoint that sends email via the Resend SDK
+## The Complete Request Flow
 
-## The process.env Landmine
+```mermaid
+sequenceDiagram
+    participant User
+    participant Form as EmailApp (SolidJS)
+    participant API as /api/contact (SSR)
+    participant Resend as Resend API
+    participant Email as Recipient Inbox
 
-This is the most dangerous gotcha in the codebase. Vite (used by Astro) inlines **all** `import.meta.env` values at build time — not just `PUBLIC_*` ones. In Docker/CI builds where secrets aren't present during `pnpm build`, they become empty strings permanently baked into the output.
-
-**Wrong:**
-```typescript
-const apiKey = import.meta.env.RESEND_API_KEY; // "" in Docker!
+    User->>Form: Fill out contact form
+    Form->>Form: Client-side validation
+    User->>Form: Click "Send"
+    Form->>API: POST /api/contact<br/>{name, email, subject, message, website}
+    API->>API: Check honeypot (website field)
+    API->>API: Validate required fields + email format
+    API->>API: Read secrets from process.env
+    API->>Resend: resend.emails.send({...})
+    Resend-->>API: { data, error }
+    alt Success
+        API-->>Form: { ok: true }
+        Form-->>User: "Message sent!" dialog
+    else Error
+        API-->>Form: { ok: false, error: "..." }
+        Form-->>User: Error message
+    end
+    Resend->>Email: Deliver email
 ```
 
-**Correct:**
+## Architecture: Three Components
+
+### ContactApp — The Chooser
+
+A simple dialog that offers two contact channels: "Email" or "Telegram." Clicking "Email" calls `actions.openWindow('email')`. Clicking "Telegram" opens a link in a new tab. This is a separate app from the email form because it's a lightweight entry point that doesn't need the form's validation logic.
+
+### EmailApp — The Form
+
+A SolidJS form with client-side validation: name, email (format check), subject, and message are required. A hidden `website` field acts as a honeypot (see below). On submit, it `POST`s to `/api/contact` and displays the response in a 98.css-styled dialog.
+
+### /api/contact — The SSR Endpoint
+
+The only server-side route in the application. Located at `src/pages/api/contact.ts`:
+
 ```typescript
-const apiKey = process.env['RESEND_API_KEY']; // Read at runtime
+export const prerender = false; // Opt out of static rendering
+
+export const POST: APIRoute = async ({ request }) => {
+  const body = await request.json();
+
+  // 1. Honeypot check — silent success (fools bots)
+  if (body.website) {
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  }
+
+  // 2. Validate fields
+  // 3. Read secrets from process.env
+  // 4. Send via Resend SDK
+  // 5. Return result
+};
 ```
 
-Server-side endpoints must use `process.env['VAR_NAME']` with bracket notation (required by `noPropertyAccessFromIndexSignature`). Only client-side code should use `import.meta.env` for `PUBLIC_*` vars.
+## The Honeypot Anti-Spam Pattern
 
-## The Resend SDK Pattern
+The form includes a hidden field named `website`. Real users never see it (it's hidden with CSS), so it stays empty. Spam bots, which automatically fill every field, will populate it.
 
-The Resend SDK returns `{ data, error }` — it does **not** throw:
+The endpoint checks: if `website` has a value, silently return `{ ok: true }`. The bot thinks the form submitted successfully. No email is sent. No CAPTCHA needed. No third-party anti-spam service.
 
 ```typescript
-const { data, error } = await resend.emails.send({
-  from: process.env['CONTACT_FROM_EMAIL'],
-  to: process.env['CONTACT_TO_EMAIL'],
-  subject: `Contact: ${subject}`,
-  html: `<p>From: ${name} (${email})</p><p>${message}</p>`,
-});
-
-if (error) {
-  // Handle error — do NOT use try/catch for Resend API errors
-  return new Response(JSON.stringify({ ok: false }), { status: 500 });
+// In contact.ts
+if (body.website) {
+  return new Response(JSON.stringify({ ok: true }), { status: 200 });
 }
 ```
 
-## SSR vs Static
+This is a low-friction anti-spam technique. It won't stop sophisticated targeted attacks, but it eliminates automated form-filling bots, which account for the vast majority of contact form spam.
 
-The `/api/contact` endpoint is the only SSR route in the entire application. Everything else is static (prerendered at build time). This endpoint uses `export const prerender = false` to opt out of static rendering.
+## The process.env Landmine
+
+This is the most dangerous gotcha in the codebase. It's documented in AGENTS.md, in the contact code comments, and now here — because getting it wrong means your production contact form silently stops working.
+
+### The Problem
+
+Vite (Astro's build tool) performs a **string replacement** on `import.meta.env` at build time. It finds every occurrence of `import.meta.env.SOME_VAR` in your source code and replaces it with the literal value from the build environment:
+
+```typescript
+// Source code:
+const key = import.meta.env.RESEND_API_KEY;
+
+// After Vite build (if RESEND_API_KEY="sk_123" during build):
+const key = "sk_123";  // Literal string baked in
+
+// After Vite build (if RESEND_API_KEY is NOT SET during build):
+const key = "";  // 💥 Empty string baked in forever
+```
+
+This affects **all** `import.meta.env` values, not just `PUBLIC_*` ones. In a Docker build or CI environment where secrets aren't available at build time, every `import.meta.env` reference becomes an empty string.
+
+### The Fix
+
+Server-side code must use `process.env['VAR_NAME']` — which reads the actual environment variable at runtime:
+
+```typescript
+// ✅ Correct: reads at runtime
+const apiKey = process.env['RESEND_API_KEY'];
+const toEmail = process.env['CONTACT_TO_EMAIL'];
+const fromEmail = process.env['CONTACT_FROM_EMAIL'];
+```
+
+The bracket notation (`process.env['VAR_NAME']` not `process.env.VAR_NAME`) is required by TypeScript's `noPropertyAccessFromIndexSignature` setting.
+
+### The Docker Build Diagram
+
+```mermaid
+flowchart TD
+    subgraph "Docker Multi-Stage Build"
+        BUILD["Stage 1: Build<br/>pnpm build<br/>❌ No RESEND_API_KEY set"]
+        DIST["dist/ output<br/>import.meta.env → '' (empty)"]
+        BUILD --> DIST
+    end
+
+    subgraph "Railway Runtime"
+        ENV["Environment Variables<br/>✅ RESEND_API_KEY=sk_live_xxx"]
+        NODE["node dist/server/entry.mjs"]
+        DIST --> NODE
+        ENV --> NODE
+    end
+
+    NODE -->|"process.env['RESEND_API_KEY']"| OK["✅ 'sk_live_xxx'"]
+    NODE -->|"import.meta.env.RESEND_API_KEY"| FAIL["❌ '' (empty, baked at build)"]
+```
+
+### Client-Side: import.meta.env Is Fine
+
+For `PUBLIC_*` variables used in client-side code, `import.meta.env` is the correct approach. These values are intentionally inlined:
+
+```typescript
+// In client-side component — ✅ correct
+const telegram = import.meta.env.PUBLIC_TELEGRAM_USERNAME;
+// Inlined at build time: const telegram = "dmitriy_lesyk";
+```
+
+`PUBLIC_*` vars must be set at build time (in Dockerfile as `ARG` + `ENV`, or in CI env).
+
+## The Resend SDK Pattern
+
+The Resend SDK has a non-standard error handling pattern that catches developers off guard:
+
+```typescript
+const resend = new Resend(apiKey);
+
+// Resend returns { data, error } — it does NOT throw
+const { error } = await resend.emails.send({
+  from: `CV Contact <${fromEmail}>`,
+  to: toEmail,
+  replyTo: email,  // Reply goes to the person who filled out the form
+  subject: `[CV Contact] ${subject}`,
+  html: `<p><strong>From:</strong> ${name} (${email})</p><hr/>${message}`,
+  text: `From: ${name} (${email})\n\n${plainText}`,
+});
+
+if (error) {
+  console.error('[contact] Resend error:', JSON.stringify(error));
+  return new Response(
+    JSON.stringify({ ok: false, error: 'Failed to send email.' }),
+    { status: 500 }
+  );
+}
+```
+
+**Do not** use `try/catch` for Resend API errors. The SDK signals failure through the return value, not exceptions. A `try/catch` around `resend.emails.send()` would silently ignore the error because no exception is thrown.
+
+### Domain Matching
+
+The `from` address domain must exactly match the verified Resend domain. If your domain is `lesyk.dev`, the from address must be `something@lesyk.dev`. Using a different domain (like `@gmail.com`) will cause a silent delivery failure.
+
+## SSR vs Static: Why Only This Route
+
+The `/api/contact` endpoint is the only route with `export const prerender = false`. Every other page (index, /learn/*, /cv-print) is prerendered to static HTML at build time.
+
+Why can't the contact endpoint be static? Because it:
+
+1. **Needs runtime secrets** — `RESEND_API_KEY` must be read from `process.env` at runtime
+2. **Processes user input** — form data arrives in a POST request body
+3. **Makes external API calls** — the Resend SDK sends HTTP requests
+
+Astro's hybrid rendering model (default with the `@astrojs/node` adapter) is ideal: static by default, SSR only where needed. The contact endpoint opts into SSR with one line (`export const prerender = false`), and the rest of the site stays static.
+
+## Rate Limiting Strategies
+
+The current implementation doesn't include server-side rate limiting. For a personal CV site with low traffic, spam bots are the primary concern (handled by the honeypot). If traffic increases, options include:
+
+| Strategy | Implementation | Tradeoff |
+|---|---|---|
+| **IP-based rate limiting** | Count requests per IP in memory or Redis | Doesn't survive server restart (memory) or needs external service (Redis) |
+| **Token bucket** | Issue a time-limited token on page load, validate on submit | Adds a round-trip but works serverless |
+| **Cloudflare/Railway WAF** | Configure rate limiting at the infrastructure level | Zero code changes, but requires platform support |
+| **Turnstile/reCAPTCHA** | Add a challenge widget to the form | Effective but adds friction and a third-party dependency |
+
+For the current scale, the honeypot is sufficient.
