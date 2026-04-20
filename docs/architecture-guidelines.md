@@ -55,7 +55,7 @@
 |---|---|
 | **Static-first** | Everything that can be pre-rendered is pre-rendered. JS hydrates interactivity on top. |
 | **Single island** | One SolidJS island owns all interactive state to avoid cross-island communication complexity. |
-| **Lazy boundaries** | Heavy dependencies (xterm.js, games, WASM) load on demand, never at startup. |
+| **Lazy boundaries** | Heavy dependencies (xterm.js, games) load on demand, never at startup. |
 | **98.css as truth** | Don't reinvent Win98 aesthetics. Use 98.css classes. Custom CSS is only for layout (desktop grid, taskbar positioning, window coordinates). |
 | **Content ≠ presentation** | CV data is Markdown. The "Netscape browser" is a presentation layer. They connect at build time. |
 | **Minimal dependencies** | Each new dependency must justify its bundle cost. Target: ≤5 runtime dependencies for MVP. |
@@ -175,7 +175,7 @@ Desktop (root SolidJS component)
 │               └── GameApp (lazy: per-game dynamic import)
 │                   ├── SnakeGame
 │                   ├── (future: Tetris, Minesweeper, etc.)
-│                   └── (future: WASM games — Doom, etc.)
+│                   └── (future: more games)
 │
 └── Taskbar (fixed bottom bar)
     ├── StartButton
@@ -353,7 +353,7 @@ A single store with per-window entries is the simplest model that supports all t
 
 ## 8. App Registry & Extensibility Architecture
 
-The "fake OS" must be trivially extensible. Adding a new "app" (a game, a settings panel, a new contact channel, a WASM binary) should require:
+The "fake OS" must be trivially extensible. Adding a new "app" (a game, a settings panel, a new contact channel) should require:
 
 1. Create the app component (a `.tsx` file in `apps/`)
 2. Add one entry to the app registry
@@ -457,33 +457,6 @@ registerApp({
 
 `WindowBody` wraps every app in `<Suspense>`, so lazy apps get a loading indicator automatically. No special handling needed per app.
 
-### WASM Games and Heavy Binaries
-
-WASM games (e.g., a Doom port) follow the same pattern, with one extra layer:
-
-```typescript
-// src/components/desktop/apps/games/DoomGame.tsx
-registerApp({
-  id: 'doom',
-  title: 'DOOM',
-  icon: doomIcon,
-  component: lazy(() => import('./games/DoomGame')),  // lazy outer shell
-  desktop: true,
-  startMenu: true,
-  startMenuCategory: 'Games',
-  singleton: true,
-  defaultSize: { width: 640, height: 480 },
-});
-
-// Inside DoomGame.tsx:
-// 1. Dynamic import() of the WASM loader
-// 2. fetch() the .wasm binary
-// 3. Instantiate into a <canvas>
-// This means: 0 bytes at page load, ~1-3MB loads only when user opens Doom
-```
-
-The window shell renders immediately. The `<Suspense>` boundary shows a loading state. The WASM binary downloads in the background. The game starts when ready.
-
 ### Start Menu Categories
 
 The Start Menu groups registered apps by `startMenuCategory`:
@@ -506,7 +479,7 @@ Future categories ("Settings", "Games") populate automatically when apps registe
 |---|---|---|
 | Add a new app | Create component + `registerApp()` | Touch Desktop, WindowManager, Taskbar, StartMenu |
 | Add a new game | Same as above, `startMenuCategory: 'Games'` | Touch GameApp (unless new game host type) |
-| Add WASM game | Same + `lazy()` + WASM loader inside component | Change lazy-loading infra |
+| Add game | Same as above | Change lazy-loading infra |
 | Add contact channel | Add a button/link inside EmailApp, or register a new app | Touch API route (unless new backend needed) |
 | Add settings panel | Register a SettingsApp | Touch StartMenu |
 | Add Start Menu category | Just use a new `startMenuCategory` string | Touch StartMenu rendering code |
@@ -830,7 +803,6 @@ Window component checks `isMobile()`:
 | **Total critical path** | **~35KB gzip** | **Immediately** |
 | xterm.js | ~300KB gzip | Terminal window opens |
 | Game (each) | ~50-150KB (varies) | Game window opens |
-| WASM modules | Varies | On demand |
 
 ### Lazy Loading Pattern
 
@@ -850,7 +822,7 @@ The `Window` shell (title bar, chrome, position) renders immediately. The `Windo
 
 ### Performance Guardrails
 
-1. **No top-level imports of heavy modules.** xterm.js, game engines, and WASM must always be behind `import()`.
+1. **No top-level imports of heavy modules.** xterm.js and game engines must always be behind `import()`.
 2. **98.css in `<head>` as render-blocking.** It's only ~10KB and prevents FOUC.
 3. **Fonts:** Use 98.css's bundled Pixelated MS Sans Serif. No external font requests.
 4. **Images:** Desktop icons are small (32×32) PNGs. Already in `assets/icons/`. No lazy loading needed — total is <50KB.
@@ -916,8 +888,6 @@ cv/
 │   ├── downloads/
 │   │   ├── cv.pdf                    # pre-built PDF
 │   │   └── cv.docx                   # pre-built DOC
-│   ├── wasm/                         # WASM binaries (future: Doom, etc.)
-│   │   └── .gitkeep
 │   ├── cursors/                      # retro cursor files (optional)
 │   │   ├── default.cur
 │   │   ├── pointer.cur
@@ -963,7 +933,7 @@ cv/
 │   │       │   ├── GameApp.tsx       # lazy: generic game host (canvas + keyboard)
 │   │       │   └── games/
 │   │       │       ├── Snake.tsx     # 90s-style Snake game
-│   │       │       └── (future: Tetris.tsx, DoomGame.tsx, etc.)
+│   │       │       └── (future: Tetris.tsx, etc.)
 │   │       └── store/
 │   │           ├── desktop-store.ts  # createStore + actions
 │   │           ├── types.ts          # WindowState, AppRegistryEntry, etc.
@@ -1005,7 +975,6 @@ cv/
 - **Store is co-located with components** — not in a top-level `src/store/`. It's specific to the desktop system.
 - **Apps are in a sub-folder** — `apps/` contains the content components rendered inside windows. This separates "window chrome" from "window content."
 - **Games get their own sub-folder** — `apps/games/` keeps game implementations isolated. Each game is a self-contained module.
-- **`public/wasm/`** — reserved for future WASM binaries (Doom, etc.). Served as static files, fetched on demand by game components.
 - **CSS is minimal** — 98.css handles 80% of styling. Custom CSS is only for layout positioning.
 - **`assets/` (root) vs `src/assets/`** — root `assets/` is for design source files. `src/assets/` is for files imported by Astro components (optimized at build time).
 
@@ -1071,7 +1040,6 @@ cv/
 │                                                              │
 │  Static Files:                                               │
 │  public/downloads/cv.pdf, cv.docx                            │
-│  public/wasm/*.wasm  (future: Doom, etc.)                    │
 ├─────────────────────────────────────────────────────────────┤
 │                   SOLIDJS (Interactive Island)               │
 │                                                              │
@@ -1102,7 +1070,7 @@ cv/
 │                   terminal, everywhere. No other changes.     │
 │                                                              │
 │  MVP apps: browser, explorer, email                          │
-│  Post-MVP: terminal, snake, tetris, doom (WASM), settings... │
+│  Post-MVP: terminal, snake, tetris, settings...               │
 ├─────────────────────────────────────────────────────────────┤
 │                      98.CSS (Aesthetic)                       │
 │                                                              │
@@ -1146,7 +1114,6 @@ cv/
 | How does contact work? | Astro API route → Resend. Form in SolidJS `EmailApp`. |
 | How does mobile work? | Responsive degradation: full-screen windows, no drag, simplified taskbar |
 | How are heavy features loaded? | Dynamic `import()` with SolidJS `lazy()` + `<Suspense>` via registry |
-| How are WASM games handled? | Same registry pattern. `lazy()` component → dynamic WASM loader → `<canvas>`. 0 bytes at page load. |
 | How do you add a new app? | Create component + `registerApp()`. No other files change. |
 | What about accessibility? | ARIA roles, keyboard nav, `<noscript>` fallback with direct links |
 | Window resizing? | Deferred. Not in MVP. |

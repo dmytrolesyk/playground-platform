@@ -48,7 +48,7 @@ The following skills **MUST** be loaded and followed when working on the corresp
 | **Phase 5** | Mobile responsive degradation | Medium | Medium | ✅ |
 | **Phase 6** | Polish, accessibility, performance | Low | Medium | ✅ |
 | **Phase 7** | Terminal app (xterm.js) | Medium | Large | ❌ Nice-to-have |
-| **Phase 8** | Retro games (90s Snake + WASM scaffold) | Low | Large | ❌ Nice-to-have |
+| **Phase 8** | Retro games (90s Snake) | Low | Large | ❌ Nice-to-have |
 | **Phase 9** | Automated PDF/DOC generation | Low | Medium | ❌ Nice-to-have |
 | **Phase 10** | CI/CD & Deployment (Railway + GitHub Actions) | Medium | Medium | ✅ Production |
 
@@ -1377,13 +1377,13 @@ Expected: Lint passes, typecheck passes, tests pass.
 
 > **Skills:** `test-driven-development`
 
-**Goal:** Playable retro games in windows, starting with a 90s-authentic Snake. Architecture provisions for WASM games (Doom, etc.) later.
+**Goal:** Playable retro games in windows, starting with a 90s-authentic Snake.
 
-**Estimated time:** 4-6 hours (Snake: ~3h, infrastructure + WASM scaffold: ~2h)
+**Estimated time:** 3-4 hours
 
 **Dependency:** MVP complete. Independent of Phase 7.
 
-**Risk:** Low (games are self-contained), but time-consuming. WASM games are an unknown — the infrastructure is straightforward, but sourcing/building a working Doom WASM port requires research.
+**Risk:** Low (games are self-contained), but time-consuming.
 
 ### Task 8.1: Game Infrastructure
 
@@ -1395,7 +1395,7 @@ Expected: Lint passes, typecheck passes, tests pass.
 Generic game host component that:
 - Receives `gameId` via `appProps` from the window state
 - Lazy-loads the specific game module based on `gameId`
-- Renders a `<canvas>` element (or a `<div>` container for WASM games that need their own DOM)
+- Renders a `<canvas>` element
 - Captures keyboard focus when the window is focused (games need arrow keys, WASD, etc.)
 - Pauses the game when the window is minimized or loses focus
 - Shows a retro loading screen ("Loading..." with an hourglass) while the game module loads
@@ -1514,86 +1514,6 @@ git commit -m "feat: add 90s-style Snake game with tested engine"
 pnpm verify
 ```
 Expected: Lint passes, typecheck passes, tests pass (including snake-engine tests).
-
-### Task 8.3: WASM Game Infrastructure (Scaffold for Future)
-
-**Files:**
-- Create: `public/wasm/.gitkeep`
-- Create: `src/components/desktop/apps/games/WasmGameHost.tsx`
-
-This task does NOT implement Doom or any specific WASM game. It builds the host infrastructure so that adding a WASM game later is trivial.
-
-- [ ] **Step 1: Create WasmGameHost component**
-
-A generic component that:
-- Accepts a `wasmUrl` prop (path to `.wasm` file in `public/wasm/`)
-- Fetches and instantiates the WASM module
-- Provides a `<canvas>` for rendering
-- Forwards keyboard/mouse events to the WASM module
-- Shows a loading progress bar while the WASM binary downloads (these can be 1-5MB)
-- Handles errors gracefully ("Failed to load game" dialog)
-
-```typescript
-interface WasmGameHostProps {
-  wasmUrl: string;           // e.g., "/wasm/doom.wasm"
-  initFunction: string;      // entry point function name in the WASM module
-  canvasWidth: number;
-  canvasHeight: number;
-}
-```
-
-- [ ] **Step 2: Document how to add a WASM game**
-
-Create `src/components/desktop/apps/games/README.md` explaining:
-1. Place the `.wasm` binary in `public/wasm/`
-2. Create a thin wrapper component that uses `WasmGameHost`
-3. Call `registerApp()` with `lazy(() => import('./games/YourGame'))`
-4. Done — game appears on desktop and Start > Games
-
-Example for a hypothetical Doom port:
-```typescript
-// games/DoomGame.tsx
-import { registerApp } from '../registry';
-import { lazy } from 'solid-js';
-import doomIcon from '../../../assets/icons/doom.png';
-
-const DoomGame = () => (
-  <WasmGameHost
-    wasmUrl="/wasm/doom.wasm"
-    initFunction="doom_main"
-    canvasWidth={640}
-    canvasHeight={480}
-  />
-);
-
-registerApp({
-  id: 'doom',
-  title: 'DOOM',
-  icon: doomIcon,
-  component: lazy(() => import('./games/DoomGame')),
-  desktop: true,
-  startMenu: true,
-  startMenuCategory: 'Games',
-  singleton: true,
-  defaultSize: { width: 660, height: 520 },
-});
-
-export default DoomGame;
-```
-
-- [ ] **Step 3: Commit**
-```bash
-git add -A
-git commit -m "feat: add WASM game host scaffold and documentation"
-```
-
-### Task 8.4: Add More Games (Future)
-
-Each additional game follows the same pattern:
-1. **Canvas-based game (Snake, Tetris, Minesweeper):** Pure TS engine + SolidJS renderer + `registerApp()`.
-2. **WASM game (Doom, Quake):** Find/build the `.wasm` binary, create a thin wrapper using `WasmGameHost`, `registerApp()`.
-
-The registry pattern means zero framework changes regardless of how many games are added.
 
 ---
 
@@ -1904,10 +1824,9 @@ Each session should be one phase or sub-phase. Keep sessions focused.
 | **Session 8** | Phase 6 (Polish + a11y + perf) | 1-2 hr | `web-design-guidelines`, `astro` | Final MVP quality pass. |
 | **Session 9** | Phase 7 (Terminal) | 3-4 hr | `test-driven-development` | Terminal is the most impressive. |
 | **Session 10** | Phase 8 Tasks 8.1-8.2 (Snake + game infra) | 3-4 hr | `test-driven-development` | 90s-style Snake. TDD the engine. |
-| **Session 11** | Phase 8 Task 8.3 (WASM scaffold) | 1-2 hr | `test-driven-development` | Build the host. No actual WASM game yet — just the infrastructure. |
-| **Session 12** | Phase 9 (automated PDF/DOC) | 2-3 hr | `astro` | Build-time generation. |
-| **Session 13** | Phase 10 (CI/CD + Railway deployment) | 2-3 hr | `use-railway`, `astro` | GitHub Actions quality gate + Railway deploy. **Site goes live.** |
-| **Session 14+** | Add more games (Tetris, Doom, etc.) | 2-4 hr each | `test-driven-development` | Each game is independent. WASM games need a `.wasm` binary to be sourced. |
+| **Session 11** | Phase 9 (automated PDF/DOC) | 2-3 hr | `astro` | Build-time generation. |
+| **Session 12** | Phase 10 (CI/CD + Railway deployment) | 2-3 hr | `use-railway`, `astro` | GitHub Actions quality gate + Railway deploy. **Site goes live.** |
+| **Session 13+** | Add more games, features | 2-4 hr each | `test-driven-development` | Each game is independent. Canvas-based: pure TS engine + `registerApp()`. |
 
 ---
 
