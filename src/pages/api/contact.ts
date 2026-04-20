@@ -52,12 +52,13 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
     });
   }
 
-  // biome-ignore lint/complexity/useLiteralKeys: env vars use index signature
-  const apiKey = import.meta.env['RESEND_API_KEY'] as string | undefined;
-  // biome-ignore lint/complexity/useLiteralKeys: env vars use index signature
-  const toEmail = import.meta.env['CONTACT_TO_EMAIL'] as string | undefined;
-  // biome-ignore lint/complexity/useLiteralKeys: env vars use index signature
-  const fromEmail = import.meta.env['CONTACT_FROM_EMAIL'] as string | undefined;
+  // Use process.env for server-side runtime vars (not import.meta.env which Vite inlines at build time)
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const apiKey = process.env['RESEND_API_KEY'];
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const toEmail = process.env['CONTACT_TO_EMAIL'];
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const fromEmail = process.env['CONTACT_FROM_EMAIL'];
 
   if (!(apiKey && toEmail && fromEmail)) {
     console.error('[contact] Missing env vars:', {
