@@ -55,6 +55,25 @@ export function BrowserApp(): JSX.Element {
 
       {/* Content viewport */}
       <div class="browser-viewport">
+        {/* Photo and header */}
+        <div class="browser-header">
+          <img src="/images/photo.jpg" alt="Dmytro Lesyk" class="browser-header__photo" />
+          <div class="browser-header__info">
+            <h1 class="browser-header__name">Dmytro Lesyk</h1>
+            <p class="browser-header__title">Frontend Engineer · Kyiv, Ukraine</p>
+            <p class="browser-header__contact">
+              dmitriylesik@gmail.com ·{' '}
+              <a
+                href="https://linkedin.com/in/dmytro-lesyk-961599139/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn
+              </a>
+            </p>
+          </div>
+        </div>
+
         {sections().length === 0 ? (
           <p style={{ padding: '16px', color: '#808080' }}>Loading CV content...</p>
         ) : (

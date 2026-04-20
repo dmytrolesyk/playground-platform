@@ -50,48 +50,104 @@
   flex: 1;
   overflow: auto;
   background-color: #fff;
-  padding: 16px 24px;
+  padding: 20px 28px;
   border: 2px inset;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1a1a1a;
 }
 
+/* Photo + name header */
+.browser-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 16px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #000080;
+}
+
+.browser-header__photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 2px solid #c0c0c0;
+  flex-shrink: 0;
+}
+
+.browser-header__info {
+  flex: 1;
+}
+
+.browser-header__name {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  color: #000080;
+}
+
+.browser-header__title {
+  font-size: 15px;
+  margin: 0 0 4px;
+  color: #333;
+  font-weight: 500;
+}
+
+.browser-header__contact {
+  font-size: 13px;
+  margin: 0;
+  color: #555;
+}
+
+.browser-header__contact a {
+  color: #0000ff;
+}
+
+/* Section headings */
 .browser-viewport h2 {
-  font-size: 1.4em;
-  margin: 16px 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+  margin: 20px 0 8px;
   border-bottom: 1px solid #c0c0c0;
   padding-bottom: 4px;
-  color: #000;
+  color: #000080;
 }
 
 .browser-viewport h3 {
-  font-size: 1.1em;
-  margin: 12px 0 4px;
-  color: #000;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 14px 0 4px;
+  color: #1a1a1a;
 }
 
 .browser-viewport p {
   margin: 4px 0;
-  line-height: 1.5;
-  font-size: 13px;
-  color: #000;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #1a1a1a;
 }
 
 .browser-viewport ul {
-  margin: 4px 0;
-  padding-left: 20px;
+  margin: 6px 0;
+  padding-left: 22px;
 }
 
 .browser-viewport li {
-  margin: 2px 0;
-  font-size: 13px;
-  line-height: 1.5;
+  margin: 3px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1a1a1a;
 }
 
 .browser-viewport em {
-  color: #666;
+  color: #555;
 }
 
 .browser-viewport strong {
   color: #000;
+  font-weight: 600;
 }
 
 .browser-viewport a {
@@ -103,5 +159,5 @@
 }
 
 .browser-section:first-child h2 {
-  margin-top: 0;
+  margin-top: 8px;
 }
