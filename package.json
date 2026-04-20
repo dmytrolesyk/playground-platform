@@ -15,7 +15,8 @@
     "typecheck": "astro check",
     "check": "biome check . && astro check",
     "test": "vitest run --passWithNoTests",
-    "verify": "biome check . && astro check && vitest run --passWithNoTests"
+    "verify": "biome check . && astro check && vitest run --passWithNoTests",
+    "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts"
   },
   "dependencies": {
     "98.css": "^0.1.21",
