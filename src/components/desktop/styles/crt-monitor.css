@@ -35,6 +35,12 @@
   padding: 10px 20px 0;
 }
 
+@supports (height: 100dvh) {
+  .crt-monitor {
+    height: 100dvh;
+  }
+}
+
 /* ============================================
    Monitor body — the plastic housing
    ============================================ */

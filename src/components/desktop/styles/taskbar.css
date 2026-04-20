@@ -104,6 +104,22 @@
 }
 
 .taskbar__tasks--mobile {
-  display: flex;
+  display: none;
   align-items: center;
+}
+
+/* Mobile — show mobile tasks, hide desktop tasks, safe-area padding */
+@media (max-width: 768px) {
+  .taskbar {
+    padding-bottom: calc(2px + env(safe-area-inset-bottom, 0px));
+    height: calc(36px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .taskbar__tasks--desktop {
+    display: none;
+  }
+
+  .taskbar__tasks--mobile {
+    display: flex;
+  }
 }

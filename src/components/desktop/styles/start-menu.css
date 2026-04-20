@@ -19,6 +19,13 @@
   display: flex;
 }
 
+/* Mobile — start menu clears the taller safe-area-aware taskbar */
+@media (max-width: 768px) {
+  .start-menu {
+    bottom: calc(36px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .start-menu__sidebar {
   background: linear-gradient(to top, var(--color-title-bar-active), #1084d0);
   width: 24px;
