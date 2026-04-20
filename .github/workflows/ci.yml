@@ -19,8 +19,12 @@ jobs:
       - run: pnpm verify
       - run: pnpm build
 
-  cv-staleness:
+  cv-generate:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: verify
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -33,9 +37,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y pandoc
       - name: Generate CV files
         run: pnpm generate-cv
-      - name: Check CV files are up-to-date
+      - name: Commit updated CV files if changed
         run: |
-          git diff --exit-code public/downloads/ || {
-            echo "::error::CV files are stale. Run 'pnpm generate-cv' locally and commit the updated files."
-            exit 1
-          }
+          git diff --quiet public/downloads/ && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/downloads/
+          git commit -m "chore: regenerate CV files [skip ci]"
+          git push
