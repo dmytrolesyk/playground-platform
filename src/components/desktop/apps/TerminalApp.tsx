@@ -1,3 +1,4 @@
+import '@xterm/xterm/css/xterm.css';
 import { createSignal, type JSX, onCleanup, onMount } from 'solid-js';
 import { APP_REGISTRY } from '../apps/registry';
 import { useDesktop } from '../store/context';
@@ -157,9 +158,6 @@ export function TerminalApp(): JSX.Element {
       import('@xterm/xterm'),
       import('@xterm/addon-fit'),
     ]);
-
-    // Import xterm CSS
-    await import('@xterm/xterm/css/xterm.css');
 
     if (!containerRef) return;
 
