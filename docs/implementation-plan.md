@@ -1523,6 +1523,17 @@ Expected: Lint passes, typecheck passes, tests pass (including snake-engine test
 
 **Goal:** PDF and DOC files auto-generated from Markdown at build time.
 
+**Current state:** `scripts/generate-cv.ts` reads MD files directly and builds its own HTML template for PDF. This works but means the PDF layout is maintained in a TS string rather than in Astro components.
+
+**Future improvement:** Move the PDF HTML template to an Astro page (e.g., `/cv-export`) so the layout lives in `.astro` files where it belongs. The script would then:
+1. `astro build` (already happens)
+2. Start preview server
+3. Chrome headless prints `/cv-export` → `cv.pdf`
+4. Pandoc converts MD → `cv.docx`
+5. Kill preview server
+
+This is a better separation of concerns — Astro owns HTML/styling, the script only orchestrates conversion tools. Not urgent since the current approach works and reads from the same MD source of truth.
+
 **Estimated time:** 2-3 hours
 
 **Dependency:** MVP complete. Phase 6.2 (cv-print page) complete.
