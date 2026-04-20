@@ -9,10 +9,14 @@
 ## Architecture — read these first
 
 - `docs/architecture-guidelines.md` — all architectural decisions, component hierarchy, state design, extensibility model. This is the source of truth.
-- `docs/implementation-plan.md` — historical phased plan (all phases 0–10 are complete). Useful as a reference for how things were built and why.
+- `docs/feature-development.md` — the process for designing and building new features. Read before starting any feature work.
+- `docs/features/` — one design doc per feature. Each feature is designed, planned, and tracked in its own file.
 - `docs/design-system.md` + `docs/design-tokens.json` — visual spec and token values. 98.css handles component aesthetics; custom CSS is layout only.
 
 ## Non-discoverable rules
+
+### Feature development process
+Every new feature follows: branch (`feat/<name>`) → design doc (`docs/features/<name>.md`) → implement with TDD → finalize (update docs, PR). Read `docs/feature-development.md` for the full process. Do not skip the design doc, even for simple features.
 
 ### App registry is the extensibility point
 Adding any new "app" (game, tool, settings panel) means: create a component in `src/components/desktop/apps/`, call `registerApp()` in `apps/registry.ts`. No other files should need changes — desktop icons, start menu, window manager, and terminal all read from the registry. If you find yourself editing Desktop, WindowManager, Taskbar, or StartMenu to add a new app, you are doing it wrong.
@@ -61,12 +65,13 @@ Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `C
 
 ## CV File Generation
 
-PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by `pnpm generate-cv`. This script requires Chrome and pandoc. After editing any CV markdown, run the script and commit the updated files. CI checks for staleness.
+PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by `pnpm generate-cv`. This script requires Chrome and pandoc. CI auto-regenerates and commits updated files on push to main (via the `cv-generate` job). You can also run `pnpm generate-cv` locally to preview changes.
 
 ## Deployment
 
 - **Target:** Railway. Builds via `Dockerfile` (node:24-slim multi-stage), NOT nixpacks.
 - **Start command:** `node dist/server/entry.mjs`
-- **CI:** Two GitHub Actions workflows — `ci.yml` (verify on all PRs + push to main) and `deploy.yml` (Railway deploy on push to main only).
-- **Railway env vars:** `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST=0.0.0.0`. `PUBLIC_*` must be set at build time (Astro inlines them).
-- **Deploy secret:** `RAILWAY_TOKEN` GitHub secret needed for `deploy.yml`.
+- **CI:** Single `ci.yml` workflow with three jobs: `verify` (lint + typecheck + tests + build, runs on all PRs and main push), `cv-generate` (regenerates CV files and auto-commits if changed, main only, after verify), `deploy` (Railway deploy, main only, after verify + cv-generate).
+- **Branch protection:** main branch is protected — PRs only, merge blocked until `verify` passes.
+- **Railway env vars:** `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST=0.0.0.0`. `PUBLIC_*` must be set at build time (Astro inlines them). `PUBLIC_*` vars need `ARG` + `ENV` in the Dockerfile to be available during Docker build.
+- **Deploy secret:** `RAILWAY_TOKEN` GitHub secret needed for deploy job.
