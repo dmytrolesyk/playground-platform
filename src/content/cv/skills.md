@@ -10,7 +10,7 @@ order: 4
 - **State Management:** Redux, Zustand, RxJS
 - **Backend:** Node.js, Fastify, REST API, gRPC (ConnectRPC)
 - **Databases:** MongoDB, PostgreSQL, Redis
-- **Testing:** Cypress
+- **Testing:** Cypress, Playwright, Vitest
 - **Build Tools:** Webpack
 - **UI Libraries:** Material UI, Ant Design
 - **Design:** Figma
