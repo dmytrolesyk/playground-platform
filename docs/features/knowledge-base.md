@@ -390,12 +390,12 @@ Both produce the same artifact: a markdown file in `src/content/knowledge/`.
 | Features | 4 docs | Walkthrough linking to arch + concepts (~500-1000 words) | Fast-mode drafts |
 | **Total** | **22 docs** | **~20,000-30,000 words** | Rolling effort |
 
-## Open Questions
+## Resolved Questions
 
-- **Icon assets:** Need icons for the Library app and Architecture Explorer. Reuse existing help/blueprint icons or create new pixel-art icons?
-- **Mermaid rendering:** Use a remark plugin for build-time SVG rendering, or keep diagrams as ASCII/code blocks initially and add Mermaid later?
-- **Search on /learn:** Static search (e.g., Pagefind) or just category browsing for now?
-- **Mobile /learn routes:** The reading interface should be responsive. The Library app (iframe in a full-screen mobile window) might be awkward — should mobile users go directly to `/learn/*` routes instead?
+- **Icon assets:** Create new pixel-art icons (32×32) for both Library and Architecture Explorer apps.
+- **Mermaid rendering:** Use a remark plugin (`remark-mermaid` or similar) for build-time SVG rendering from the start.
+- **Search on /learn:** Category browsing only for now. Static search (Pagefind) deferred as a separate feature.
+- **Mobile /learn routes:** Mobile users go directly to `/learn/*` routes — bypass the Library app (iframe-in-window is awkward on mobile). Desktop icon on mobile opens `/learn/` in a new tab or navigates directly.
 
 ## Implementation Plan
 
