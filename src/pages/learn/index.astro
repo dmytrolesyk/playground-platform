@@ -1,0 +1,108 @@
+---
+import { getCollection } from 'astro:content';
+import LearnLayout from '../../layouts/LearnLayout.astro';
+
+export const prerender = true;
+
+interface KnowledgeEntry {
+  id: string;
+  data: {
+    title: string;
+    category: string;
+    summary: string;
+    difficulty?: string;
+    order?: number;
+  };
+}
+
+const entries = (await getCollection('knowledge')) as KnowledgeEntry[];
+
+const categories: Record<string, KnowledgeEntry[]> = {};
+for (const entry of entries) {
+  const cat = entry.data.category;
+  if (!categories[cat]) {
+    categories[cat] = [];
+  }
+  categories[cat].push(entry);
+}
+
+// Sort each category by order, then title
+for (const cat of Object.keys(categories)) {
+  const items = categories[cat];
+  if (items) {
+    items.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+  }
+}
+
+const categoryOrder = ['architecture', 'concept', 'technology', 'feature'];
+const categoryLabels: Record<string, string> = {
+  architecture: '🏗️ Architecture',
+  concept: '💡 Concepts',
+  technology: '🔧 Technologies',
+  feature: '✨ Features',
+};
+
+const startHere = [
+  'architecture/overview',
+  'architecture/window-manager',
+  'architecture/app-registry',
+];
+---
+
+<LearnLayout title="Knowledge Base">
+  <div class="learn-page">
+    <aside class="learn-sidebar">
+      <h3>Categories</h3>
+      <ul>
+        {categoryOrder.map((cat) => (
+          <li><a href={`#${cat}`}>{categoryLabels[cat]}</a></li>
+        ))}
+      </ul>
+    </aside>
+
+    <main class="learn-content">
+      <h1>Knowledge Base</h1>
+      <p class="learn-content__summary">
+        Everything about how this platform works — the architecture, the technologies, the patterns, and the decisions behind them.
+      </p>
+
+      <h2>🚀 Start Here</h2>
+      <p>Recommended reading order to understand the system top-to-bottom:</p>
+      <ol>
+        {startHere.map((slug) => {
+          const entry = entries.find((e) => e.id === slug);
+          return entry ? (
+            <li>
+              <a href={`/learn/${entry.id}`}>{entry.data.title}</a>
+              {' — '}<em>{entry.data.summary}</em>
+            </li>
+          ) : null;
+        })}
+      </ol>
+
+      {categoryOrder.map((cat) => {
+        const items = categories[cat];
+        if (!items?.length) return null;
+        return (
+          <>
+            <h2 id={cat}>{categoryLabels[cat]}</h2>
+            <ul>
+              {items.map((entry) => (
+                <li>
+                  <a href={`/learn/${entry.id}`}>{entry.data.title}</a>
+                  {entry.data.difficulty && (
+                    <span class={`learn-badge learn-badge--${entry.data.difficulty}`}>
+                      {entry.data.difficulty}
+                    </span>
+                  )}
+                  <br />
+                  <em>{entry.data.summary}</em>
+                </li>
+              ))}
+            </ul>
+          </>
+        );
+      })}
+    </main>
+  </div>
+</LearnLayout>
