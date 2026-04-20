@@ -57,6 +57,9 @@ Use `transform: translate(x, y)` for window position — not CSS `left`/`top`. T
 ### Mobile breakpoint
 `768px`. Below it: full-screen windows, no drag, one window at a time, single-tap opens apps. The `isMobile` signal from the store drives this — same components, conditional behavior.
 
+### Knowledge base content collection
+Learning content lives in `src/content/knowledge/` as Markdown with Zod-validated frontmatter (category, relatedConcepts, relatedFiles, technologies, externalReferences, diagramRef). Four categories: `architecture/`, `concepts/`, `technologies/`, `features/`. Every new feature must include knowledge entries in its feature doc. The Architecture Explorer data in `architecture-data.ts` must stay in sync with the actual system — update nodes/edges when adding apps or changing architecture.
+
 ## Secrets
 
 Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST`.

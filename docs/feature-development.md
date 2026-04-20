@@ -84,6 +84,21 @@ registerApp({
 - [ ] Step 1
 - [ ] Step 2
 - [ ] ...
+
+## Knowledge Entries
+<!-- What learning content does this feature need? -->
+
+New entries to create:
+- [ ] `architecture/<slug>.md` — ...
+- [ ] `concepts/<slug>.md` — ...
+- [ ] `technologies/<slug>.md` — ...
+
+Existing entries to update:
+- [ ] `architecture/overview.md` — ...
+
+Architecture explorer updates:
+- [ ] Add node(s): ...
+- [ ] Add edge(s): ...
 ```
 
 ### Commit the doc before writing code
@@ -118,6 +133,8 @@ Before merging:
 3. **Update `docs/architecture-guidelines.md`** — only if the feature introduced new patterns, extension points, or architectural decisions worth recording. Most simple features won't need this. Features that add new shared services, new registry fields, or new platform-level behaviors should update §19 (Experimentation Platform Analysis) or add a new section.
 4. **Update `AGENTS.md`** — only if there are new non-discoverable rules that an agent couldn't figure out from reading the code (e.g., "audio service is a singleton — don't create a second AudioContext").
 5. **PR → merge to main.** Squash or merge commit — your preference per feature.
+6. **Update knowledge base** — write/update knowledge entries listed in the feature doc. Update `architecture-data.ts` with new nodes and edges. Update `architecture/overview.md` if the feature changes the big picture.
+7. **(Optional) Draft blog entry** — write a blog post about the feature, linking to relevant knowledge articles.
 
 ---
 
