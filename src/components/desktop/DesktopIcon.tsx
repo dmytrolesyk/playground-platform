@@ -1,4 +1,5 @@
 import type { JSX } from 'solid-js';
+import { Z_INDEX } from './constants';
 import { useDesktop } from './store/context';
 
 interface DesktopIconProps {
@@ -9,6 +10,9 @@ interface DesktopIconProps {
   y: number;
   onDrag: (x: number, y: number) => void;
 }
+
+/** Minimum px movement before a pointerdown becomes a drag (prevents accidental drags on click). */
+const DRAG_THRESHOLD_PX = 4;
 
 export function DesktopIcon(props: DesktopIconProps): JSX.Element {
   const [state, actions] = useDesktop();
@@ -41,11 +45,14 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
     const newX = e.clientX - dragOffsetX;
     const newY = e.clientY - dragOffsetY;
 
-    if (!hasMoved && (Math.abs(newX - props.x) > 4 || Math.abs(newY - props.y) > 4)) {
+    if (
+      !hasMoved &&
+      (Math.abs(newX - props.x) > DRAG_THRESHOLD_PX || Math.abs(newY - props.y) > DRAG_THRESHOLD_PX)
+    ) {
       hasMoved = true;
       if (elementRef) {
         elementRef.style.willChange = 'transform';
-        elementRef.style.zIndex = '100';
+        elementRef.style.zIndex = String(Z_INDEX.DRAGGING_ICON);
       }
     }
 
@@ -101,8 +108,8 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
       class="desktop-icon"
       classList={{ 'desktop-icon--selected': isSelected() }}
       style={{
-        position: 'absolute',
-        transform: `translate(${props.x}px, ${props.y}px)`,
+        position: state.isMobile ? 'static' : 'absolute',
+        transform: state.isMobile ? 'none' : `translate(${props.x}px, ${props.y}px)`,
         'touch-action': 'none',
       }}
       onClick={handleClick}

@@ -152,7 +152,7 @@
   inset: 0;
   border-radius: 6px;
   pointer-events: none;
-  z-index: 998;
+  z-index: var(--z-crt-glass);
   /* Convex glass curvature illusion */
   background: /* Ceiling light reflection hotspot */
       radial-gradient(
@@ -175,7 +175,7 @@
   inset: 0;
   border-radius: 6px;
   pointer-events: none;
-  z-index: 999;
+  z-index: var(--z-crt-scanlines);
   background: repeating-linear-gradient(
     to bottom,
     transparent 0px,
@@ -194,7 +194,7 @@
   inset: 0;
   border-radius: 6px;
   pointer-events: none;
-  z-index: 997;
+  z-index: var(--z-crt-vignette);
   background: radial-gradient(
     ellipse at 50% 50%,
     transparent 55%,
