@@ -85,3 +85,7 @@
 .explorer-file:hover .explorer-file__name {
   color: #fff;
 }
+
+.explorer-file:hover img {
+  filter: brightness(0) invert(1);
+}

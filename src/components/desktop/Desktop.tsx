@@ -13,9 +13,22 @@ function DesktopInner(): JSX.Element {
 
   const handleDesktopClick = (e: MouseEvent): void => {
     const target = e.target as HTMLElement;
-    if (target.classList.contains('desktop') || target.classList.contains('crt-screen')) {
-      actions.selectDesktopIcon(null);
-      actions.closeStartMenu();
+
+    // Close start menu when clicking anywhere outside it and the start button
+    if (state.startMenuOpen) {
+      const isStartBtn = target.closest('.taskbar__start-btn');
+      const isStartMenu = target.closest('.start-menu');
+      if (!(isStartBtn || isStartMenu)) {
+        actions.closeStartMenu();
+      }
+    }
+
+    // Deselect desktop icon when clicking outside icon area
+    if (state.selectedDesktopIcon !== null) {
+      const isIcon = target.closest('.desktop-icon');
+      if (!isIcon) {
+        actions.selectDesktopIcon(null);
+      }
     }
   };
 
