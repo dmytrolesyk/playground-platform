@@ -45,3 +45,16 @@ jobs:
           git add public/downloads/
           git commit -m "chore: regenerate CV files [skip ci]"
           git push
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [verify, cv-generate]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+      - name: Deploy to Railway
+        run: railway up --detach --service cv-website
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
