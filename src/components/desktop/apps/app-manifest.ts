@@ -100,6 +100,7 @@ registerApp({
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 700, height: 500 },
+  desktopAlign: 'right',
 });
 
 registerApp({
@@ -112,4 +113,5 @@ registerApp({
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 900, height: 600 },
+  desktopAlign: 'right',
 });

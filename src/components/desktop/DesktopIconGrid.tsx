@@ -18,23 +18,41 @@ interface IconPosition {
 
 function calculateInitialPositions(apps: AppRegistryEntry[]): IconPosition[] {
   const positions: IconPosition[] = [];
+
+  const leftApps = apps.filter((a) => a.desktopAlign !== 'right');
+  const rightApps = apps.filter((a) => a.desktopAlign === 'right');
+
+  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+
+  // Place left-aligned icons (top-left, column-first)
   let col = 0;
   let row = 0;
-
-  for (const app of apps) {
+  for (const app of leftApps) {
     const x = GRID_PADDING + col * (ICON_WIDTH + GRID_GAP);
     const y = GRID_PADDING + row * (ICON_HEIGHT + GRID_GAP);
     positions.push({ id: app.id, x, y });
     row += 1;
-    // Wrap to next column if exceeding viewport (rough estimate)
-    if (
-      y + ICON_HEIGHT * 2 + TASKBAR_HEIGHT >
-      (typeof window !== 'undefined' ? window.innerHeight : 800)
-    ) {
+    if (y + ICON_HEIGHT * 2 + TASKBAR_HEIGHT > viewportHeight) {
       row = 0;
       col += 1;
     }
   }
+
+  // Place right-aligned icons (top-right, column-first)
+  col = 0;
+  row = 0;
+  for (const app of rightApps) {
+    const x = viewportWidth - GRID_PADDING - ICON_WIDTH - col * (ICON_WIDTH + GRID_GAP);
+    const y = GRID_PADDING + row * (ICON_HEIGHT + GRID_GAP);
+    positions.push({ id: app.id, x, y });
+    row += 1;
+    if (y + ICON_HEIGHT * 2 + TASKBAR_HEIGHT > viewportHeight) {
+      row = 0;
+      col += 1;
+    }
+  }
+
   return positions;
 }
 
