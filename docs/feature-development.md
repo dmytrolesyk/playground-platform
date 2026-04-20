@@ -22,6 +22,15 @@ Create a feature branch before writing anything:
 git checkout -b feat/<feature-name>
 ```
 
+### Skills
+
+The design phase requires the following agent skills. Load them before starting:
+
+- **`system-design`** — for architecture analysis, component design, data flow, trade-off analysis
+- **`brainstorming`** — for exploring the idea, clarifying requirements, proposing approaches before committing to a design
+
+Additional skills as applicable (e.g., `test-driven-development` for Phase 2, `typescript-magician` for complex types, `web-design-guidelines` for UI-heavy features).
+
 ### Feature Document
 
 Create `docs/features/<feature-name>.md`. The document has required sections, but **scale each section to the feature's complexity** — a simple canvas game might be 30 lines total; a WebRTC video chat gets the full treatment.
