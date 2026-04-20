@@ -17,7 +17,9 @@
     "check": "biome check . && astro check",
     "test": "vitest run --passWithNoTests",
     "verify": "biome check . && astro check && vitest run --passWithNoTests",
-    "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts"
+    "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts",
+    "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
+    "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots"
   },
   "dependencies": {
     "98.css": "^0.1.21",
@@ -39,6 +41,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@biomejs/biome": "^2.4.12",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
     "vitest": "^4.1.4"
   }
