@@ -1,7 +1,7 @@
 # Feature: Knowledge Base & Learning System
 
 ## Status
-Design
+Complete
 
 ## Motivation
 
@@ -402,42 +402,46 @@ Both produce the same artifact: a markdown file in `src/content/knowledge/`.
 ## Implementation Plan
 
 ### Phase 1: Content Foundation
-- [ ] Set up `knowledge` content collection with Zod schema in `src/content.config.ts`
-- [ ] Create `LearnLayout.astro` — reading-optimized layout (not 98.css)
-- [ ] Create `/learn/index.astro` — category index with "Start Here" path
-- [ ] Create `/learn/[...slug].astro` — article page with sidebar, related links, external refs
-- [ ] Create 2-3 initial architecture docs as seed content (overview, window-manager, app-registry)
-- [ ] Verify build works, routes render correctly
+- [x] Set up `knowledge` content collection with Zod schema in `src/content.config.ts`
+- [x] Create `LearnLayout.astro` — reading-optimized layout (not 98.css)
+- [x] Create `/learn/index.astro` — category index with "Start Here" path
+- [x] Create `/learn/[...slug].astro` — article page with sidebar, related links, external refs
+- [x] Create 2-3 initial architecture docs as seed content (overview, window-manager, app-registry)
+- [x] Verify build works, routes render correctly
 
 ### Phase 2: Desktop Integration — Library App
-- [ ] Create `LibraryApp.tsx` with iframe browser mode + toolbar
-- [ ] Create `LibraryTreeView.tsx` with 98.css tree component
-- [ ] Register in `app-manifest.ts` with `lazy()` loading
-- [ ] Wire "New Tab" button to open current URL in browser tab
-- [ ] Test iframe navigation, back/forward, address bar sync
+- [x] Create `LibraryApp.tsx` with iframe browser mode + toolbar
+- [x] Create `LibraryTreeView.tsx` with 98.css tree component
+- [x] Register in `app-manifest.ts` with `lazy()` loading
+- [x] Wire "New Tab" button to open current URL in browser tab
+- [x] Test iframe navigation, back/forward, address bar sync
 
 ### Phase 3: Architecture Explorer
-- [ ] Create `architecture-data.ts` with full node/edge/layer definitions
-- [ ] Create `ExplorerCanvas.tsx` — SVG rendering with viewBox pan/zoom
-- [ ] Create `ExplorerNode.tsx` — clickable nodes with hover highlighting
-- [ ] Create `ExplorerEdge.tsx` — animated edges with layer-based visibility
-- [ ] Create `ExplorerPanel.tsx` — slide-in detail panel with "Open in Library" link
-- [ ] Create `LayerToggle.tsx` — edge type visibility controls
-- [ ] Register in `app-manifest.ts` with `lazy()` loading
-- [ ] Wire node clicks to open Library app at relevant `/learn/` URL
+- [x] Create `architecture-data.ts` with full node/edge/layer definitions
+- [x] Create `ExplorerCanvas.tsx` — SVG rendering with viewBox pan/zoom
+- [x] Create `ExplorerNode.tsx` — clickable nodes with hover highlighting
+- [x] Create `ExplorerEdge.tsx` — animated edges with layer-based visibility
+- [x] Create `ExplorerPanel.tsx` — slide-in detail panel with "Open in Library" link
+- [x] Create `LayerToggle.tsx` — edge type visibility controls
+- [x] Register in `app-manifest.ts` with `lazy()` loading
+- [x] Wire node clicks to open Library app at relevant `/learn/` URL
 
 ### Phase 4: Complete Initial Content
-- [ ] Write remaining architecture docs (state-management, data-flow, contact-system)
-- [ ] Write concept docs (fine-grained-reactivity, signals-vs-vdom, islands-architecture, pointer-events, compositor-pattern, inversion-of-control, lazy-loading)
-- [ ] Write technology docs (solidjs, astro, 98css, xterm, resend)
-- [ ] Write feature docs (cv-viewer, terminal, snake-game, crt-monitor-frame)
-- [ ] Wire all `diagramRef` values to corresponding explorer nodes
-- [ ] Verify all `relatedConcepts` slugs resolve correctly
+- [x] Write remaining architecture docs (state-management, data-flow, contact-system)
+- [x] Write concept docs (fine-grained-reactivity, signals-vs-vdom, islands-architecture, pointer-events, compositor-pattern, inversion-of-control, lazy-loading)
+- [x] Write technology docs (solidjs, astro, 98css, xterm, resend)
+- [x] Write feature docs (cv-viewer, terminal, snake-game, crt-monitor-frame)
+- [x] Wire all `diagramRef` values to corresponding explorer nodes
+- [x] Verify all `relatedConcepts` slugs resolve correctly
 
 ### Phase 5: Process Integration
-- [ ] Update `docs/feature-development.md` — add "Knowledge Entries" section to template
-- [ ] Update `docs/feature-development.md` — add knowledgebase steps to Phase 3 (Finalize)
-- [ ] Update `AGENTS.md` — add knowledgebase rules (content must be in knowledge collection, architecture-data.ts must stay in sync, etc.)
+- [x] Update `docs/feature-development.md` — add "Knowledge Entries" section to template
+- [x] Update `docs/feature-development.md` — add knowledgebase steps to Phase 3 (Finalize)
+- [x] Update `AGENTS.md` — add knowledgebase rules (content must be in knowledge collection, architecture-data.ts must stay in sync, etc.)
+
+### Deviations
+- **rehype-mermaid removed** — The plugin requires Playwright for all strategies (including `pre-mermaid`). Replaced with client-side mermaid rendering: a script in `LearnLayout.astro` converts `<pre><code class="language-mermaid">` blocks to `<pre class="mermaid">` and calls `mermaid.run()`.
+- **Biome overrides added** — SVG interactive elements in the Architecture Explorer trigger false-positive a11y rules (`noInteractiveElementToNoninteractiveRole`, `useSemanticElements`, `noStaticElementInteractions`). Added a biome.json override for `**/architecture-explorer/**`.
 
 ### Future (Not In Scope)
 - Blog system as another content collection + routes + desktop app
