@@ -4,7 +4,7 @@
 
 **Goal:** Build an executable reliability layer and staged mastery model for the knowledge base, including audits, doc reconciliation, Library bridge fixes, restored Playwright e2e tests, and richer learning progress.
 
-**Architecture:** Keep the system static-first and local-first. Audit tooling runs in Node during verification, mastery progress runs in the browser through `localStorage`, and desktop integration is limited to improving existing Library and Architecture Explorer behavior.
+**Architecture:** Keep the system static-first and local-first. Audit tooling runs in Node during verification, mastery progress runs in the browser through `localStorage`, and desktop integration is limited to improving existing Library and Architecture Explorer behavior. Architecture graph work must stabilize renderer-agnostic data only; do not deepen the current SVG renderer or migrate to Cytoscape/LikeC4/ELK in this feature.
 
 **Tech Stack:** Astro content collections, SolidJS desktop store, Node 24 native TypeScript stripping, Vitest, Playwright, localStorage, Markdown frontmatter, Mermaid.
 
@@ -25,6 +25,7 @@
 - Modify `src/pages/learn/[...slug].astro`: render staged mastery controls.
 - Modify `src/components/desktop/store/desktop-store.ts`: update singleton app props on repeated open.
 - Modify `src/components/desktop/apps/library/LibraryApp.tsx`: react to changing `initialUrl` and sync iframe navigation.
+- Modify `src/components/desktop/apps/architecture-explorer/architecture-data.ts`: stabilize graph data and links without adding renderer-specific layout behavior.
 - Create `playwright.config.ts`: production-build e2e config.
 - Create `tests/e2e/helpers.ts`: shared Playwright helpers.
 - Create `tests/e2e/knowledge.spec.ts`: `/learn` and mastery tests.
@@ -44,7 +45,7 @@
 
 - [ ] **Step 1: Write failing tests for graph resolution**
 
-Test missing related concepts, missing prerequisites, unknown modules, bad diagram refs, and prerequisite cycles.
+Test missing related concepts, missing prerequisites, unknown modules, bad diagram refs, broken edge endpoints, duplicate architecture node IDs, invalid node categories, invalid edge types, and prerequisite cycles.
 
 Run:
 
@@ -97,6 +98,7 @@ The loader should collect:
 - raw frontmatter fields
 - raw body text
 - architecture node ids and `knowledgeSlug` values from `architecture-data.ts`
+- architecture edge endpoints, node categories, and edge types from `architecture-data.ts`
 - module ids from `src/content/knowledge/modules.ts`
 
 - [ ] **Step 3: Implement CLI report and exit codes**
@@ -128,7 +130,7 @@ git add package.json pnpm-lock.yaml scripts/audit-knowledge.ts scripts/knowledge
 git commit -m "feat: add executable knowledge audit"
 ```
 
-## Task 3: Fix Current Knowledge Audit Failures
+## Task 3: Fix Current Knowledge Audit Failures and Stabilize Graph Data
 
 **Files:**
 - Modify: `src/content/knowledge/**/*.md`
@@ -150,15 +152,23 @@ Expected: concrete failures, including stale docs or graph inconsistencies.
 
 Make `diagramRef` values match real node ids or add missing nodes where the relationship is meaningful.
 
-- [ ] **Step 3: Fix lab quality gaps**
+- [ ] **Step 3: Fix architecture graph integrity**
+
+Make node IDs stable and unique, ensure every edge endpoint resolves, ensure node categories and edge types come from the documented enums, and ensure every `knowledgeSlug` points to a real article.
+
+- [ ] **Step 4: Avoid renderer-specific expansion**
+
+Do not add new manual SVG layout behavior or visual interactions in this task. The graph data should be clean enough for a future renderer migration, but the existing SVG renderer should only receive fixes needed to keep it working.
+
+- [ ] **Step 5: Fix lab quality gaps**
 
 If the audit requires Mermaid diagrams for labs, add concise Mermaid diagrams to lab bodies. If labs are intentionally exempt, update the audit and docs so the rule is explicit.
 
-- [ ] **Step 4: Reconcile stale docs**
+- [ ] **Step 6: Reconcile stale docs**
 
 Update `knowledge-base-v2.md` and `architecture-guidelines.md` so statuses match current implementation.
 
-- [ ] **Step 5: Run audit again**
+- [ ] **Step 7: Run audit again**
 
 Run:
 
@@ -168,7 +178,7 @@ pnpm verify:knowledge
 
 Expected: pass.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add docs src/content src/components/desktop/apps/architecture-explorer

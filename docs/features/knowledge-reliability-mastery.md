@@ -14,6 +14,7 @@ This feature extends the existing knowledge system without changing the core des
 - **Audit tooling** runs from Node during verification. It reads `src/content/knowledge/**/*.md`, `src/content/knowledge/modules.ts`, and `architecture-data.ts`, then reports actionable failures.
 - **Mastery progress** remains local-first. The browser stores progress in `localStorage`; no backend, account system, or database is introduced.
 - **Library bridge fixes** stay inside the existing registry/window model by improving singleton prop updates and iframe URL synchronization.
+- **Architecture graph stabilization** treats `architecture-data.ts` as a renderer-agnostic knowledge graph. This feature should audit and improve the graph model, not deepen the current hand-drawn SVG renderer or migrate to Cytoscape/LikeC4/ELK yet.
 - **E2E tests** restore the missing Playwright tier expected by `AGENTS.md`, using production builds to test `/learn`, Library, Architecture Explorer, and mobile behavior.
 - **Docs reconciliation** updates stale feature and architecture docs so agents can trust the documented process.
 
@@ -34,6 +35,15 @@ The audit validates:
 - architecture explorer coverage is intentional: every `diagramRef` maps to a node, and every node with `knowledgeSlug` maps to an article
 - lab structure includes setup, cleanup, and repeated DO / OBSERVE / EXPLAIN sections
 - docs status consistency for knowledge feature docs
+
+The audit should also prepare for a future Architecture Explorer v2 by enforcing a clean graph contract:
+
+- node IDs are stable and unique
+- edge endpoints resolve
+- node categories and edge types come from documented enums
+- `knowledgeSlug` values point to real articles
+- article `diagramRef` values point back to real graph nodes
+- no renderer-only layout assumptions are required for correctness
 
 Add package scripts:
 
@@ -91,7 +101,21 @@ Fix two existing navigation issues:
 
 This keeps Architecture Explorer node clicks useful even if the Library is already open.
 
-### 4. E2E Testing Restoration
+### 4. Renderer-Agnostic Architecture Graph Constraint
+
+The current Architecture Explorer SVG renderer is useful enough to keep working, but not valuable enough to deepen during this feature. The visual learner goal is real, and a future graph upgrade should be treated as its own feature.
+
+For this feature:
+
+- **Do validate and stabilize** the architecture graph data model.
+- **Do add tests/audits** that keep nodes, edges, article links, and diagram refs consistent.
+- **Do keep existing Architecture Explorer behavior passing** through e2e smoke coverage.
+- **Do not add new custom SVG layout complexity.**
+- **Do not migrate to Cytoscape.js, LikeC4, React Flow, Solid Flow, or ELK yet.**
+
+This creates a clean handoff for a future **Architecture Explorer v2** feature, where the data model can feed a professional interactive renderer.
+
+### 5. E2E Testing Restoration
 
 Add Playwright with production-build web server config and scripts:
 
@@ -112,7 +136,7 @@ Test coverage:
 
 Visual regression can begin with small snapshots for `/learn`, desktop, Library, and Architecture Explorer. Keep baselines focused so they catch layout breakage without making normal content edits painful.
 
-### 5. Documentation Reconciliation
+### 6. Documentation Reconciliation
 
 Update:
 
@@ -146,7 +170,7 @@ Recommended answers:
 
 - [ ] Create audit helper modules and tests.
 - [ ] Add `scripts/audit-knowledge.ts` and `pnpm verify:knowledge`.
-- [ ] Fix current audit failures in article metadata, docs, and architecture explorer data.
+- [ ] Fix current audit failures in article metadata, docs, and renderer-agnostic architecture graph data.
 - [ ] Upgrade `src/scripts/learn-progress.ts` to staged mastery with migration.
 - [ ] Wire staged mastery UI into `/learn/[...slug].astro` and progress summaries into `/learn/index.astro`.
 - [ ] Fix singleton `openWindow()` prop updates and Library iframe synchronization.
@@ -183,6 +207,7 @@ Recommended answers:
 - [ ] Add node for Knowledge Audit
 - [ ] Add node for Mastery Progress
 - [ ] Add edges from Knowledge Collection to Audit, `/learn/*` to Mastery Progress, and Architecture Explorer to Library
+- [ ] Document Architecture Explorer v2 as a future renderer migration that consumes the stabilized graph model
 
 ### Curriculum:
 
