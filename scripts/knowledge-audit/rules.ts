@@ -1,11 +1,13 @@
 import {
   ARCHITECTURE_EDGE_TYPES,
   ARCHITECTURE_NODE_CATEGORIES,
+  type ArchitectureEdge,
+  type ArchitectureNode,
   type KnowledgeArticle,
   type KnowledgeAuditInput,
   type KnowledgeAuditIssue,
   type KnowledgeAuditIssueCode,
-} from './types';
+} from './types.ts';
 
 export function auditKnowledgeRules(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return [
@@ -93,67 +95,121 @@ function auditArticleDiagramRef(
 }
 
 export function auditArchitectureGraph(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
-  const nodeIds = new Set<string>();
-  const duplicateNodeIds = new Set<string>();
+  const articleIds = new Set(input.articles.map((article) => article.id));
+  const nodeIds = collectNodeIds(input.architectureNodes);
   const allowedNodeCategories = new Set(
     input.allowedNodeCategories ?? ARCHITECTURE_NODE_CATEGORIES,
   );
   const allowedEdgeTypes = new Set(input.allowedEdgeTypes ?? ARCHITECTURE_EDGE_TYPES);
-  const issues: KnowledgeAuditIssue[] = [];
 
-  for (const node of input.architectureNodes) {
-    if (nodeIds.has(node.id)) {
-      duplicateNodeIds.add(node.id);
-    }
-    nodeIds.add(node.id);
-
-    if (!allowedNodeCategories.has(node.category)) {
-      issues.push(
-        error(
-          'invalid-node-category',
-          node.id,
-          `Architecture node "${node.id}" uses category "${node.category}", which is not in the graph contract.`,
-        ),
-      );
-    }
-  }
-
-  for (const nodeId of duplicateNodeIds) {
-    issues.push(
+  return [
+    ...input.architectureNodes.flatMap((node) =>
+      auditArchitectureNode(node, allowedNodeCategories, articleIds),
+    ),
+    ...findDuplicateNodeIds(input.architectureNodes).map((nodeId) =>
       error(
         'duplicate-architecture-node-id',
         nodeId,
         `Architecture node id "${nodeId}" is declared more than once.`,
       ),
+    ),
+    ...input.architectureEdges.flatMap((edge) =>
+      auditArchitectureEdge(edge, nodeIds, allowedEdgeTypes),
+    ),
+  ];
+}
+
+function collectNodeIds(nodes: readonly ArchitectureNode[]): Set<string> {
+  return new Set(nodes.map((node) => node.id));
+}
+
+function findDuplicateNodeIds(nodes: readonly ArchitectureNode[]): string[] {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+
+  for (const node of nodes) {
+    if (seen.has(node.id)) {
+      duplicates.add(node.id);
+    }
+    seen.add(node.id);
+  }
+
+  return [...duplicates];
+}
+
+function auditArchitectureNode(
+  node: ArchitectureNode,
+  allowedNodeCategories: ReadonlySet<string>,
+  articleIds: ReadonlySet<string>,
+): KnowledgeAuditIssue[] {
+  const issues: KnowledgeAuditIssue[] = [];
+
+  if (!allowedNodeCategories.has(node.category)) {
+    issues.push(
+      error(
+        'invalid-node-category',
+        node.id,
+        `Architecture node "${node.id}" uses category "${node.category}", which is not in the graph contract.`,
+      ),
     );
   }
 
-  for (const edge of input.architectureEdges) {
-    const missingEndpoints = [edge.from, edge.to].filter((nodeId) => !nodeIds.has(nodeId));
-    if (missingEndpoints.length > 0) {
-      issues.push(
-        error(
-          'broken-edge-endpoint',
-          `${edge.from}->${edge.to}`,
-          `Architecture edge "${edge.from}" -> "${edge.to}" references missing node(s): ${missingEndpoints.join(
-            ', ',
-          )}.`,
-        ),
-      );
-    }
-
-    if (!allowedEdgeTypes.has(edge.type)) {
-      issues.push(
-        error(
-          'invalid-edge-type',
-          `${edge.from}->${edge.to}`,
-          `Architecture edge "${edge.from}" -> "${edge.to}" uses type "${edge.type}", which is not in the graph contract.`,
-        ),
-      );
-    }
+  if (node.knowledgeSlug && !articleIds.has(node.knowledgeSlug)) {
+    issues.push(
+      error(
+        'bad-knowledge-slug',
+        node.id,
+        `Architecture node "${node.id}" links to knowledgeSlug "${node.knowledgeSlug}", but no article has that id.`,
+      ),
+    );
   }
 
   return issues;
+}
+
+function auditArchitectureEdge(
+  edge: ArchitectureEdge,
+  nodeIds: ReadonlySet<string>,
+  allowedEdgeTypes: ReadonlySet<string>,
+): KnowledgeAuditIssue[] {
+  return [...auditEdgeEndpoints(edge, nodeIds), ...auditEdgeType(edge, allowedEdgeTypes)];
+}
+
+function auditEdgeEndpoints(
+  edge: ArchitectureEdge,
+  nodeIds: ReadonlySet<string>,
+): KnowledgeAuditIssue[] {
+  const missingEndpoints = [edge.from, edge.to].filter((nodeId) => !nodeIds.has(nodeId));
+  if (missingEndpoints.length === 0) {
+    return [];
+  }
+
+  return [
+    error(
+      'broken-edge-endpoint',
+      `${edge.from}->${edge.to}`,
+      `Architecture edge "${edge.from}" -> "${edge.to}" references missing node(s): ${missingEndpoints.join(
+        ', ',
+      )}.`,
+    ),
+  ];
+}
+
+function auditEdgeType(
+  edge: ArchitectureEdge,
+  allowedEdgeTypes: ReadonlySet<string>,
+): KnowledgeAuditIssue[] {
+  if (allowedEdgeTypes.has(edge.type)) {
+    return [];
+  }
+
+  return [
+    error(
+      'invalid-edge-type',
+      `${edge.from}->${edge.to}`,
+      `Architecture edge "${edge.from}" -> "${edge.to}" uses type "${edge.type}", which is not in the graph contract.`,
+    ),
+  ];
 }
 
 export function auditPrerequisiteCycles(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
@@ -172,7 +228,7 @@ export function auditPrerequisiteCycles(input: KnowledgeAuditInput): KnowledgeAu
   function visit(articleId: string, path: string[]): void {
     if (visiting.has(articleId)) {
       const cycleStart = path.indexOf(articleId);
-      const cycle = [...path.slice(cycleStart), articleId];
+      const cycle = path.slice(cycleStart);
       const cycleKey = canonicalCycleKey(cycle);
       if (!reportedCycles.has(cycleKey)) {
         reportedCycles.add(cycleKey);

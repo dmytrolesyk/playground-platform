@@ -16,7 +16,8 @@
     "typecheck": "astro check",
     "check": "biome check . && astro check",
     "test": "vitest run --passWithNoTests --exclude 'tests/e2e/**'",
-    "verify": "biome check . && astro check && vitest run --passWithNoTests --exclude 'tests/e2e/**'",
+    "verify:knowledge": "node --experimental-strip-types scripts/audit-knowledge.ts",
+    "verify": "biome check . && astro check && vitest run --passWithNoTests --exclude 'tests/e2e/**' && pnpm verify:knowledge",
     "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts",
     "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
     "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots all"
@@ -43,6 +44,7 @@
     "@biomejs/biome": "^2.4.12",
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.4",
+    "yaml": "^2.8.3"
   }
 }

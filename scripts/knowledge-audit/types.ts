@@ -21,6 +21,7 @@ export type KnowledgeAuditIssueCode =
   | 'duplicate-architecture-node-id'
   | 'invalid-node-category'
   | 'invalid-edge-type'
+  | 'bad-knowledge-slug'
   | 'prerequisite-cycle';
 
 export interface KnowledgeAuditIssue {
@@ -33,10 +34,16 @@ export interface KnowledgeAuditIssue {
 export interface KnowledgeArticle {
   id: string;
   category: string;
+  frontmatter?: Record<string, unknown>;
+  body?: string;
   relatedConcepts?: readonly string[];
   prerequisites?: readonly string[];
   module?: string;
   diagramRef?: string;
+  relatedFiles?: readonly string[];
+  learningObjectives?: readonly string[];
+  exercises?: readonly unknown[];
+  estimatedMinutes?: number;
 }
 
 export interface CurriculumModule {

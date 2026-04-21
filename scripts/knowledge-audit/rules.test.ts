@@ -150,6 +150,18 @@ describe('auditKnowledgeRules', () => {
     expect(codes).toContain('invalid-edge-type');
   });
 
+  it('reports architecture node knowledge slugs that do not resolve to articles', () => {
+    const codes = issueCodesFor(
+      baseInput({
+        architectureNodes: [
+          { id: 'overview', category: 'astro', knowledgeSlug: 'architecture/missing' },
+        ],
+      }),
+    );
+
+    expect(codes).toContain('bad-knowledge-slug');
+  });
+
   it('reports prerequisite cycles', () => {
     const issues = auditKnowledgeRules(
       baseInput({
@@ -178,5 +190,6 @@ describe('auditKnowledgeRules', () => {
         }),
       ]),
     );
+    expect(issues[0]?.message).not.toContain('architecture/overview -> architecture/overview');
   });
 });
