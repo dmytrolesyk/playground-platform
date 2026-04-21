@@ -31,10 +31,8 @@
 - Create `tests/e2e/knowledge.spec.ts`: `/learn` and mastery tests.
 - Create `tests/e2e/desktop-knowledge.spec.ts`: Library and Architecture Explorer bridge tests.
 - Create `tests/e2e/visual-regression.spec.ts`: small initial snapshot set.
-- Modify `docs/features/knowledge-base-v2.md`: reconcile status/checklist/open questions.
-- Modify `docs/architecture-guidelines.md`: update §19 statuses for already-implemented items.
-- Modify `AGENTS.md` and `docs/feature-development.md`: document new verification expectations if needed.
-- Modify `docs/features/knowledge-reliability-mastery.md`: update checkboxes and final status.
+- Modify during implementation: `docs/features/knowledge-reliability-mastery.md` stays current as the feature-local design/status document.
+- Modify after behavior stabilizes: `AGENTS.md`, `docs/feature-development.md`, `docs/features/knowledge-base.md`, `docs/features/knowledge-base-v2.md`, and `docs/architecture-guidelines.md` document the real commands, data model, and future-agent rules.
 
 ## Task 1: Audit Rule Core
 
@@ -135,8 +133,7 @@ git commit -m "feat: add executable knowledge audit"
 **Files:**
 - Modify: `src/content/knowledge/**/*.md`
 - Modify: `src/components/desktop/apps/architecture-explorer/architecture-data.ts`
-- Modify: `docs/features/knowledge-base-v2.md`
-- Modify: `docs/architecture-guidelines.md`
+- Modify: `docs/features/knowledge-reliability-mastery.md`
 
 - [ ] **Step 1: Run audit and list failures**
 
@@ -164,9 +161,9 @@ Do not add new manual SVG layout behavior or visual interactions in this task. T
 
 If the audit requires Mermaid diagrams for labs, add concise Mermaid diagrams to lab bodies. If labs are intentionally exempt, update the audit and docs so the rule is explicit.
 
-- [ ] **Step 6: Reconcile stale docs**
+- [ ] **Step 6: Record feature-local deviations**
 
-Update `knowledge-base-v2.md` and `architecture-guidelines.md` so statuses match current implementation.
+Update `docs/features/knowledge-reliability-mastery.md` with any implementation deviations discovered while fixing audit failures. Do not update repo-wide process docs yet; those should wait until the actual commands and behaviors exist.
 
 - [ ] **Step 7: Run audit again**
 
@@ -181,8 +178,8 @@ Expected: pass.
 - [ ] **Step 8: Commit**
 
 ```bash
-git add docs src/content src/components/desktop/apps/architecture-explorer
-git commit -m "docs: reconcile knowledge system reliability state"
+git add docs/features/knowledge-reliability-mastery.md src/content src/components/desktop/apps/architecture-explorer
+git commit -m "fix: stabilize knowledge graph data"
 ```
 
 ## Task 4: Staged Mastery Model
@@ -350,11 +347,14 @@ git add package.json pnpm-lock.yaml playwright.config.ts tests
 git commit -m "test: restore knowledge e2e coverage"
 ```
 
-## Task 7: Verification and Docs Finalization
+## Task 7: Knowledge Expansion and Repo-Wide Docs Finalization
 
 **Files:**
 - Modify: `AGENTS.md`
 - Modify: `docs/feature-development.md`
+- Modify: `docs/features/knowledge-base.md`
+- Modify: `docs/features/knowledge-base-v2.md`
+- Modify: `docs/architecture-guidelines.md`
 - Modify: `docs/features/knowledge-reliability-mastery.md`
 - Modify: knowledge articles listed in the feature doc
 
@@ -367,7 +367,17 @@ Create/update the articles promised in the feature doc:
 - `cs-fundamentals/graph-validation.md`
 - `labs/repair-a-knowledge-graph.md`
 
-- [ ] **Step 2: Run the full verification stack**
+- [ ] **Step 2: Update repo-wide agent/process docs after behavior exists**
+
+Update the canonical docs to describe real implemented behavior, not intentions:
+
+- `AGENTS.md`: add hard rules for `pnpm verify:knowledge`, staged mastery, renderer-agnostic graph data, and e2e expectations for `/learn`/Library/Architecture Explorer changes.
+- `docs/feature-development.md`: update Phase 3 and the feature template so future features include audit-passing knowledge expansion, graph integrity updates, mastery/checkpoint expectations, and e2e requirements.
+- `docs/features/knowledge-base-v2.md`: replace binary "mark as understood" language with staged mastery language and point to the reliability feature for quality enforcement.
+- `docs/features/knowledge-base.md`: add a note that v1 content quality standards are now enforced by the reliability feature and `verify:knowledge`.
+- `docs/architecture-guidelines.md`: update Architecture Explorer guidance so `architecture-data.ts` is documented as a renderer-agnostic graph contract and Architecture Explorer v2 is the future renderer migration.
+
+- [ ] **Step 3: Run the full verification stack**
 
 ```bash
 pnpm verify
@@ -377,11 +387,11 @@ pnpm test:e2e
 
 Expected: all pass.
 
-- [ ] **Step 3: Update feature doc status**
+- [ ] **Step 4: Update feature doc status**
 
 Set `docs/features/knowledge-reliability-mastery.md` to `Complete`, check completed tasks, and add deviations.
 
-- [ ] **Step 4: Commit final docs**
+- [ ] **Step 5: Commit final docs**
 
 ```bash
 git add AGENTS.md docs src/content
