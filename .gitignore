@@ -22,3 +22,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Playwright
+tests/e2e/test-results/
+test-results/
