@@ -12,7 +12,7 @@ technologies:
   - astro
 order: 7
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-21
 externalReferences:
   - title: "Dynamic import() — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import"
@@ -30,7 +30,7 @@ module: extensibility
 moduleOrder: 3
 estimatedMinutes: 12
 prerequisites:
-  - concepts/module-systems-and-bundling
+  - architecture/app-registry
 learningObjectives:
   - "Explain how dynamic import() splits code at bundler boundaries"
   - "Describe how SolidJS lazy() wraps dynamic import with Suspense integration"

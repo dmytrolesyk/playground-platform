@@ -16,7 +16,7 @@ technologies:
   - astro
 order: 6
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-21
 externalReferences:
   - title: "Resend Documentation"
     url: "https://resend.com/docs"
@@ -35,7 +35,6 @@ moduleOrder: 1
 estimatedMinutes: 15
 prerequisites:
   - architecture/overview
-  - technologies/resend
 learningObjectives:
   - "Trace a contact form submission from browser to email inbox"
   - "Explain the process.env vs import.meta.env landmine and why it matters in Docker builds"

@@ -20,10 +20,10 @@ technologies:
   - solidjs
   - astro
   - 98css
-diagramRef: "overview"
+diagramRef: "desktop"
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-21
 externalReferences:
   - title: "Astro Islands Documentation"
     url: "https://docs.astro.build/en/concepts/islands/"

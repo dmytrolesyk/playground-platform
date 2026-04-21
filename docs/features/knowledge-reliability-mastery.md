@@ -179,6 +179,11 @@ Recommended answers:
 - [ ] Reconcile knowledge docs and architecture guidelines.
 - [ ] Run `pnpm verify`, `pnpm build`, and `pnpm test:e2e`.
 
+## Implementation Notes
+
+- Task 3 audit stabilization resolved the initial failures with metadata-only article fixes. `architecture/overview` now points its `diagramRef` at the existing `desktop` node instead of adding a new overview node, which keeps the graph renderer-agnostic and avoids expanding the current SVG layout.
+- The first executable audit surfaced prerequisite cycles and a stale diagram reference only. No `architecture-data.ts` edits or lab Mermaid exemptions were required for the current rule set.
+
 ## Knowledge Expansion
 
 ### Articles to create:

@@ -19,7 +19,7 @@ technologies:
 diagramRef: "app-registry"
 order: 3
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-21
 externalReferences:
   - title: "Inversion of Control — Martin Fowler"
     url: "https://martinfowler.com/bliki/InversionOfControl.html"
@@ -38,7 +38,6 @@ moduleOrder: 1
 estimatedMinutes: 15
 prerequisites:
   - architecture/overview
-  - concepts/inversion-of-control
 learningObjectives:
   - "Add a new app to the platform using only registerApp() and a component file"
   - "Explain how the registry achieves the Open/Closed Principle"
