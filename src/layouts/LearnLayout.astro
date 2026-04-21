@@ -66,29 +66,92 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
 <script>
   // Progress tracking — marks articles as read and renders the progress UI.
   // Uses localStorage. Progressive enhancement — pages work without it.
+  import {
+    getModuleProgress,
+    getProgress,
+    getStage,
+    markArticleChecked,
+    markArticleMastered,
+    markArticlePracticed,
+    markArticleRead,
+  } from '../scripts/learn-progress';
+  import type { MasteryStage } from '../scripts/learn-progress';
 
-  const STORAGE_KEY = 'kb-learning-progress';
+  const STAGE_LABELS: Record<MasteryStage, string> = {
+    read: 'Read',
+    checked: 'Checked',
+    practiced: 'Practiced',
+    mastered: 'Mastered',
+  };
 
-  interface ArticleProgress {
-    firstRead: string;
-    lastRead: string;
-    completed: boolean;
+  const STAGE_ORDER: Record<MasteryStage, number> = {
+    read: 0,
+    checked: 1,
+    practiced: 2,
+    mastered: 3,
+  };
+
+  function stageAtLeast(stage: MasteryStage, minimum: MasteryStage): boolean {
+    return STAGE_ORDER[stage] >= STAGE_ORDER[minimum];
   }
 
-  interface LearningProgress {
-    articlesRead: Record<string, ArticleProgress>;
+  function markStage(slug: string, stage: MasteryStage): void {
+    switch (stage) {
+      case 'read':
+        markArticleRead(slug);
+        break;
+      case 'checked':
+        markArticleChecked(slug);
+        break;
+      case 'practiced':
+        markArticlePracticed(slug);
+        break;
+      case 'mastered':
+        markArticleMastered(slug);
+        break;
+      default:
+        stage satisfies never;
+    }
   }
 
-  function loadProgress(): LearningProgress {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as LearningProgress;
-    } catch { /* ignore */ }
-    return { articlesRead: {} };
-  }
+  function renderProgressTracker(container: HTMLElement, slug: string): void {
+    const stage = getStage(slug) ?? 'read';
+    const actions: MasteryStage[] = ['checked', 'practiced', 'mastered'];
 
-  function saveProgress(progress: LearningProgress): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    container.innerHTML = `
+      <div class="progress-tracker" data-stage="${stage}">
+        <div class="progress-tracker__status">
+          <span>Stage</span>
+          <strong class="progress-tracker__stage">${STAGE_LABELS[stage]}</strong>
+        </div>
+        <div class="progress-tracker__actions">
+          ${actions
+            .map((action) => {
+              const isActive = stageAtLeast(stage, action);
+              return `
+                <button
+                  class="progress-tracker__btn ${isActive ? 'progress-tracker__btn--active' : ''}"
+                  type="button"
+                  data-progress-stage="${action}"
+                  aria-pressed="${isActive ? 'true' : 'false'}"
+                >
+                  ${STAGE_LABELS[action]}
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+      </div>
+    `;
+
+    container.querySelectorAll<HTMLButtonElement>('[data-progress-stage]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const nextStage = button.dataset['progressStage'] as MasteryStage | undefined;
+        if (nextStage === undefined) return;
+        markStage(slug, nextStage);
+        renderProgressTracker(container, slug);
+      });
+    });
   }
 
   function initProgressTracker(): void {
@@ -98,71 +161,74 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
     const slug = container.dataset['slug'];
     if (!slug) return;
 
-    const progress = loadProgress();
-    const now = new Date().toISOString();
+    markArticleRead(slug);
+    renderProgressTracker(container, slug);
 
-    // Mark as read
-    const existing = progress.articlesRead[slug];
-    progress.articlesRead[slug] = {
-      firstRead: existing?.firstRead ?? now,
-      lastRead: now,
-      completed: existing?.completed ?? false,
-    };
-    saveProgress(progress);
-
-    // Render the "Mark as understood" button
-    const isCompleted = progress.articlesRead[slug]?.completed ?? false;
-    container.innerHTML = `
-      <div class="progress-tracker">
-        <span>${isCompleted ? '✅ Marked as understood' : '📖 You\'ve read this article'}</span>
-        <button class="progress-tracker__btn ${isCompleted ? 'progress-tracker__btn--completed' : ''}"
-                id="toggle-understood">
-          ${isCompleted ? 'Understood ✓' : 'Mark as understood'}
-        </button>
-      </div>
-    `;
-
-    document.getElementById('toggle-understood')?.addEventListener('click', () => {
-      const p = loadProgress();
-      const entry = p.articlesRead[slug];
-      if (entry) {
-        entry.completed = !entry.completed;
-        saveProgress(p);
-        initProgressTracker(); // re-render
-      }
+    document.querySelectorAll<HTMLDetailsElement>('.exercise__answer').forEach((details) => {
+      details.addEventListener('toggle', () => {
+        if (!details.open) return;
+        markArticleChecked(slug);
+        renderProgressTracker(container, slug);
+      });
     });
   }
 
-  function initIndexProgress(): void {
-    // Update progress bars on the /learn index page
-    const bars = document.querySelectorAll<HTMLElement>('[data-module-articles]');
-    const progress = loadProgress();
+  function progressSummaryText(): string {
+    const articles = Object.values(getProgress().articlesRead);
+    const read = articles.length;
+    let checked = 0;
+    let practiced = 0;
+    let mastered = 0;
 
-    for (const bar of bars) {
-      const slugsStr = bar.dataset['moduleArticles'];
-      if (!slugsStr) continue;
-      const slugs = slugsStr.split(',').filter(Boolean);
-      const completed = slugs.filter((s) => progress.articlesRead[s]?.completed).length;
-      const pct = slugs.length > 0 ? (completed / slugs.length) * 100 : 0;
-
-      const fill = bar.querySelector<HTMLElement>('.learn-module__progress-fill');
-      if (fill) fill.style.width = `${pct}%`;
-
-      const label = bar.querySelector<HTMLElement>('.learn-module__progress-label');
-      if (label) label.textContent = `${completed}/${slugs.length} completed`;
+    for (const article of articles) {
+      if (stageAtLeast(article.stage, 'checked')) checked += 1;
+      if (stageAtLeast(article.stage, 'practiced')) practiced += 1;
+      if (article.stage === 'mastered') mastered += 1;
     }
 
-    // Update summary header
-    const summary = document.getElementById('progress-summary');
-    if (summary) {
-      const total = Object.keys(progress.articlesRead).length;
-      const completed = Object.values(progress.articlesRead).filter((a) => a.completed).length;
-      summary.textContent = `📊 Your Progress: ${total} articles read · ${completed} understood`;
+    return `Progress: ${read} read · ${checked} checked · ${practiced} practiced · ${mastered} mastered`;
+  }
+
+  function renderModuleProgress(bar: HTMLElement): void {
+    const slugsStr = bar.dataset['moduleArticles'];
+    if (!slugsStr) return;
+
+    const slugs = slugsStr.split(',').filter(Boolean);
+    const moduleProgress = getModuleProgress(slugs);
+    const pct =
+      moduleProgress.total > 0 ? (moduleProgress.mastered / moduleProgress.total) * 100 : 0;
+
+    const fill = bar.querySelector<HTMLElement>('.learn-module__progress-fill');
+    if (fill) fill.style.width = `${pct}%`;
+
+    const label = bar.parentElement?.querySelector<HTMLElement>('.learn-module__progress-label');
+    if (label) {
+      label.textContent =
+        `${moduleProgress.mastered}/${moduleProgress.total} mastered` +
+        ` · ${moduleProgress.read} read` +
+        ` · ${moduleProgress.checked} checked` +
+        ` · ${moduleProgress.practiced} practiced`;
     }
   }
 
-  document.addEventListener('astro:page-load', () => {
+  function initIndexProgress(): void {
+    const bars = document.querySelectorAll<HTMLElement>('[data-module-articles]');
+    for (const bar of bars) {
+      renderModuleProgress(bar);
+    }
+
+    const summary = document.getElementById('progress-summary');
+    if (summary) {
+      summary.textContent = progressSummaryText();
+    }
+  }
+
+  function initLearnProgress(): void {
     initProgressTracker();
     initIndexProgress();
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    initLearnProgress();
   });
 </script>

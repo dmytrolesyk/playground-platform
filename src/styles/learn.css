@@ -429,10 +429,28 @@ body {
   border: 1px solid var(--learn-border);
   border-radius: 4px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  flex-direction: column;
   gap: 12px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
+}
+
+.progress-tracker__status {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.progress-tracker__stage {
+  color: var(--learn-heading);
+}
+
+.progress-tracker__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .progress-tracker__btn {
@@ -450,7 +468,7 @@ body {
   border-color: var(--learn-accent);
 }
 
-.progress-tracker__btn--completed {
+.progress-tracker__btn--active {
   background: #28a745;
   color: #fff;
   border-color: #28a745;
