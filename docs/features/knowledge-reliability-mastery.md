@@ -115,18 +115,18 @@ For this feature:
 
 This creates a clean handoff for a future **Architecture Explorer v2** feature, where the data model can feed a professional interactive renderer.
 
-### 5. E2E Testing Restoration
+### 5. E2E Testing Expansion
 
-Add Playwright with production-build web server config and scripts:
+Use the existing Playwright tier under `tests/e2e/`, which already runs against a production build in desktop and mobile viewports:
 
 ```json
 {
-  "test:e2e": "playwright test",
-  "test:e2e:update": "playwright test --update-snapshots"
+  "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
+  "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots all"
 }
 ```
 
-Test coverage:
+Add focused knowledge-system coverage:
 
 - `/learn` renders curriculum modules, labs, and category browsing
 - article progress advances and persists after reload
@@ -134,13 +134,14 @@ Test coverage:
 - Library address/history updates when navigating inside the iframe
 - mobile viewport opens/uses `/learn` without iframe window awkwardness
 
-Visual regression can begin with small snapshots for `/learn`, desktop, Library, and Architecture Explorer. Keep baselines focused so they catch layout breakage without making normal content edits painful.
+Visual regression should extend the existing snapshot suite with small snapshots for `/learn`, Library, and Architecture Explorer. Keep baselines focused so they catch layout breakage without making normal content edits painful.
 
 ### 6. Documentation Reconciliation
 
 Update:
 
-- `docs/features/knowledge-base-v2.md` so status, checklist, and resolved questions reflect reality
+- `docs/features/knowledge-base.md` into the canonical active Knowledge Base system document
+- `docs/features/knowledge-base-v2.md` as superseded or archived after still-relevant guidance is merged
 - `docs/architecture-guidelines.md` §19 so already-implemented platform improvements are not listed as future work
 - `AGENTS.md` and `docs/feature-development.md` if new verification commands or quality gates become non-discoverable
 - this feature doc status and checklist as implementation progresses
@@ -174,7 +175,7 @@ Recommended answers:
 - [ ] Upgrade `src/scripts/learn-progress.ts` to staged mastery with migration.
 - [ ] Wire staged mastery UI into `/learn/[...slug].astro` and progress summaries into `/learn/index.astro`.
 - [ ] Fix singleton `openWindow()` prop updates and Library iframe synchronization.
-- [ ] Add Playwright config, scripts, helpers, and e2e smoke tests.
+- [ ] Extend existing Playwright config, helpers, and e2e tests with knowledge-specific coverage.
 - [ ] Reconcile knowledge docs and architecture guidelines.
 - [ ] Run `pnpm verify`, `pnpm build`, and `pnpm test:e2e`.
 

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build an executable reliability layer and staged mastery model for the knowledge base, including audits, doc reconciliation, Library bridge fixes, restored Playwright e2e tests, and richer learning progress.
+**Goal:** Build an executable reliability layer and staged mastery model for the knowledge base, including audits, doc reconciliation, Library bridge fixes, expanded Playwright e2e coverage, and richer learning progress.
 
 **Architecture:** Keep the system static-first and local-first. Audit tooling runs in Node during verification, mastery progress runs in the browser through `localStorage`, and desktop integration is limited to improving existing Library and Architecture Explorer behavior. Architecture graph work must stabilize renderer-agnostic data only; do not deepen the current SVG renderer or migrate to Cytoscape/LikeC4/ELK in this feature.
 
@@ -18,7 +18,7 @@
 - Create `scripts/knowledge-audit/rules.ts`: pure validation rules.
 - Create `scripts/knowledge-audit/report.ts`: readable terminal output.
 - Create `scripts/knowledge-audit/rules.test.ts`: unit tests for graph and quality rules.
-- Modify `package.json`: add `verify:knowledge`, `test:e2e`, and `test:e2e:update`.
+- Modify `package.json`: add `verify:knowledge` and wire it into `verify`; keep existing `test:e2e` scripts working.
 - Modify `src/scripts/learn-progress.ts`: make this the canonical staged mastery module.
 - Modify `src/layouts/LearnLayout.astro`: use staged progress behavior instead of binary completed state.
 - Modify `src/pages/learn/index.astro`: show read, checked, practiced, and mastered progress.
@@ -26,13 +26,13 @@
 - Modify `src/components/desktop/store/desktop-store.ts`: update singleton app props on repeated open.
 - Modify `src/components/desktop/apps/library/LibraryApp.tsx`: react to changing `initialUrl` and sync iframe navigation.
 - Modify `src/components/desktop/apps/architecture-explorer/architecture-data.ts`: stabilize graph data and links without adding renderer-specific layout behavior.
-- Create `playwright.config.ts`: production-build e2e config.
-- Create `tests/e2e/helpers.ts`: shared Playwright helpers.
+- Modify `tests/e2e/playwright.config.ts` if the existing production-build e2e config needs knowledge-specific adjustments.
+- Modify `tests/e2e/helpers.ts`: extend shared Playwright helpers where useful.
 - Create `tests/e2e/knowledge.spec.ts`: `/learn` and mastery tests.
 - Create `tests/e2e/desktop-knowledge.spec.ts`: Library and Architecture Explorer bridge tests.
-- Create `tests/e2e/visual-regression.spec.ts`: small initial snapshot set.
+- Modify `tests/e2e/visual-regression.spec.ts`: extend the existing snapshot set with focused knowledge views.
 - Modify during implementation: `docs/features/knowledge-reliability-mastery.md` stays current as the feature-local design/status document.
-- Modify after behavior stabilizes: `AGENTS.md`, `docs/feature-development.md`, `docs/features/knowledge-base.md`, `docs/features/knowledge-base-v2.md`, and `docs/architecture-guidelines.md` document the real commands, data model, and future-agent rules.
+- Modify after behavior stabilizes: `AGENTS.md`, `docs/feature-development.md`, `docs/features/knowledge-base.md`, `docs/features/knowledge-base-v2.md`, and `docs/architecture-guidelines.md` document the real commands, data model, and future-agent rules. Consolidate knowledge-system guidance into one canonical active doc.
 
 ## Task 1: Audit Rule Core
 
@@ -272,48 +272,34 @@ git add src/components/desktop/store/desktop-store.ts src/components/desktop/app
 git commit -m "fix: keep library singleton navigation in sync"
 ```
 
-## Task 6: Restore Playwright E2E
+## Task 6: Extend Playwright E2E for Knowledge Reliability
 
 **Files:**
-- Create: `playwright.config.ts`
-- Create: `tests/e2e/helpers.ts`
+- Modify: `tests/e2e/playwright.config.ts`
+- Modify: `tests/e2e/helpers.ts`
 - Create: `tests/e2e/knowledge.spec.ts`
 - Create: `tests/e2e/desktop-knowledge.spec.ts`
-- Create: `tests/e2e/visual-regression.spec.ts`
-- Modify: `package.json`
+- Modify: `tests/e2e/visual-regression.spec.ts`
+- Modify: `package.json` only if the existing e2e scripts are missing or stale
 
-- [ ] **Step 1: Add Playwright dependency and scripts**
+- [ ] **Step 1: Confirm existing Playwright baseline**
 
 Run:
 
 ```bash
-pnpm add -D @playwright/test
-pnpm exec playwright install chromium
+pnpm test:e2e
 ```
 
-Add:
+Expected: the current e2e tier runs from `tests/e2e/playwright.config.ts`. If it fails before this feature's changes, fix or record the pre-existing failure before adding new knowledge-specific tests.
 
-```json
-"test:e2e": "playwright test",
-"test:e2e:update": "playwright test --update-snapshots"
-```
+- [ ] **Step 2: Verify e2e scripts and config are aligned**
 
-- [ ] **Step 2: Create Playwright config**
-
-Use two projects:
+Confirm `package.json` points `test:e2e` and `test:e2e:update` at `tests/e2e/playwright.config.ts`, and confirm the config still uses:
 
 - desktop Chromium `1280x720`
 - mobile Chromium `375x812`
-
-Use a production build web server:
-
-```ts
-webServer: {
-  command: 'pnpm build && pnpm preview --host 127.0.0.1 --port 4321',
-  url: 'http://127.0.0.1:4321',
-  reuseExistingServer: !process.env.CI,
-}
-```
+- a production build web server
+- the existing visual snapshot expectations
 
 - [ ] **Step 3: Add `/learn` smoke tests**
 
@@ -325,7 +311,7 @@ Test opening Library and Architecture Explorer, then assert the Library address 
 
 - [ ] **Step 5: Add focused visual snapshots**
 
-Snapshot:
+Extend the existing visual regression suite with focused snapshots:
 
 - `/learn`
 - one article page
@@ -343,7 +329,7 @@ Expected: pass.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add package.json pnpm-lock.yaml playwright.config.ts tests
+git add package.json pnpm-lock.yaml tests/e2e
 git commit -m "test: restore knowledge e2e coverage"
 ```
 
@@ -373,8 +359,8 @@ Update the canonical docs to describe real implemented behavior, not intentions:
 
 - `AGENTS.md`: add hard rules for `pnpm verify:knowledge`, staged mastery, renderer-agnostic graph data, and e2e expectations for `/learn`/Library/Architecture Explorer changes.
 - `docs/feature-development.md`: update Phase 3 and the feature template so future features include audit-passing knowledge expansion, graph integrity updates, mastery/checkpoint expectations, and e2e requirements.
-- `docs/features/knowledge-base-v2.md`: replace binary "mark as understood" language with staged mastery language and point to the reliability feature for quality enforcement.
-- `docs/features/knowledge-base.md`: add a note that v1 content quality standards are now enforced by the reliability feature and `verify:knowledge`.
+- `docs/features/knowledge-base.md`: make this the canonical active Knowledge Base system document by merging the still-relevant v2 and reliability standards into it.
+- `docs/features/knowledge-base-v2.md`: mark as superseded or archive after its active guidance has been merged, so future agents do not treat v1/v2/reliability docs as competing sources of truth.
 - `docs/architecture-guidelines.md`: update Architecture Explorer guidance so `architecture-data.ts` is documented as a renderer-agnostic graph contract and Architecture Explorer v2 is the future renderer migration.
 
 - [ ] **Step 3: Run the full verification stack**
