@@ -1,4 +1,4 @@
-import { createSignal, type JSX, Show } from 'solid-js';
+import { createEffect, createSignal, type JSX, on, Show, untrack } from 'solid-js';
 import { useDesktop } from '../../store/context';
 import { LibraryToolbar } from './LibraryToolbar';
 import type { KnowledgeIndexEntry } from './LibraryTreeView';
@@ -37,12 +37,44 @@ export function LibraryApp(props: LibraryAppProps): JSX.Element {
   const entries = loadKnowledgeIndex();
 
   let iframeRef: HTMLIFrameElement | undefined;
+  let pendingIframeUrl: string | undefined;
+
+  const normalizeUrl = (url: string): string => {
+    try {
+      const parsed = new URL(url, window.location.origin);
+      if (parsed.origin !== window.location.origin) return url;
+      return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    } catch {
+      return url;
+    }
+  };
+
+  const replaceCurrentUrl = (url: string): void => {
+    const nextUrl = normalizeUrl(url);
+    setHistory((entries) => {
+      const nextEntries = [...entries];
+      nextEntries[historyIndex()] = nextUrl;
+      return nextEntries;
+    });
+    setCurrentUrl(nextUrl);
+  };
 
   const navigateTo = (url: string): void => {
-    const newHistory = [...history().slice(0, historyIndex() + 1), url];
+    const nextUrl = normalizeUrl(url);
+    const currentHistory = history();
+    const currentIndex = historyIndex();
+
+    if (currentHistory[currentIndex] === nextUrl) {
+      setCurrentUrl(nextUrl);
+      setShowIndex(false);
+      return;
+    }
+
+    pendingIframeUrl = nextUrl;
+    const newHistory = [...currentHistory.slice(0, currentIndex + 1), nextUrl];
     setHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
-    setCurrentUrl(url);
+    setCurrentUrl(nextUrl);
     setShowIndex(false);
   };
 
@@ -51,7 +83,10 @@ export function LibraryApp(props: LibraryAppProps): JSX.Element {
       const newIndex = historyIndex() - 1;
       setHistoryIndex(newIndex);
       const url = history()[newIndex];
-      if (url) setCurrentUrl(url);
+      if (url) {
+        pendingIframeUrl = url;
+        setCurrentUrl(url);
+      }
     }
   };
 
@@ -60,12 +95,16 @@ export function LibraryApp(props: LibraryAppProps): JSX.Element {
       const newIndex = historyIndex() + 1;
       setHistoryIndex(newIndex);
       const url = history()[newIndex];
-      if (url) setCurrentUrl(url);
+      if (url) {
+        pendingIframeUrl = url;
+        setCurrentUrl(url);
+      }
     }
   };
 
   const handleReload = (): void => {
     if (iframeRef) {
+      pendingIframeUrl = currentUrl();
       iframeRef.src = currentUrl();
     }
   };
@@ -77,6 +116,41 @@ export function LibraryApp(props: LibraryAppProps): JSX.Element {
   const handleTreeSelect = (slug: string): void => {
     navigateTo(`/learn/${slug}`);
   };
+
+  const handleIframeLoad = (): void => {
+    try {
+      const location = iframeRef?.contentWindow?.location;
+      if (!location || location.origin !== window.location.origin) return;
+
+      const loadedUrl = `${location.pathname}${location.search}${location.hash}`;
+      if (pendingIframeUrl) {
+        pendingIframeUrl = undefined;
+        if (loadedUrl !== currentUrl()) {
+          replaceCurrentUrl(loadedUrl);
+        }
+        return;
+      }
+
+      if (loadedUrl !== currentUrl()) {
+        navigateTo(loadedUrl);
+        pendingIframeUrl = undefined;
+      }
+    } catch {
+      // Cross-origin iframe navigation is not expected, but browser security can block inspection.
+    }
+  };
+
+  createEffect(
+    on(
+      () => props.initialUrl,
+      (initialUrl) => {
+        if (initialUrl) {
+          untrack(() => navigateTo(initialUrl));
+        }
+      },
+      { defer: true },
+    ),
+  );
 
   return (
     <div class="library-app">
@@ -95,7 +169,12 @@ export function LibraryApp(props: LibraryAppProps): JSX.Element {
         when={showIndex()}
         fallback={
           <div class="library-viewport">
-            <iframe ref={iframeRef} src={currentUrl()} title="Knowledge Base" />
+            <iframe
+              ref={iframeRef}
+              src={currentUrl()}
+              title="Knowledge Base"
+              onLoad={handleIframeLoad}
+            />
           </div>
         }
       >

@@ -1,4 +1,11 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+// biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
+const e2ePort: string = process.env['PLAYWRIGHT_PORT'] ?? '4321';
+const baseURL: string = `http://localhost:${e2ePort}`;
 
 export default defineConfig({
   testDir: '.',
@@ -11,7 +18,7 @@ export default defineConfig({
   // biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
   reporter: process.env['CI'] ? 'github' : 'list',
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL,
     trace: 'on-first-retry',
   },
   projects: [
@@ -31,14 +38,16 @@ export default defineConfig({
     },
   ],
   webServer: {
+    cwd: repoRoot,
     command: 'pnpm build && node dist/server/entry.mjs',
-    url: 'http://localhost:4321',
+    url: baseURL,
     // biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
     reuseExistingServer: !process.env['CI'],
     timeout: 120_000,
     env: {
       HOST: '0.0.0.0',
       NODE_ENV: 'production',
+      PORT: e2ePort,
     },
   },
   expect: {
