@@ -123,6 +123,8 @@ body {
 /* Main content */
 .learn-content {
   flex: 1;
+  width: 100%;
+  min-width: 0;
   max-width: var(--learn-max-content);
   margin: 0 auto;
   padding: 40px 32px;
@@ -168,9 +170,11 @@ body {
   background: var(--learn-code-bg);
   padding: 2px 5px;
   border-radius: 3px;
+  overflow-wrap: anywhere;
 }
 
 .learn-content pre {
+  max-width: 100%;
   background: #2d2d2d;
   color: #f8f8f2;
   padding: 16px 20px;
@@ -423,6 +427,8 @@ body {
 /* ===== v2: Progress tracking ===== */
 
 .progress-tracker {
+  position: relative;
+  z-index: 1;
   margin-top: 32px;
   padding: 16px 20px;
   background: var(--learn-sidebar-bg);

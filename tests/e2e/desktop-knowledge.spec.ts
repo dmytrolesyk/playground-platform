@@ -1,13 +1,7 @@
-import { expect, type Locator, type Page, test } from '@playwright/test';
-import { openApp, waitForHydration } from './helpers';
+import { expect, test } from '@playwright/test';
+import { desktopWindow, openApp, waitForHydration } from './helpers';
 
 const READ_FULL_ARTICLE = /Read Full Article/;
-
-function desktopWindow(page: Page, title: string): Locator {
-  return page.locator('.window.win-container').filter({
-    has: page.locator('.title-bar-text', { hasText: title }),
-  });
-}
 
 test.describe('Desktop knowledge bridge', () => {
   test.beforeEach(async ({ page }) => {

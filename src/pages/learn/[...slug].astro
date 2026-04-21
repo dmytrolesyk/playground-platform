@@ -185,6 +185,13 @@ const hasPracticeCheckpoint =
 
       <article set:html={html} />
 
+      {/* Progress tracking placeholder — hydrated by client script */}
+      <div
+        id="progress-tracker"
+        data-slug={entry.id}
+        data-has-practice-checkpoint={hasPracticeCheckpoint ? 'true' : 'false'}
+      ></div>
+
       {/* Exercises */}
       {entry.data.exercises.length > 0 && (
         <section class="learn-exercises">
@@ -259,13 +266,6 @@ const hasPracticeCheckpoint =
           ) : <span />}
         </nav>
       )}
-
-      {/* Progress tracking placeholder — hydrated by client script */}
-      <div
-        id="progress-tracker"
-        data-slug={entry.id}
-        data-has-practice-checkpoint={hasPracticeCheckpoint ? 'true' : 'false'}
-      ></div>
     </main>
   </div>
 </LearnLayout>
