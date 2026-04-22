@@ -1,7 +1,7 @@
 # Feature: Knowledge Reliability & Mastery
 
 ## Status
-Design
+Complete
 
 ## Motivation
 
@@ -169,56 +169,60 @@ Recommended answers:
 
 ## Implementation Plan
 
-- [ ] Create audit helper modules and tests.
-- [ ] Add `scripts/audit-knowledge.ts` and `pnpm verify:knowledge`.
-- [ ] Fix current audit failures in article metadata, docs, and renderer-agnostic architecture graph data.
-- [ ] Upgrade `src/scripts/learn-progress.ts` to staged mastery with migration.
-- [ ] Wire staged mastery UI into `/learn/[...slug].astro` and progress summaries into `/learn/index.astro`.
-- [ ] Fix singleton `openWindow()` prop updates and Library iframe synchronization.
-- [ ] Extend existing Playwright config, helpers, and e2e tests with knowledge-specific coverage.
-- [ ] Reconcile knowledge docs and architecture guidelines.
-- [ ] Run `pnpm verify`, `pnpm build`, and `pnpm test:e2e`.
+- [x] Create audit helper modules and tests.
+- [x] Add `scripts/audit-knowledge.ts` and `pnpm verify:knowledge`.
+- [x] Fix current audit failures in article metadata, docs, and renderer-agnostic architecture graph data.
+- [x] Upgrade `src/scripts/learn-progress.ts` to staged mastery with migration.
+- [x] Wire staged mastery UI into `/learn/[...slug].astro` and progress summaries into `/learn/index.astro`.
+- [x] Fix singleton `openWindow()` prop updates and Library iframe synchronization.
+- [x] Extend existing Playwright config, helpers, and e2e tests with knowledge-specific coverage.
+- [x] Reconcile knowledge docs and architecture guidelines.
+- [x] Run `pnpm verify`, `pnpm build`, and `pnpm test:e2e`.
 
 ## Implementation Notes
 
 - Task 3 audit stabilization resolved the initial failures with metadata-only article fixes. `architecture/overview` now points its `diagramRef` at the existing `desktop` node instead of adding a new overview node, which keeps the graph renderer-agnostic and avoids expanding the current SVG layout.
 - The first executable audit surfaced prerequisite cycles and a stale diagram reference only. No `architecture-data.ts` edits or lab Mermaid exemptions were required for the current rule set.
+- Task 7 added the promised learning-system reliability curriculum module and four articles: `features/knowledge-reliability-mastery.md`, `concepts/executable-quality-gates.md`, `cs-fundamentals/graph-validation.md`, and `labs/repair-a-knowledge-graph.md`.
+- `docs/features/knowledge-base.md` is now the canonical active Knowledge Base spec. `docs/features/knowledge-base-v2.md` is retained only as superseded historical context.
+- Architecture Explorer now includes renderer-agnostic nodes for Knowledge Audit and Mastery Progress, plus explicit graph edges from Knowledge Collection to Audit, `/learn/*` to Mastery Progress, and Architecture Explorer to Library.
+- Final verification passed: `pnpm verify`, `pnpm build`, and `PLAYWRIGHT_PORT=4328 pnpm test:e2e` (48 passed, 8 skipped). A first `pnpm test:e2e` attempt reused a stale Vite dev server on port 4321 and failed with `504 Outdated Optimize Dep`; rerunning on a fresh production-build port resolved it.
 
 ## Knowledge Expansion
 
 ### Articles to create:
 
-- [ ] `features/knowledge-reliability-mastery.md` - how executable audits and staged progress make the knowledge base trustworthy
-- [ ] `concepts/executable-quality-gates.md` - turning documentation standards into automated checks
-- [ ] `cs-fundamentals/graph-validation.md` - validating DAGs, link graphs, and cycle detection in this codebase
-- [ ] `labs/repair-a-knowledge-graph.md` - break and fix knowledge links, prerequisites, and diagram refs
+- [x] `features/knowledge-reliability-mastery.md` - how executable audits and staged progress make the knowledge base trustworthy
+- [x] `concepts/executable-quality-gates.md` - turning documentation standards into automated checks
+- [x] `cs-fundamentals/graph-validation.md` - validating DAGs, link graphs, and cycle detection in this codebase
+- [x] `labs/repair-a-knowledge-graph.md` - break and fix knowledge links, prerequisites, and diagram refs
 
 ### Articles to update:
 
-- [ ] `architecture/overview.md` - mention the knowledge audit and mastery layer if it changes the big picture
-- [ ] `architecture/data-flow.md` - add audit-time and progress-time data flows
-- [ ] `concepts/progressive-enhancement.md` - explain localStorage mastery as progressive enhancement
+- [x] `architecture/overview.md` - mention the knowledge audit and mastery layer if it changes the big picture
+- [x] `architecture/data-flow.md` - add audit-time and progress-time data flows
+- [x] `concepts/progressive-enhancement.md` - explain localStorage mastery as progressive enhancement
 
 ### Per-article checklist:
 
-- [ ] `learningObjectives` filled in
-- [ ] `prerequisites` specified
-- [ ] `exercises` added where applicable
-- [ ] `estimatedMinutes` set
-- [ ] `module` and `moduleOrder` assigned
-- [ ] Quality standards met from `docs/features/knowledge-base.md` and `docs/features/knowledge-base-v2.md`
+- [x] `learningObjectives` filled in
+- [x] `prerequisites` specified
+- [x] `exercises` added where applicable
+- [x] `estimatedMinutes` set
+- [x] `module` and `moduleOrder` assigned
+- [x] Quality standards met from canonical `docs/features/knowledge-base.md`
 
 ### Architecture explorer updates:
 
-- [ ] Add node for Knowledge Audit
-- [ ] Add node for Mastery Progress
-- [ ] Add edges from Knowledge Collection to Audit, `/learn/*` to Mastery Progress, and Architecture Explorer to Library
-- [ ] Document Architecture Explorer v2 as a future renderer migration that consumes the stabilized graph model
+- [x] Add node for Knowledge Audit
+- [x] Add node for Mastery Progress
+- [x] Add edges from Knowledge Collection to Audit, `/learn/*` to Mastery Progress, and Architecture Explorer to Library
+- [x] Document Architecture Explorer v2 as a future renderer migration that consumes the stabilized graph model
 
 ### Curriculum:
 
-- [ ] Add a new module: "Learning System Reliability"
-- [ ] Include audit, graph validation, progressive enhancement, and repair lab articles
+- [x] Add a new module: "Learning System Reliability"
+- [x] Include audit, graph validation, progressive enhancement, and repair lab articles
 
 ### Blog entry:
 

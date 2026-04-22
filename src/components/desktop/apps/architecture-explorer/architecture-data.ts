@@ -133,6 +133,41 @@ export const NODES: ArchNode[] = [
     knowledgeSlug: 'architecture/data-flow',
     sourceFiles: ['src/content/knowledge/', 'src/content.config.ts'],
   },
+  {
+    id: 'knowledge-audit',
+    label: 'Knowledge Audit',
+    category: 'infrastructure',
+    x: 430,
+    y: 105,
+    width: 150,
+    height: 45,
+    description:
+      'Node TypeScript audit that validates knowledge links, prerequisite cycles, modules, and renderer-agnostic Architecture Explorer graph data.',
+    knowledgeSlug: 'concepts/executable-quality-gates',
+    sourceFiles: [
+      'scripts/audit-knowledge.ts',
+      'scripts/knowledge-audit/load.ts',
+      'scripts/knowledge-audit/rules.ts',
+    ],
+  },
+  {
+    id: 'mastery-progress',
+    label: 'Mastery Progress',
+    category: 'concept',
+    x: 430,
+    y: 165,
+    width: 150,
+    height: 45,
+    description:
+      'Progressive localStorage model that separates reading, checking, practicing, and mastering knowledge articles.',
+    knowledgeSlug: 'features/knowledge-reliability-mastery',
+    sourceFiles: [
+      'src/scripts/learn-progress.ts',
+      'src/layouts/LearnLayout.astro',
+      'src/pages/learn/index.astro',
+      'src/pages/learn/[...slug].astro',
+    ],
+  },
 
   // SolidJS island layer (middle)
   {
@@ -517,6 +552,12 @@ export const EDGES: ArchEdge[] = [
     label: 'iframe',
     type: 'data-flow',
   },
+  {
+    from: 'architecture-explorer-app',
+    to: 'library-app',
+    label: 'opens article',
+    type: 'data-flow',
+  },
 
   // Knowledge system
   {
@@ -524,6 +565,18 @@ export const EDGES: ArchEdge[] = [
     to: 'learn-routes',
     label: 'builds into',
     type: 'data-flow',
+  },
+  {
+    from: 'knowledge-collection',
+    to: 'knowledge-audit',
+    label: 'validated by',
+    type: 'dependency',
+  },
+  {
+    from: 'learn-routes',
+    to: 'mastery-progress',
+    label: 'enhanced by',
+    type: 'dependency',
   },
   {
     from: 'content-collections',
