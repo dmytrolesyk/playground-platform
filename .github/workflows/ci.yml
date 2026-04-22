@@ -70,10 +70,10 @@ jobs:
         run: pnpm test:e2e:update
       - name: Commit updated snapshots if changed
         run: |
-          git diff --quiet tests/e2e/visual-regression.spec.ts-snapshots/ && exit 0
+          git add tests/e2e/visual-regression.spec.ts-snapshots/
+          git diff --cached --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tests/e2e/visual-regression.spec.ts-snapshots/
           git commit -m "test: update linux visual snapshots"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
 
