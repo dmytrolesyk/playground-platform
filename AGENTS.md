@@ -26,7 +26,7 @@ The project has two separate test suites. Both must pass before merging.
 - **Bug fixes start with a failing test.** Pick the right tier: vitest for logic bugs, Playwright for UI/interaction bugs. Write the test, watch it fail, fix the bug, watch it pass.
 - E2E tests run in two viewports (desktop 1280×720, mobile 375×812). Tests that only apply to one viewport skip on the other.
 - Visual regression snapshots are platform-specific (darwin/linux) and committed to git. CI uses Linux snapshots.
-- To regenerate Linux visual snapshots from CI for same-repo PRs, add the `update snapshots` label. The label-gated job runs `pnpm test:e2e:update` on Ubuntu and commits changed Linux snapshots back to the PR branch.
+- To regenerate Linux visual snapshots from CI for same-repo PRs, add or re-add the `update snapshots` label. The label-gated job runs `pnpm test:e2e:update` on Ubuntu and commits changed Linux snapshots back to the PR branch.
 - `tests/e2e/` is excluded from vitest. Do not put vitest tests there.
 
 ### Feature development process

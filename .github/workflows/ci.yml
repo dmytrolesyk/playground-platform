@@ -49,6 +49,8 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'update snapshots' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       contains(github.event.pull_request.labels.*.name, 'update snapshots')
     needs: [verify]

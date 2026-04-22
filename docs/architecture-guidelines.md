@@ -1464,7 +1464,7 @@ Shared helpers live in `tests/e2e/helpers.ts`: `waitForHydration`, `ConsoleError
 
 **Visual regression snapshots** are committed to git (`tests/e2e/visual-regression.spec.ts-snapshots/`). They are platform-specific (darwin/linux). Normal CI requires committed Linux snapshots; missing baselines fail the e2e job. When UI changes intentionally, run `pnpm test:e2e:update` locally and commit the updated snapshots.
 
-For CI-compatible Linux baselines on same-repo PRs, add the `update snapshots` label. The label-gated CI job runs `pnpm test:e2e:update` on Ubuntu and commits changed Linux snapshots back to the PR branch. Normal PR e2e still compares against committed snapshots; it does not auto-accept visual changes.
+For CI-compatible Linux baselines on same-repo PRs, add or re-add the `update snapshots` label. The label-gated CI job runs `pnpm test:e2e:update` on Ubuntu and commits changed Linux snapshots back to the PR branch. Normal PR e2e still compares against committed snapshots; it does not auto-accept visual changes.
 
 ### Which Tier to Use
 
