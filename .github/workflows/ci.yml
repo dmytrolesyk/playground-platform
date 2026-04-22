@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
 
 jobs:
   verify:
@@ -31,7 +32,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
       - name: Run E2E tests
         run: pnpm test:e2e
       - name: Upload test results on failure
@@ -39,8 +40,44 @@ jobs:
         if: failure()
         with:
           name: e2e-test-results
-          path: tests/e2e/test-results/
+          path: |
+            test-results/
+            playwright-report/
           retention-days: 7
+
+  update-visual-snapshots:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'update snapshots' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.labels.*.name, 'update snapshots')
+    needs: [verify]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Update Linux visual snapshots
+        run: pnpm test:e2e:update
+      - name: Commit updated snapshots if changed
+        run: |
+          git add tests/e2e/visual-regression.spec.ts-snapshots/
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test: update linux visual snapshots"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
 
   cv-generate:
     runs-on: ubuntu-latest

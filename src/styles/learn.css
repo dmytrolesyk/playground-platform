@@ -123,6 +123,8 @@ body {
 /* Main content */
 .learn-content {
   flex: 1;
+  width: 100%;
+  min-width: 0;
   max-width: var(--learn-max-content);
   margin: 0 auto;
   padding: 40px 32px;
@@ -168,9 +170,11 @@ body {
   background: var(--learn-code-bg);
   padding: 2px 5px;
   border-radius: 3px;
+  overflow-wrap: anywhere;
 }
 
 .learn-content pre {
+  max-width: 100%;
   background: #2d2d2d;
   color: #f8f8f2;
   padding: 16px 20px;
@@ -423,16 +427,36 @@ body {
 /* ===== v2: Progress tracking ===== */
 
 .progress-tracker {
+  position: relative;
+  z-index: 1;
   margin-top: 32px;
   padding: 16px 20px;
   background: var(--learn-sidebar-bg);
   border: 1px solid var(--learn-border);
   border-radius: 4px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  flex-direction: column;
   gap: 12px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
+}
+
+.progress-tracker__status {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.progress-tracker__stage {
+  color: var(--learn-heading);
+}
+
+.progress-tracker__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .progress-tracker__btn {
@@ -450,7 +474,7 @@ body {
   border-color: var(--learn-accent);
 }
 
-.progress-tracker__btn--completed {
+.progress-tracker__btn--active {
   background: #28a745;
   color: #fff;
   border-color: #28a745;

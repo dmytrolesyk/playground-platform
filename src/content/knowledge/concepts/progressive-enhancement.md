@@ -7,14 +7,18 @@ relatedConcepts:
   - concepts/islands-architecture
   - concepts/module-systems-and-bundling
   - concepts/lazy-loading-and-code-splitting
+  - concepts/executable-quality-gates
 relatedFiles:
   - src/pages/index.astro
   - src/pages/learn/index.astro
   - src/pages/learn/[...slug].astro
+  - src/layouts/LearnLayout.astro
+  - src/scripts/learn-progress.ts
 technologies:
   - astro
 order: 13
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-21
 externalReferences:
   - title: "Progressive Enhancement — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement"
@@ -112,11 +116,26 @@ src/pages/learn/[...slug].astro   → static HTML articles
 These pages use `LearnLayout.astro` — a reading-optimized layout separate from the desktop. They contain:
 - Semantic HTML (`<article>`, `<nav>`, `<h1>`–`<h6>`, `<ul>`, `<a>`)
 - CSS for layout and typography
-- A small Mermaid script for diagram rendering (enhancement)
+- A Mermaid script for diagram rendering (enhancement)
+- A `localStorage` progress script for read, checked, practiced, and mastered stages (enhancement)
 
-Without JavaScript: every article is fully readable. Links work. Navigation works. The only thing missing is Mermaid diagram rendering — the raw Mermaid syntax is visible but not rendered as SVG.
+Without JavaScript: every article is fully readable. Links work. Navigation works. The only missing pieces are enhancements: Mermaid diagram rendering and mastery progress controls.
 
-With JavaScript: Mermaid diagrams are rendered as interactive SVGs.
+With JavaScript: Mermaid diagrams are rendered as SVGs, article visits are marked as `read`, exercise answers can advance an article to `checked`, labs can be marked `practiced`, and the learner can deliberately mark an article `mastered`.
+
+### Mastery Progress as Progressive Enhancement
+
+The progress model is a good example of restraint. It stores state in the browser under `kb-learning-progress`, not on a server:
+
+```mermaid
+flowchart LR
+    HTML["Static article HTML"] --> READ["Readable without JS"]
+    HTML --> SCRIPT["LearnLayout progress script"]
+    SCRIPT --> STORAGE["localStorage<br/>read / checked / practiced / mastered"]
+    STORAGE --> INDEX["/learn module summaries"]
+```
+
+The core content does not depend on this script. If `localStorage` is unavailable, the reader loses progress badges but not the article. That is the progressive-enhancement test: remove the enhancement, and the primary purpose still works.
 
 ### Static Files: No JS Required
 

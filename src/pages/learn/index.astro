@@ -53,9 +53,10 @@ const categoryLabels: Record<string, string> = {
 // Group articles by module
 const moduleArticles: Record<string, KnowledgeEntry[]> = {};
 for (const entry of entries) {
-  if (entry.data.module) {
-    if (!moduleArticles[entry.data.module]) moduleArticles[entry.data.module] = [];
-    moduleArticles[entry.data.module]!.push(entry);
+  const moduleId = entry.data.module;
+  if (moduleId) {
+    moduleArticles[moduleId] ??= [];
+    moduleArticles[moduleId].push(entry);
   }
 }
 for (const mod of Object.keys(moduleArticles)) {
@@ -131,7 +132,7 @@ const sortedModules = [...MODULES].sort((a, b) => a.order - b.order);
                 <div class="learn-module__progress-fill" style="width: 0%"></div>
               </div>
               <span class="learn-module__progress-label learn-module__meta" style="display:block;margin-top:4px">
-                0/{articles.length} completed
+                0/{articles.length} mastered · 0 read · 0 checked · 0 practiced
               </span>
             </div>
           );

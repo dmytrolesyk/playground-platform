@@ -1,7 +1,8 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 const HYDRATION_TIMEOUT = 15_000;
 const SETTLE_DELAY = 1_000;
+const LEARNING_PROGRESS_KEY = 'kb-learning-progress';
 
 /**
  * Wait for the SolidJS Desktop island to hydrate.
@@ -14,6 +15,21 @@ export async function waitForHydration(page: Page): Promise<void> {
   });
   // Let any post-hydration effects settle
   await page.waitForTimeout(SETTLE_DELAY);
+}
+
+export async function clearLearningProgress(page: Page): Promise<void> {
+  await page.addInitScript((storageKey: string) => {
+    const sentinel = `${storageKey}:cleared`;
+    if (window.sessionStorage.getItem(sentinel) === 'true') return;
+    window.localStorage.removeItem(storageKey);
+    window.sessionStorage.setItem(sentinel, 'true');
+  }, LEARNING_PROGRESS_KEY);
+}
+
+export function desktopWindow(page: Page, title: string): Locator {
+  return page.locator('.window.win-container').filter({
+    has: page.locator('.title-bar-text', { hasText: title }),
+  });
 }
 
 /**

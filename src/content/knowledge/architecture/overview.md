@@ -8,6 +8,7 @@ relatedConcepts:
   - concepts/islands-architecture
   - concepts/progressive-enhancement
   - concepts/module-systems-and-bundling
+  - concepts/executable-quality-gates
 relatedFiles:
   - src/pages/index.astro
   - src/components/desktop/Desktop.tsx
@@ -16,14 +17,16 @@ relatedFiles:
   - src/components/desktop/apps/app-manifest.ts
   - src/components/desktop/WindowManager.tsx
   - src/components/desktop/CrtMonitorFrame.tsx
+  - scripts/audit-knowledge.ts
+  - src/scripts/learn-progress.ts
 technologies:
   - solidjs
   - astro
   - 98css
-diagramRef: "overview"
+diagramRef: "desktop"
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-21
 externalReferences:
   - title: "Astro Islands Documentation"
     url: "https://docs.astro.build/en/concepts/islands/"
@@ -130,6 +133,23 @@ sequenceDiagram
 ```
 
 The knowledge base follows the same pattern but renders to separate `/learn/*` static routes instead of a JSON blob. Both collections use the same Zod-validated content pipeline defined in `src/content.config.ts`.
+
+## Knowledge Reliability Layer
+
+The knowledge base now has a fourth supporting loop: executable reliability checks. `scripts/audit-knowledge.ts` runs during `pnpm verify` and validates relationships that the Astro schema cannot see by itself: article prerequisites, related concepts, curriculum modules, `diagramRef` values, Architecture Explorer edge endpoints, node categories, edge types, and prerequisite cycles.
+
+```mermaid
+flowchart TD
+    KC["Knowledge Markdown"] --> ASTRO["Astro content collection"]
+    KC --> AUDIT["Knowledge audit<br/>verify:knowledge"]
+    ARCH["architecture-data.ts"] --> AUDIT
+    MOD["modules.ts"] --> AUDIT
+    ASTRO --> LEARN["/learn/* static pages"]
+    LEARN --> PROGRESS["localStorage mastery stages"]
+    AUDIT --> VERIFY["pnpm verify"]
+```
+
+This does not turn the site into a backend application. The audit runs in Node during local verification and CI. The mastery model runs in the browser through `localStorage`. The content remains static-first, and the interactive desktop remains one SolidJS island.
 
 ## The Single-Island Architecture
 

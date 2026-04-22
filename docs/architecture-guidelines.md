@@ -1387,7 +1387,30 @@ Currently these are built into individual app components (BrowserApp has its own
 
 **Trigger:** Build shared chrome components when two or more apps need the same sub-window UI pattern.
 
-### 19.7 What Not to Change
+### 19.7 Knowledge System and Architecture Explorer Graph Contract
+
+The knowledge base is part of the platform, not a detached docs folder. `/learn/*` routes, the Library app, Architecture Explorer, `src/content/knowledge/modules.ts`, and the executable audit all share one graph-shaped contract.
+
+`src/components/desktop/apps/architecture-explorer/architecture-data.ts` is the source of truth for Architecture Explorer graph data:
+
+- `NODES` defines stable ids, categories, source files, and optional `knowledgeSlug` links.
+- `EDGES` defines directed relationships between node ids.
+- `LAYERS` maps edge types to visual layers.
+
+The current renderer is a hand-authored SVG canvas, so nodes still contain `x`, `y`, `width`, and `height`. Treat those as presentation fields. The durable contract is renderer-agnostic:
+
+- node ids are unique and stable
+- edge endpoints resolve to node ids
+- node categories stay inside the documented enum
+- edge types stay inside the documented enum
+- `knowledgeSlug` points to real `/learn` articles
+- article `diagramRef` values point back to real node ids
+
+`pnpm verify:knowledge` validates this contract. Run it after changing knowledge articles, curriculum modules, or Architecture Explorer data. Future **Architecture Explorer v2** work should consume this stabilized graph model and may replace the renderer with Cytoscape, LikeC4, ELK, React Flow, Solid Flow, or another graph renderer. That migration should be its own feature; do not add renderer-specific layout complexity to the current SVG implementation as a side effect of unrelated work.
+
+The Library bridge uses the generic desktop `appProps` channel: Architecture Explorer calls `actions.openWindow('library', { initialUrl })`, the singleton store merges new props into the existing Library window, and `LibraryApp` reacts by navigating its iframe. Keep that bridge generic. Do not add Architecture Explorer-specific state to `DesktopState`.
+
+### 19.8 What Not to Change
 
 These patterns are load-bearing and should remain as-is:
 
@@ -1400,6 +1423,7 @@ These patterns are load-bearing and should remain as-is:
 | Single store with zero app-specific logic | ~200 lines, stable regardless of app count | ...leak app state into `DesktopState` |
 | One SolidJS island | Simple state management, no cross-island sync | ...create additional `client:*` islands |
 | CSS isolation (each app has own CSS file) | No style conflicts between apps | ...use global classes for app-specific styling |
+| Renderer-agnostic architecture graph | Future renderers can consume stable nodes and edges | ...encode correctness in SVG-only layout assumptions |
 
 ---
 
@@ -1411,7 +1435,7 @@ The project uses a two-tier testing architecture. Each tier runs a different too
 
 **What it covers:** Pure logic — game engines, utility functions, data transformations, API route handlers. Anything that can be tested without a browser.
 
-**Runs via:** `pnpm verify` (which also runs lint + typecheck).
+**Runs via:** `pnpm verify` (which also runs lint, typecheck, and `pnpm verify:knowledge`).
 
 **Location:** Test files live next to their source files or in `tests/` (but **not** in `tests/e2e/` — that directory is excluded from vitest).
 
@@ -1423,7 +1447,7 @@ The project uses a two-tier testing architecture. Each tier runs a different too
 
 **Runs via:** `pnpm test:e2e`. Update visual regression baselines with `pnpm test:e2e:update`.
 
-**Location:** `tests/e2e/`. Four spec files:
+**Location:** `tests/e2e/`. Core spec files:
 
 | File | Purpose |
 |---|---|
@@ -1431,12 +1455,16 @@ The project uses a two-tier testing architecture. Each tier runs a different too
 | `smoke.spec.ts` | Every app opens, shows expected content, start menu + taskbar work |
 | `visual-regression.spec.ts` | Screenshot comparisons for desktop/mobile empty, start menu, window |
 | `responsive.spec.ts` | 768px breakpoint boundary, CRT frame visibility, mobile full-screen |
+| `knowledge.spec.ts` | `/learn` curriculum rendering and staged progress persistence |
+| `desktop-knowledge.spec.ts` | Architecture Explorer to Library singleton navigation |
 
 Shared helpers live in `tests/e2e/helpers.ts`: `waitForHydration`, `ConsoleErrorCollector`, `openApp`, `closeTopWindow`.
 
 **Two viewport projects:** Every test runs twice — desktop (1280×720) and mobile (Pixel 5, 375×812 with touch). Tests that only apply to one viewport skip on the other using `page.viewportSize()`.
 
-**Visual regression snapshots** are committed to git (`tests/e2e/visual-regression.spec.ts-snapshots/`). They are platform-specific (darwin/linux). CI generates its own Linux snapshots on first run. When UI changes intentionally, run `pnpm test:e2e:update` locally and commit the updated snapshots.
+**Visual regression snapshots** are committed to git (`tests/e2e/visual-regression.spec.ts-snapshots/`). They are platform-specific (darwin/linux). Normal CI requires committed Linux snapshots; missing baselines fail the e2e job. When UI changes intentionally, run `pnpm test:e2e:update` locally and commit the updated snapshots.
+
+For CI-compatible Linux baselines on same-repo PRs, add or re-add the `update snapshots` label. The label-gated CI job runs `pnpm test:e2e:update` on Ubuntu and commits changed Linux snapshots back to the PR branch. Normal PR e2e still compares against committed snapshots; it does not auto-accept visual changes.
 
 ### Which Tier to Use
 
@@ -1449,6 +1477,8 @@ Shared helpers live in `tests/e2e/helpers.ts`: `waitForHydration`, `ConsoleError
 | Hydration or SSR issue | Playwright health test (only shows in production build) |
 | Visual change (layout, styling) | Playwright visual regression — update snapshots after verifying |
 | New API endpoint | vitest for the handler logic |
+| Knowledge article, module, diagram ref, or Architecture Explorer graph change | `pnpm verify:knowledge` |
+| `/learn`, Library iframe, Architecture Explorer navigation, or progress UI change | Playwright E2E |
 
 ### CI Integration
 

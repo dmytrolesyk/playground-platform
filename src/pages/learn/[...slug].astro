@@ -115,6 +115,8 @@ const exerciseTypeLabels: Record<string, string> = {
 };
 
 const html = entry.rendered?.html ?? entry.body ?? '';
+const hasPracticeCheckpoint =
+  entry.data.category === 'lab' || entry.data.exercises.some((exercise) => exercise.type === 'do');
 ---
 
 <LearnLayout title={entry.data.title}>
@@ -182,6 +184,13 @@ const html = entry.rendered?.html ?? entry.body ?? '';
       )}
 
       <article set:html={html} />
+
+      {/* Progress tracking placeholder — hydrated by client script */}
+      <div
+        id="progress-tracker"
+        data-slug={entry.id}
+        data-has-practice-checkpoint={hasPracticeCheckpoint ? 'true' : 'false'}
+      ></div>
 
       {/* Exercises */}
       {entry.data.exercises.length > 0 && (
@@ -257,9 +266,6 @@ const html = entry.rendered?.html ?? entry.body ?? '';
           ) : <span />}
         </nav>
       )}
-
-      {/* Progress tracking placeholder — hydrated by client script */}
-      <div id="progress-tracker" data-slug={entry.id}></div>
     </main>
   </div>
 </LearnLayout>

@@ -54,6 +54,12 @@ export function createDesktopStore(): [DesktopState, DesktopActions] {
           return win?.app === appId;
         });
         if (existingId) {
+          if (extraProps) {
+            setState('windows', existingId, 'appProps', (appProps) => ({
+              ...(appProps ?? {}),
+              ...extraProps,
+            }));
+          }
           actions.focusWindow(existingId);
           // Also restore if minimized
           const existing = state.windows[existingId];

@@ -69,4 +69,15 @@ export const MODULES: CurriculumModule[] = [
     prerequisites: ['foundation', 'reactivity'],
     order: 6,
   },
+  {
+    id: 'learning-system-reliability',
+    title: 'Learning System Reliability',
+    objective:
+      'Turn knowledge content into an auditable graph, then use staged mastery to practice and verify understanding',
+    estimatedHours: 2,
+    checkpoint:
+      'Break a knowledge link, diagnose the audit failure, repair the graph, and explain how progress stages preserve honest self-assessment.',
+    prerequisites: ['foundation', 'extensibility'],
+    order: 7,
+  },
 ];

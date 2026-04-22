@@ -1,18 +1,21 @@
 # Feature: Knowledge Base & Learning System
 
 ## Status
-Complete
+Complete — Canonical Active Spec
+
+This is the source of truth for the current knowledge system. The older v2 design has been merged into this document and `docs/features/knowledge-base-v2.md` is now superseded. Future agents should treat this file, `docs/feature-development.md`, and `AGENTS.md` as the active process contract.
 
 ## Motivation
 
-This codebase was built almost entirely by AI (Claude/Opus). It works perfectly, but the human developer doesn't deeply understand the architecture, patterns, or technologies used (SolidJS, Astro islands, fine-grained reactivity, the registry pattern, etc.). Since this is a personal platform for experimentation and learning, that knowledge gap undermines the whole purpose.
+This codebase was built almost entirely by AI (Claude/Opus). It works well, but the human developer needs to deeply understand the architecture, patterns, and technologies used (SolidJS, Astro islands, fine-grained reactivity, the registry pattern, etc.). Since this is a personal platform for experimentation and learning, that knowledge gap undermines the whole purpose.
 
 The knowledge base is a structured learning system that:
 1. Documents the entire architecture with interactive diagrams
 2. Explains every technology, pattern, and concept used
 3. Provides deep-dive articles with external references
-4. Grows automatically with every new feature
-5. Eventually becomes a blog / online presence (deferred)
+4. Grows with every new feature through mandatory knowledge expansion
+5. Uses executable audits and e2e coverage to keep learning links, graph data, and progress behavior reliable
+6. Eventually becomes a blog / online presence (deferred)
 
 ## Architecture Fit
 
@@ -21,9 +24,11 @@ This feature spans multiple layers:
 - **New Astro content collection** (`knowledge`) — follows the exact same pattern as the existing `cv` collection. Build-time rendering, Zod schema validation, static routes.
 - **New Astro routes** (`/learn/*`) — static pages with a new reading-optimized layout (not 98.css). Uses Astro's file-based routing with `[...slug]` catch-all.
 - **Two new registered apps** — `LibraryApp` (iframe-based reader) and `ArchitectureExplorer` (interactive SVG diagram). Both follow the standard `registerApp()` pattern with `lazy()` loading.
-- **Extended feature development process** — `docs/feature-development.md` gains a "Knowledge Entries" section in the feature doc template.
+- **Extended feature development process** — `docs/feature-development.md` defines mandatory knowledge expansion, audit checks, and e2e expectations.
+- **Executable knowledge audit** — `pnpm verify:knowledge` validates article links, prerequisite cycles, curriculum modules, diagram refs, and Architecture Explorer graph integrity.
+- **Staged mastery progress** — `/learn` pages remain static HTML, then use `localStorage` as progressive enhancement for read, checked, practiced, and mastered states.
 
-No changes to Desktop, WindowManager, Taskbar, StartMenu, or the store. No new runtime dependencies for the content/reading layer. The Architecture Explorer is pure SolidJS + SVG (no charting library).
+The desktop architecture stays intact: one SolidJS island, registry-driven apps, lazy app loading, and no knowledge-specific state in the desktop store. The one store change made for the learning system is generic singleton behavior: reopening an existing singleton app can merge new `appProps`, which lets Architecture Explorer navigate an already-open Library window.
 
 ## Technical Design
 
@@ -57,21 +62,38 @@ src/content/knowledge/
 │   ├── xterm.md
 │   └── resend.md
 │
-└── features/               ← per-feature learning (grows with platform)
-    ├── cv-viewer.md
-    ├── terminal.md
-    ├── snake-game.md
-    └── crt-monitor-frame.md
+├── features/               ← per-feature learning (grows with platform)
+│   ├── cv-viewer.md
+│   ├── terminal.md
+│   ├── snake-game.md
+│   └── crt-monitor-frame.md
+│
+├── cs-fundamentals/        ← foundational CS concepts grounded in this repo
+│   ├── hash-maps-and-lookup.md
+│   ├── graph-validation.md
+│   └── ...
+│
+└── labs/                   ← guided hands-on experiments
+    ├── break-reactivity.md
+    ├── repair-a-knowledge-graph.md
+    └── ...
 ```
 
 #### Frontmatter Schema
 
 ```typescript
 const knowledge = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/knowledge' }),
   schema: z.object({
     title: z.string(),
-    category: z.enum(['architecture', 'concept', 'technology', 'feature']),
+    category: z.enum([
+      'architecture',
+      'concept',
+      'technology',
+      'feature',
+      'lab',
+      'cs-fundamentals',
+    ]),
     summary: z.string(),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
     relatedConcepts: z.array(z.string()).default([]),
@@ -80,22 +102,34 @@ const knowledge = defineCollection({
     externalReferences: z.array(z.object({
       title: z.string(),
       url: z.string(),
-      type: z.enum(['article', 'video', 'docs', 'talk', 'repo']),
+      type: z.enum(['article', 'video', 'docs', 'talk', 'repo', 'book']),
     })).default([]),
     diagramRef: z.string().optional(),
     order: z.number().optional(),
     dateAdded: z.date().optional(),
     lastUpdated: z.date().optional(),
+    prerequisites: z.array(z.string()).default([]),
+    learningObjectives: z.array(z.string()).default([]),
+    exercises: z.array(z.object({
+      question: z.string(),
+      hint: z.string().optional(),
+      answer: z.string(),
+      type: z.enum(['predict', 'explain', 'do', 'debug']).default('explain'),
+    })).default([]),
+    estimatedMinutes: z.number().optional(),
+    module: z.string().optional(),
+    moduleOrder: z.number().optional(),
   }),
 });
 ```
 
 Key design decisions:
-- **Relationships by slug** — `relatedConcepts: ['fine-grained-reactivity', 'solidjs']`. Build-time validation catches broken links.
+- **Relationships by slug** — `relatedConcepts: ['concepts/fine-grained-reactivity']` and `prerequisites: ['architecture/overview']`. `pnpm verify:knowledge` catches broken links and cycles.
 - **`relatedFiles`** — points to actual source paths (e.g., `src/components/desktop/Window.tsx`).
 - **`diagramRef`** — ties a doc to a node in the Architecture Explorer. Click node → open doc.
 - **`externalReferences` with types** — enables filtering by article/video/docs/talk/repo.
-- **Categories map to directories** — simple, discoverable.
+- **Module metadata** — `module` and `moduleOrder` place articles into the curriculum defined in `src/content/knowledge/modules.ts`.
+- **Categories map to directories** — simple, discoverable. The directory is `labs/`, but frontmatter uses `category: lab`.
 
 ### 2. Reading Interface (`/learn/*` routes)
 
@@ -122,7 +156,7 @@ Separate layout from the main desktop — clean, modern, reading-optimized. NOT 
 │   nav with │  - Difficulty badge                  │
 │   collapse │  - Full markdown content             │
 │ - Current  │  - Code excerpts from relatedFiles   │
-│   article  │  - Mermaid diagrams (rendered to SVG) │
+│   article  │  - Mermaid diagrams (client rendered) │
 │   highlight│                                      │
 │            │  Related section                     │
 │ ────────── │  - Related concepts (from frontmatter)│
@@ -138,7 +172,7 @@ Design decisions:
 - **"Back to Desktop"** link — one click returns to the Win95 experience.
 - **No 98.css** — separate `LearnLayout.astro` optimized for reading.
 - **Static rendering** — all pages prerendered at build time, zero JS needed for reading.
-- **Mermaid diagrams** in markdown → rendered to inline SVG at build time.
+- **Mermaid diagrams** in markdown → rendered client-side by the small Mermaid script in `LearnLayout.astro`.
 
 ### 3. Desktop Integration: Library App
 
@@ -329,7 +363,75 @@ registerApp({
 });
 ```
 
-### 5. Living Process — Feature Development Integration
+### 5. Reliability Layer
+
+The knowledge system has an executable audit:
+
+```bash
+pnpm verify:knowledge
+```
+
+`pnpm verify` runs this audit after Biome, Astro check, and Vitest. The audit reads:
+
+- `src/content/knowledge/**/*.md`
+- `src/content/knowledge/modules.ts`
+- `src/components/desktop/apps/architecture-explorer/architecture-data.ts`
+
+It validates:
+
+- `relatedConcepts` and `prerequisites` point to real articles
+- `module` points to a real curriculum module
+- `diagramRef` points to a real Architecture Explorer node
+- prerequisite relationships are acyclic
+- architecture node ids are unique
+- architecture node categories and edge types stay inside the graph contract
+- architecture edge endpoints resolve
+- `knowledgeSlug` values point to real articles
+
+This audit covers relationships that Astro's Zod schema cannot validate because they depend on multiple files. Warnings may exist later, but current hard failures exit non-zero and block `pnpm verify`.
+
+### 6. Staged Mastery Progress
+
+`src/scripts/learn-progress.ts` is the canonical local progress module. The data is stored in `localStorage` under `kb-learning-progress`:
+
+```typescript
+type MasteryStage = 'read' | 'checked' | 'practiced' | 'mastered';
+```
+
+Rules:
+
+- Article load marks an article `read`.
+- Opening exercise answers or clicking Checked marks it `checked`.
+- Labs and do-style work can be marked `practiced`.
+- `mastered` is a deliberate self-assessment, not a page-view side effect.
+- Old `{ completed: true }` records migrate to `mastered`; old incomplete records migrate to `read`.
+
+Progress is progressive enhancement. `/learn` content must remain fully readable without JavaScript. If `localStorage` is unavailable, article content, prerequisites, source files, and external references still render.
+
+### 7. Renderer-Agnostic Architecture Graph
+
+`architecture-data.ts` is a graph contract first and SVG layout data second. Current fields like `x`, `y`, `width`, and `height` exist for the hand-drawn SVG renderer, but future Architecture Explorer v2 work should consume the stable graph model rather than deepening custom SVG layout behavior.
+
+Hard rules:
+
+- Treat node ids as stable public identifiers.
+- Keep `knowledgeSlug` pointed at real `/learn` articles.
+- Keep article `diagramRef` values pointed at real node ids.
+- Keep edge endpoints valid.
+- Use only documented node categories and edge types.
+- Do not add renderer-specific semantics to make the graph "validate"; fix the model instead.
+
+### 8. E2E Coverage
+
+Knowledge-system UI behavior is covered by Playwright against a production build:
+
+- `tests/e2e/knowledge.spec.ts` covers `/learn` rendering and staged progress persistence.
+- `tests/e2e/desktop-knowledge.spec.ts` covers Architecture Explorer -> Library singleton navigation.
+- `tests/e2e/visual-regression.spec.ts` includes focused snapshots for `/learn`, an article, Library, and Architecture Explorer.
+
+Run `pnpm test:e2e` before PRs that touch `/learn`, Library, Architecture Explorer, progress behavior, or knowledge styling. Run `pnpm test:e2e:update` only for intentional visual changes and inspect the updated snapshots before committing them.
+
+### 9. Living Process — Feature Development Integration
 
 #### Extended Feature Doc Template
 
@@ -367,7 +469,7 @@ Added to the existing Phase 3 steps:
 
 Both produce the same artifact: a markdown file in `src/content/knowledge/`.
 
-### 6. Initial Content Plan
+### 10. Initial Content Plan
 
 #### "Start Here" Reading Path (recommended order)
 
@@ -384,15 +486,17 @@ Both produce the same artifact: a markdown file in `src/content/knowledge/`.
 
 #### Content Scope
 
-| Category | Count | Depth | Authorship |
+| Category | Current Count | Depth | Authorship |
 |---|---|---|---|
 | Architecture | 6 docs | Deep (~1500-2500 words) — code excerpts, diagrams, decision rationale, trade-off analysis | Collaborative |
-| Concepts | 13 docs (7 original + 6 foundational) | Transferable (~1000-1800 words) — what, why, history, broader context, external refs | Mix |
+| Concepts | 14 docs | Transferable (~1000-1800 words) — what, why, history, broader context, external refs | Mix |
 | Technologies | 5 docs | Reference + "how we use it" + alternatives comparison (~800-1400 words) | Fast-mode drafts |
-| Features | 4 docs | Walkthrough linking to arch + concepts (~600-1000 words) | Fast-mode drafts |
-| **Total** | **28 docs** | **~30,000-40,000 words** | Rolling effort |
+| Features | 5 docs | Walkthrough linking to arch + concepts (~600-1000 words) | Fast-mode drafts |
+| CS Fundamentals | 7 docs | Foundational concepts grounded in this repo (~1000-1800 words) | Mix |
+| Labs | 6 docs | Hands-on experiments with setup, DO/OBSERVE/EXPLAIN, cleanup (~800-1500 words) | Mix |
+| **Total** | **43 docs** | **Living curriculum** | Rolling effort |
 
-### 7. Content Quality Standards
+### 11. Content Quality Standards
 
 Every knowledge article must meet these standards. This applies to initial content, enrichments, and all future articles created as part of new features.
 
@@ -459,7 +563,7 @@ Most knowledge articles are written by AI agents. To ensure accuracy and depth, 
 ## Resolved Questions
 
 - **Icon assets:** Create new pixel-art icons (32×32) for both Library and Architecture Explorer apps.
-- **Mermaid rendering:** Use a remark plugin (`remark-mermaid` or similar) for build-time SVG rendering from the start.
+- **Mermaid rendering:** Use the client-side Mermaid script in `LearnLayout.astro`; build-time rendering was tried and removed because the plugin required Playwright for all strategies.
 - **Search on /learn:** Category browsing only for now. Static search (Pagefind) deferred as a separate feature.
 - **Mobile /learn routes:** Mobile users go directly to `/learn/*` routes — bypass the Library app (iframe-in-window is awkward on mobile). Desktop icon on mobile opens `/learn/` in a new tab or navigates directly.
 

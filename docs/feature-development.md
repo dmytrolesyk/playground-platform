@@ -108,15 +108,20 @@ registerApp({
 - [ ] `exercises` added (2-4 per article, at least one `predict` or `do` type)
 - [ ] `estimatedMinutes` set
 - [ ] `module` and `moduleOrder` assigned (new module if needed, or extend existing)
-- [ ] Quality standards met (see `docs/features/knowledge-base.md` §7 + `docs/features/knowledge-base-v2.md`)
+- [ ] Quality standards met (see canonical `docs/features/knowledge-base.md`)
 
 ### Architecture explorer updates:
-- [ ] Add node(s): ...
-- [ ] Add edge(s): ...
+- [ ] Add/update renderer-agnostic graph node(s): ...
+- [ ] Add/update graph edge(s): ...
+- [ ] Confirm node ids, edge endpoints, `knowledgeSlug`, and `diagramRef` values pass `pnpm verify:knowledge`
 
 ### Curriculum:
 - [ ] New module defined? (name, objective, article sequence, checkpoint)
 - [ ] Or articles added to existing module? (which one, at what position)
+
+### Verification:
+- [ ] `pnpm verify:knowledge` passes after knowledge and graph edits
+- [ ] `pnpm test:e2e` passes if `/learn`, Library, Architecture Explorer, progress controls, styling, or visual snapshots changed
 
 ### Blog entry (optional but encouraged):
 - [ ] Draft blog post linking to relevant knowledge articles
@@ -150,27 +155,29 @@ git commit -m "docs: add feature design for <feature-name>"
 
 Before merging:
 
-1. **`pnpm verify` passes** — lint, typecheck, unit tests. Non-negotiable.
-2. **`pnpm test:e2e` passes** — E2E tests against production build. If you changed UI, run `pnpm test:e2e:update` and commit updated snapshots.
-3. **Update the feature doc:**
-   - Set Status to `Complete`.
-   - Check off all implementation plan steps.
-   - Add a "Deviations" note if anything was built differently than designed.
-4. **Update `docs/architecture-guidelines.md`** — only if the feature introduced new patterns, extension points, or architectural decisions worth recording. Most simple features won't need this. Features that add new shared services, new registry fields, or new platform-level behaviors should update §19 (Experimentation Platform Analysis) or add a new section.
-5. **Update `AGENTS.md`** — only if there are new non-discoverable rules that an agent couldn't figure out from reading the code (e.g., "audio service is a singleton — don't create a second AudioContext").
-6. **PR → merge to main.** Squash or merge commit — your preference per feature.
-7. **Expand the knowledge base** — this is the most important learning step. For each new feature:
+1. **Expand the knowledge base** — this is the most important learning step. For each new feature:
    a. Write/update all articles listed in the feature doc's "Knowledge Expansion" section.
    b. Every article must include `learningObjectives`, `prerequisites`, `exercises` (2-4 per article), `estimatedMinutes`, and `module` assignment.
    c. Every exercise must have a thorough answer, not just yes/no. At least one exercise per article must be type `predict` or `do`.
    d. For medium/complex features: write at least one lab (`labs/<name>.md`) with guided hands-on experiments.
    e. For features introducing new technologies: write CS fundamentals articles for any underlying CS concepts not already covered.
-   f. Assign articles to curriculum modules — either a new module or extension of an existing one.
-   g. Update `architecture-data.ts` with new nodes and edges.
-   h. Update `architecture/overview.md` if the feature changes the big picture.
-   i. **All articles must pass both** the quality standards in `docs/features/knowledge-base.md` §7 (motivation opening, ≥1 Mermaid diagram, real code, external refs, word counts) **AND** the v2 standards in `docs/features/knowledge-base-v2.md` (exercises, learning objectives, prerequisites, module assignment).
-   j. **Research process is mandatory** — read the source code, consult official docs, search the web. Never generate knowledge articles from training data alone.
+   f. Assign articles to curriculum modules — either a new module or extension of an existing one in `src/content/knowledge/modules.ts`.
+   g. Update `architecture-data.ts` with renderer-agnostic nodes and edges. Keep node ids stable, edge endpoints valid, and `knowledgeSlug` values pointed at real articles.
+   h. Update article `diagramRef` values when the feature changes the Architecture Explorer graph.
+   i. Update `architecture/overview.md` if the feature changes the big picture.
+   j. **All articles must pass** the quality standards in canonical `docs/features/knowledge-base.md`.
+   k. **Research process is mandatory** — read the source code, consult official docs, search the web. Never generate knowledge articles from training data alone.
+2. **`pnpm verify:knowledge` passes** — executable audit for article links, prerequisite cycles, module ids, diagram refs, and Architecture Explorer graph integrity.
+3. **`pnpm verify` passes** — lint, typecheck, unit tests, and knowledge audit. Non-negotiable.
+4. **`pnpm test:e2e` passes** — E2E tests against production build. Required for UI, styling, interaction, `/learn`, Library, Architecture Explorer, and progress behavior changes. If you changed visuals intentionally, run `pnpm test:e2e:update`, inspect the new screenshots, and commit updated snapshots.
+5. **Update the feature doc:**
+   - Set Status to `Complete`.
+   - Check off all implementation plan steps.
+   - Add a "Deviations" note if anything was built differently than designed.
+6. **Update `docs/architecture-guidelines.md`** — only if the feature introduced new patterns, extension points, or architectural decisions worth recording. Most simple features won't need this. Features that add new shared services, new registry fields, graph contracts, or platform-level behaviors should update §19 or add a new section.
+7. **Update `AGENTS.md`** — only if there are new non-discoverable rules that an agent couldn't figure out from reading the code (e.g., "audio service is a singleton — don't create a second AudioContext").
 8. **(Optional but encouraged) Draft blog entry** — write a blog post about the feature, linking to relevant knowledge articles.
+9. **PR → merge to main.** Squash or merge commit — your preference per feature.
 
 ---
 

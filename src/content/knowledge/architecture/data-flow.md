@@ -7,6 +7,7 @@ relatedConcepts:
   - concepts/islands-architecture
   - concepts/progressive-enhancement
   - concepts/module-systems-and-bundling
+  - concepts/executable-quality-gates
 relatedFiles:
   - src/content.config.ts
   - src/content/cv/
@@ -16,11 +17,15 @@ relatedFiles:
   - src/content/knowledge/
   - src/pages/learn/index.astro
   - src/pages/learn/[...slug].astro
+  - src/scripts/learn-progress.ts
+  - scripts/audit-knowledge.ts
+  - scripts/knowledge-audit/load.ts
+  - scripts/knowledge-audit/rules.ts
 technologies:
   - astro
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-21
 externalReferences:
   - title: "Astro Content Collections"
     url: "https://docs.astro.build/en/guides/content-collections/"
@@ -206,7 +211,7 @@ Astro's file-based routing renders each knowledge entry as a static HTML page:
 /learn/concepts/signals-vs-vdom → src/content/knowledge/concepts/signals-vs-vdom.md
 ```
 
-The `/learn/*` pages are fully static — no SolidJS island, no client-side hydration (except a small Mermaid rendering script). They're pre-rendered HTML that works without JavaScript.
+The `/learn/*` pages are fully static — no SolidJS island, no client-side hydration. They are pre-rendered HTML that works without JavaScript, then `LearnLayout.astro` adds two progressive enhancements: Mermaid diagram rendering and local mastery progress.
 
 Additionally, `index.astro` serializes a knowledge index into the page for the Library app's tree view:
 
@@ -224,6 +229,43 @@ const knowledgeEntries = ((await getCollection('knowledge')) as KnowledgeEntry[]
   [{"id":"architecture/overview","title":"The Big Picture",...}]
 </script>
 ```
+
+### Audit-Time Data Flow
+
+The knowledge audit follows the same static-first philosophy, but it runs before shipping instead of in the browser:
+
+```mermaid
+sequenceDiagram
+    participant CLI as audit-knowledge.ts
+    participant Load as load.ts
+    participant MD as Knowledge Markdown
+    participant Arch as architecture-data.ts
+    participant Rules as rules.ts
+    participant Report as report.ts
+
+    CLI->>Load: loadKnowledgeAuditInput()
+    Load->>MD: read files + parse YAML frontmatter
+    Load->>Arch: dynamic import nodes and edges
+    Load-->>CLI: articles, modules, graph data
+    CLI->>Rules: auditKnowledgeRules(input)
+    Rules-->>CLI: issues[]
+    CLI->>Report: formatKnowledgeAuditReport(issues)
+    Report-->>CLI: terminal output + exit status
+```
+
+Astro's Zod schema validates the shape of one article at a time. The audit validates relationships across files: "does this prerequisite exist?", "does this module id exist?", "does this edge endpoint exist?", and "does this prerequisite graph contain a cycle?"
+
+### Progress-Time Data Flow
+
+Learning progress is intentionally client-local. Article content is static HTML, then the script in `LearnLayout.astro` imports `src/scripts/learn-progress.ts` and stores staged progress under the `kb-learning-progress` key in `localStorage`.
+
+The data shape separates article visits from mastery:
+
+```ts
+type MasteryStage = 'read' | 'checked' | 'practiced' | 'mastered';
+```
+
+That means `/learn` can show "read", "checked", "practiced", and "mastered" counts per module without claiming that a page view equals understanding.
 
 ## What If We'd Used Runtime Markdown Parsing?
 
