@@ -14,6 +14,19 @@ export function auditKnowledgeRules(input: KnowledgeAuditInput): KnowledgeAuditI
     ...auditArticleReferences(input),
     ...auditArchitectureGraph(input),
     ...auditPrerequisiteCycles(input),
+    ...auditMinimumRelatedConcepts(input),
+    ...auditMinimumExercises(input),
+    ...auditRequiredLearningObjectives(input),
+    ...auditArchitectureRequiresDiagram(input),
+    ...auditLabRequiresPrerequisites(input),
+    ...auditNoOrphanArticles(input),
+    ...auditTechnologyCoverage(input),
+    ...auditModuleCompleteness(input),
+    ...auditBroaderNarrowerSymmetry(input),
+    ...auditMinimumWordCount(input),
+    ...auditExerciseTypeDiversity(input),
+    ...auditExternalReferenceMinimum(input),
+    ...auditInlineCitationDensity(input),
   ];
 }
 
@@ -277,15 +290,353 @@ function canonicalCycleKey(cycle: readonly string[]): string {
   return canonical ? canonical.join('\u0000') : cycle.join(' -> ');
 }
 
+function issue(
+  severity: 'error' | 'warning',
+  code: KnowledgeAuditIssueCode,
+  subject: string,
+  message: string,
+): KnowledgeAuditIssue {
+  return { severity, code, subject, message };
+}
+
 function error(
   code: KnowledgeAuditIssueCode,
   subject: string,
   message: string,
 ): KnowledgeAuditIssue {
-  return {
-    severity: 'error',
-    code,
-    subject,
-    message,
-  };
+  return issue('error', code, subject, message);
+}
+
+function warning(
+  code: KnowledgeAuditIssueCode,
+  subject: string,
+  message: string,
+): KnowledgeAuditIssue {
+  return issue('warning', code, subject, message);
+}
+
+// --- Rule 1: minimum-related-concepts ---
+
+export function auditMinimumRelatedConcepts(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => (article.relatedConcepts?.length ?? 0) < 1)
+    .map((article) =>
+      warning(
+        'minimum-related-concepts',
+        article.id,
+        `${article.id} has no relatedConcepts (minimum 1).`,
+      ),
+    );
+}
+
+// --- Rule 2: minimum-exercises ---
+
+export function auditMinimumExercises(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => article.category !== 'lab')
+    .filter((article) => (article.exercises?.length ?? 0) < 2)
+    .map((article) =>
+      error(
+        'minimum-exercises',
+        article.id,
+        `${article.id} has ${article.exercises?.length ?? 0} exercises (minimum 2 for non-lab articles).`,
+      ),
+    );
+}
+
+// --- Rule 3: required-learning-objectives ---
+
+export function auditRequiredLearningObjectives(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => (article.learningObjectives?.length ?? 0) < 1)
+    .map((article) =>
+      error(
+        'required-learning-objectives',
+        article.id,
+        `${article.id} has no learningObjectives (minimum 1).`,
+      ),
+    );
+}
+
+// --- Rule 4: architecture-requires-diagram ---
+
+export function auditArchitectureRequiresDiagram(
+  input: KnowledgeAuditInput,
+): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => article.category === 'architecture')
+    .filter((article) => !article.diagramRef)
+    .map((article) =>
+      warning(
+        'architecture-requires-diagram',
+        article.id,
+        `${article.id} is an architecture article but has no diagramRef.`,
+      ),
+    );
+}
+
+// --- Rule 5: lab-requires-prerequisites ---
+
+export function auditLabRequiresPrerequisites(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => article.category === 'lab')
+    .filter((article) => (article.prerequisites?.length ?? 0) < 1)
+    .map((article) =>
+      warning(
+        'lab-requires-prerequisites',
+        article.id,
+        `${article.id} is a lab but has no prerequisites (minimum 1).`,
+      ),
+    );
+}
+
+// --- Rule 6: no-orphan-articles ---
+
+export function auditNoOrphanArticles(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  // An article is NOT orphaned if:
+  // - It's referenced by another article's relatedConcepts or prerequisites, OR
+  // - It's assigned to a module
+  const referenced = new Set<string>();
+  for (const article of input.articles) {
+    for (const ref of article.relatedConcepts ?? []) {
+      referenced.add(ref);
+    }
+    for (const prereq of article.prerequisites ?? []) {
+      referenced.add(prereq);
+    }
+  }
+
+  return input.articles
+    .filter((article) => !(referenced.has(article.id) || article.module))
+    .map((article) =>
+      warning(
+        'no-orphan-articles',
+        article.id,
+        `${article.id} is not referenced by any other article and has no module assignment.`,
+      ),
+    );
+}
+
+// --- Rule 7: technology-coverage ---
+
+export function auditTechnologyCoverage(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  // Collect all unique technology tags used across all articles
+  const allTechTags = new Set<string>();
+  for (const article of input.articles) {
+    for (const tech of article.technologies ?? []) {
+      allTechTags.add(tech);
+    }
+  }
+
+  // Collect technology article slugs (category: technology, id like "technologies/foo")
+  const coveredTechs = new Set<string>();
+  for (const article of input.articles) {
+    if (article.category === 'technology') {
+      // Extract the slug part after "technologies/"
+      const parts = article.id.split('/');
+      const slug = parts[parts.length - 1];
+      if (slug) {
+        coveredTechs.add(slug);
+      }
+    }
+  }
+
+  return [...allTechTags]
+    .filter((tech) => !coveredTechs.has(tech))
+    .sort()
+    .map((tech) =>
+      warning(
+        'technology-coverage',
+        tech,
+        `Technology tag "${tech}" is used but no technologies/${tech} article exists.`,
+      ),
+    );
+}
+
+// --- Rule 8: module-completeness ---
+
+export function auditModuleCompleteness(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  const articlesByModule = new Map<string, number>();
+  for (const article of input.articles) {
+    if (article.module) {
+      articlesByModule.set(article.module, (articlesByModule.get(article.module) ?? 0) + 1);
+    }
+  }
+
+  return input.modules
+    .filter((mod) => (articlesByModule.get(mod.id) ?? 0) < 2)
+    .map((mod) =>
+      warning(
+        'module-completeness',
+        mod.id,
+        `Module "${mod.id}" has ${articlesByModule.get(mod.id) ?? 0} articles (minimum 2).`,
+      ),
+    );
+}
+
+// --- Rule 9: broader-narrower-symmetry ---
+
+export function auditBroaderNarrowerSymmetry(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  const articleMap = new Map(input.articles.map((a) => [a.id, a]));
+  return [
+    ...checkBroaderLinks(input.articles, articleMap),
+    ...checkNarrowerLinks(input.articles, articleMap),
+  ];
+}
+
+function checkBroaderLinks(
+  articles: readonly KnowledgeArticle[],
+  articleMap: ReadonlyMap<string, KnowledgeArticle>,
+): KnowledgeAuditIssue[] {
+  const issues: KnowledgeAuditIssue[] = [];
+  for (const article of articles) {
+    for (const broaderId of article.broader ?? []) {
+      const broaderArticle = articleMap.get(broaderId);
+      if (broaderArticle && !(broaderArticle.narrower ?? []).includes(article.id)) {
+        issues.push(
+          error(
+            'broader-narrower-symmetry',
+            article.id,
+            `${article.id} lists "${broaderId}" in broader, but "${broaderId}" does not list "${article.id}" in narrower.`,
+          ),
+        );
+      }
+    }
+  }
+  return issues;
+}
+
+function checkNarrowerLinks(
+  articles: readonly KnowledgeArticle[],
+  articleMap: ReadonlyMap<string, KnowledgeArticle>,
+): KnowledgeAuditIssue[] {
+  const issues: KnowledgeAuditIssue[] = [];
+  for (const article of articles) {
+    for (const narrowerId of article.narrower ?? []) {
+      const narrowerArticle = articleMap.get(narrowerId);
+      if (narrowerArticle && !(narrowerArticle.broader ?? []).includes(article.id)) {
+        issues.push(
+          error(
+            'broader-narrower-symmetry',
+            article.id,
+            `${article.id} lists "${narrowerId}" in narrower, but "${narrowerId}" does not list "${article.id}" in broader.`,
+          ),
+        );
+      }
+    }
+  }
+  return issues;
+}
+
+// --- Rule 10: minimum-word-count ---
+
+const MINIMUM_WORD_COUNTS: Record<string, number> = {
+  architecture: 1500,
+  concept: 1000,
+  technology: 800,
+  feature: 600,
+  'cs-fundamentals': 1000,
+  lab: 800,
+  'project-lab': 800,
+};
+
+export function auditMinimumWordCount(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => article.body !== undefined)
+    .filter((article) => {
+      const minimum = MINIMUM_WORD_COUNTS[article.category];
+      if (minimum === undefined) return false;
+      const wordCount = countWords(article.body ?? '');
+      return wordCount < minimum;
+    })
+    .map((article) => {
+      const wordCount = countWords(article.body ?? '');
+      const minimum = MINIMUM_WORD_COUNTS[article.category] ?? 0;
+      return warning(
+        'minimum-word-count',
+        article.id,
+        `${article.id} has ${wordCount} words (minimum ${minimum} for ${article.category}).`,
+      );
+    });
+}
+
+export function countWords(text: string): number {
+  // Strip Markdown frontmatter (should already be stripped, but be safe)
+  // Count words in the body: split on whitespace, filter empty strings
+  const stripped = text.replace(WORD_STRIP_FRONTMATTER_PATTERN, '');
+  const words = stripped.split(WORD_SPLIT_PATTERN).filter((word) => word.length > 0);
+  return words.length;
+}
+
+// --- Rule 11: exercise-type-diversity ---
+
+export function auditExerciseTypeDiversity(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => article.category !== 'lab')
+    .filter((article) => (article.exercises?.length ?? 0) > 0)
+    .filter((article) => {
+      const types = (article.exercises ?? []).map((ex) => ex.type).filter(Boolean);
+      return !types.some((type) => type === 'predict' || type === 'do');
+    })
+    .map((article) =>
+      warning(
+        'exercise-type-diversity',
+        article.id,
+        `${article.id} exercises must include at least 1 "predict" or "do" type (not all "explain").`,
+      ),
+    );
+}
+
+// --- Rule 12: external-reference-minimum ---
+
+export function auditExternalReferenceMinimum(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => {
+      const refs = article.externalReferences ?? [];
+      if (refs.length < 2) return true;
+      const types = new Set(refs.map((ref) => ref.type).filter(Boolean));
+      return types.size < 2;
+    })
+    .map((article) => {
+      const refs = article.externalReferences ?? [];
+      const types = new Set(refs.map((ref) => ref.type).filter(Boolean));
+      if (refs.length < 2) {
+        return warning(
+          'external-reference-minimum',
+          article.id,
+          `${article.id} has ${refs.length} external references (minimum 2).`,
+        );
+      }
+      return warning(
+        'external-reference-minimum',
+        article.id,
+        `${article.id} has ${types.size} external reference type(s) (minimum 2 different types).`,
+      );
+    });
+}
+
+// --- Rule 13: inline-citation-density ---
+
+const EXTERNAL_URL_PATTERN = /https?:\/\/[^\s)\]>]+/gu;
+const BODY_FRONTMATTER_PATTERN = /^---[\s\S]*?---\s*/u;
+const WORD_SPLIT_PATTERN = /\s+/u;
+const WORD_STRIP_FRONTMATTER_PATTERN = /^---[\s\S]*?---\s*/u;
+
+export function auditInlineCitationDensity(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => article.body !== undefined)
+    .filter((article) => {
+      const body = (article.body ?? '').replace(BODY_FRONTMATTER_PATTERN, '');
+      const urls = body.match(EXTERNAL_URL_PATTERN) ?? [];
+      return urls.length < 3;
+    })
+    .map((article) => {
+      const body = (article.body ?? '').replace(BODY_FRONTMATTER_PATTERN, '');
+      const urls = body.match(EXTERNAL_URL_PATTERN) ?? [];
+      return warning(
+        'inline-citation-density',
+        article.id,
+        `${article.id} has ${urls.length} inline citations (minimum 3 external URLs in body).`,
+      );
+    });
 }
