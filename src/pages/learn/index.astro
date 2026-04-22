@@ -1,9 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
 import { MODULES } from '../../content/knowledge/modules';
+import graphData from '../../data/knowledge-graph.json';
 import LearnLayout from '../../layouts/LearnLayout.astro';
+import { computeGraphStats } from '../../utils/graph-stats';
 
 export const prerender = true;
+
+const stats = computeGraphStats(graphData);
 
 interface KnowledgeEntry {
   id: string;
@@ -99,6 +103,124 @@ const sortedModules = [...MODULES].sort((a, b) => a.order - b.order);
       <div class="learn-progress-summary" id="progress-summary">
         📊 Loading progress...
       </div>
+
+      {/* ===== Graph Stats Dashboard ===== */}
+      <details class="graph-stats">
+        <summary class="graph-stats__toggle">📈 Knowledge Graph Stats</summary>
+        <div class="graph-stats__content">
+          {/* Row 1: Overview counts */}
+          <div class="graph-stats__grid">
+            <div class="graph-stats__card">
+              <span class="graph-stats__number">{stats.nodes.byType['article'] ?? 0}</span>
+              <span class="graph-stats__label">Articles</span>
+            </div>
+            <div class="graph-stats__card">
+              <span class="graph-stats__number">{stats.edges.total}</span>
+              <span class="graph-stats__label">Edges</span>
+            </div>
+            <div class="graph-stats__card">
+              <span class="graph-stats__number">{stats.longestPrerequisiteChain}</span>
+              <span class="graph-stats__label">Longest prereq chain</span>
+            </div>
+            <div class="graph-stats__card">
+              <span class="graph-stats__number">{stats.orphanArticles.length}</span>
+              <span class="graph-stats__label">Orphan articles</span>
+            </div>
+          </div>
+
+          {/* Row 2: Nodes & edges by type */}
+          <div class="graph-stats__tables">
+            <div>
+              <h4 class="graph-stats__heading">Nodes by Type</h4>
+              <table class="graph-stats__table">
+                <thead><tr><th>Type</th><th>Count</th></tr></thead>
+                <tbody>
+                  {Object.entries(stats.nodes.byType)
+                    .sort(([, a], [, b]) => b - a)
+                    .map(([type, count]) => (
+                      <tr><td>{type}</td><td>{count}</td></tr>
+                    ))}
+                  <tr class="graph-stats__total"><td>Total</td><td>{stats.nodes.total}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h4 class="graph-stats__heading">Edges by Type</h4>
+              <table class="graph-stats__table">
+                <thead><tr><th>Type</th><th>Count</th></tr></thead>
+                <tbody>
+                  {Object.entries(stats.edges.byType)
+                    .sort(([, a], [, b]) => b - a)
+                    .map(([type, count]) => (
+                      <tr><td>{type}</td><td>{count}</td></tr>
+                    ))}
+                  <tr class="graph-stats__total"><td>Total</td><td>{stats.edges.total}</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Row 3: Articles per category */}
+          <h4 class="graph-stats__heading">Articles per Category</h4>
+          <table class="graph-stats__table">
+            <thead><tr><th>Category</th><th>Count</th></tr></thead>
+            <tbody>
+              {stats.articlesPerCategory.map(({ category, count }) => (
+                <tr><td>{category}</td><td>{count}</td></tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Row 4: Module sizes */}
+          <h4 class="graph-stats__heading">Articles per Module</h4>
+          <table class="graph-stats__table">
+            <thead><tr><th>Module</th><th>Articles</th></tr></thead>
+            <tbody>
+              {stats.moduleSizes.map(({ label, count }) => (
+                <tr><td>{label}</td><td>{count}</td></tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Row 5: Longest prerequisite chain */}
+          {stats.prerequisiteChainPath.length > 1 && (
+            <div>
+              <h4 class="graph-stats__heading">Longest Prerequisite Chain ({stats.longestPrerequisiteChain} steps)</h4>
+              <ol class="graph-stats__chain">
+                {stats.prerequisiteChainPath.map((id) => (
+                  <li><a href={`/learn/${id}`}>{id}</a></li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* Row 6: Technology gaps */}
+          {stats.technologyGaps.length > 0 && (
+            <div>
+              <h4 class="graph-stats__heading">Technology Coverage Gaps</h4>
+              <p class="graph-stats__note">Technologies referenced in articles but missing a dedicated technology article:</p>
+              <ul class="graph-stats__list">
+                {stats.technologyGaps.map(({ label }) => (
+                  <li>{label}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Row 7: Orphan articles */}
+          {stats.orphanArticles.length > 0 && (
+            <div>
+              <h4 class="graph-stats__heading">Orphan Articles</h4>
+              <p class="graph-stats__note">Articles not referenced by any other article's prerequisites or related concepts:</p>
+              <ul class="graph-stats__list">
+                {stats.orphanArticles.map(({ id }) => (
+                  <li><a href={`/learn/${id}`}>{id}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </details>
 
       {/* ===== Learning Path ===== */}
       <h2>🎓 Learning Path</h2>
