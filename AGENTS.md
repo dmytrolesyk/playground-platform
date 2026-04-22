@@ -74,6 +74,9 @@ Use `transform: translate(x, y)` for window position — not CSS `left`/`top`. T
 ### Knowledge base content collection
 Learning content lives in `src/content/knowledge/` as Markdown with Zod-validated frontmatter (category, relatedConcepts, relatedFiles, technologies, externalReferences, diagramRef, prerequisites, learningObjectives, exercises, estimatedMinutes, module, moduleOrder). Six directories: `architecture/`, `concepts/`, `technologies/`, `features/`, `cs-fundamentals/`, `labs/`. Every new feature must include knowledge entries in its feature doc. The Architecture Explorer data in `architecture-data.ts` is a renderer-agnostic graph contract — keep node ids stable, keep edges valid, and update nodes/edges when adding apps or changing architecture.
 
+### Knowledge graph (generated artifact)
+`src/data/knowledge-graph.json` is generated at build time by `scripts/build-knowledge-graph.ts`. It is a derived artifact — never edit it manually. It is regenerated on every build via the `prebuild` script. If you change any knowledge article frontmatter, architecture-data.ts, or modules.ts, the graph JSON updates automatically on next build.
+
 ### Knowledge base is a learning system, not documentation
 The knowledge base exists to make the human developer a rockstar engineer — not to document the codebase. Every article must include `learningObjectives` (what you should be able to DO after reading), `exercises` (2-4 per article with answers, at least one `predict` or `do` type), `prerequisites` (which articles to read first), and `estimatedMinutes`. Articles are grouped into curriculum modules via the `module` frontmatter field. Labs (`labs/` directory, `category: lab`) are hands-on guided experiments. CS fundamentals (`cs-fundamentals` category) cover foundational CS concepts grounded in THIS codebase. See `docs/features/knowledge-base.md` for the canonical active system design.
 

@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node --experimental-strip-types scripts/build-knowledge-graph.ts",
     "build": "astro build",
     "preview": "astro preview",
     "lint": "biome check .",
