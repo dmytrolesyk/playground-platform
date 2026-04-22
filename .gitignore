@@ -26,3 +26,6 @@ Thumbs.db
 # Playwright
 tests/e2e/test-results/
 test-results/
+
+# Generated artifacts
+src/data/knowledge-graph.json
