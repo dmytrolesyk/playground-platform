@@ -12,6 +12,7 @@ Feature 1 (graph extraction — needs `src/data/knowledge-graph.json`)
 
 - `astro` — build-time data loading, static import of JSON in Astro pages
 - `web-design-guidelines` — stats layout, accessibility, collapsible panel UX
+- `typescript-magician`
 
 ## Metrics to Display
 
