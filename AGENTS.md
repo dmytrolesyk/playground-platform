@@ -131,6 +131,18 @@ Run `pnpm test:e2e` before opening a PR for any change that touches `/learn`, `L
 ### Knowledge article research process
 Articles are written by AI agents, but must be grounded in thorough research — not generated from training data alone. Before writing or enriching any article, the agent must: (1) **read the actual source code** referenced in `relatedFiles` and understand the real implementation, not assumed patterns; (2) **consult official documentation** for every technology mentioned — read the docs pages, not just recall them; (3) **search the web** for authoritative explanations, talks, and blog posts to verify claims and find the best external references; (4) **analyze the codebase architecture** by reading `docs/architecture-guidelines.md`, related feature docs, and tracing actual data flows through the code; (5) **synthesize across sources** — cross-reference documentation, source code, and external resources to produce accurate, nuanced explanations. Do not write from memory. Every factual claim should be verifiable against docs or source code. If you're unsure about a detail, look it up.
 
+### Research mandate for article creation
+Before writing or significantly updating any knowledge article: find 3-5 authoritative external sources (official docs, specs, RFCs, expert content). Read them. Cite sources inline throughout the article text as Markdown hyperlinks at the point where the source's information is used. Collect all cited sources in the `externalReferences` frontmatter section. Articles without inline citations will fail the `inline-citation-density` audit rule. Inline links not in `externalReferences` trigger `unlisted-inline-citation`. References never linked inline trigger `uncited-reference`.
+
+### Content staleness detection
+The audit pipeline checks if source files referenced by an article have been modified after the article's `lastUpdated` date. When `verify:knowledge` reports `stale-code-reference`, update the article to reflect code changes. Always set `lastUpdated` to today's date when modifying an article.
+
+### External link checking
+`pnpm check:links` sends HEAD requests to all `externalReferences` URLs and reports dead links, redirects, timeouts, and errors. Run manually before major releases — it is NOT part of `pnpm verify` (network-dependent and slow).
+
+### Flag for review
+Article pages have a "Flag for review" button. Flags are stored as JSON files in `src/data/review-flags/` (gitignored). `pnpm verify:knowledge` reports flagged articles as informational. The stats dashboard shows the flagged count.
+
 ### Knowledge exercise and lab creation
 Exercises must test real understanding, not recall. Prefer `predict` ("What will happen if...") and `do` ("Open DevTools and...") types over `explain`. Answers must be thorough explanations, not yes/no. Labs must include exact setup instructions (git branch, files to create), a DO → OBSERVE → EXPLAIN structure for each experiment, and cleanup steps. Labs must link back to ≥2 theory articles. Every exercise and lab must be something the developer can actually perform in this codebase or browser.
 

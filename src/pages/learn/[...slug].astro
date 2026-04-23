@@ -192,6 +192,14 @@ const hasPracticeCheckpoint =
         data-has-practice-checkpoint={hasPracticeCheckpoint ? 'true' : 'false'}
       ></div>
 
+      {/* Flag for review */}
+      <div id="flag-for-review" data-article-id={entry.id} class="flag-review">
+        <button type="button" class="flag-review__btn" id="flag-review-btn">
+          🚩 Flag for Review
+        </button>
+        <span class="flag-review__status" id="flag-review-status"></span>
+      </div>
+
       {/* Exercises */}
       {entry.data.exercises.length > 0 && (
         <section class="learn-exercises">

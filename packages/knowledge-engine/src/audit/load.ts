@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
@@ -8,6 +9,7 @@ import type {
   CurriculumModule,
   Exercise,
   ExternalReference,
+  FileModifiedDate,
   KnowledgeArticle,
   KnowledgeAuditInput,
 } from './types.ts';
@@ -38,8 +40,19 @@ export async function loadKnowledgeAuditInput(
     importCurriculumModules(root),
   ]);
 
+  const articles = loadKnowledgeArticles(contentRoot);
+
+  // Collect all unique relatedFiles across articles for staleness detection
+  const allRelatedFiles = new Set<string>();
+  for (const article of articles) {
+    for (const filePath of article.relatedFiles ?? []) {
+      allRelatedFiles.add(filePath);
+    }
+  }
+  const fileModifiedDates = getFileModifiedDates(root, [...allRelatedFiles]);
+
   return {
-    articles: loadKnowledgeArticles(contentRoot),
+    articles,
     modules: moduleData.MODULES.map((module) => ({ id: module.id })),
     architectureNodes: architectureData.NODES.map((node) => {
       const result: ArchitectureNode = {
@@ -56,6 +69,7 @@ export async function loadKnowledgeAuditInput(
       to: edge.to,
       type: edge.type,
     })),
+    fileModifiedDates,
   };
 }
 
@@ -85,6 +99,9 @@ function loadKnowledgeArticles(contentRoot: string): KnowledgeArticle[] {
 
     const diagramRef = getString(frontmatter, 'diagramRef');
     if (diagramRef !== undefined) article.diagramRef = diagramRef;
+
+    const lastUpdated = getDateString(frontmatter, 'lastUpdated');
+    if (lastUpdated !== undefined) article.lastUpdated = lastUpdated;
 
     const estimatedMinutes = getNumber(frontmatter, 'estimatedMinutes');
     if (estimatedMinutes !== undefined) article.estimatedMinutes = estimatedMinutes;
@@ -173,7 +190,12 @@ function getExercises(record: Record<string, unknown>): Exercise[] {
 function getExternalReferences(record: Record<string, unknown>): ExternalReference[] {
   return getArray(record, 'externalReferences')
     .filter(isRecord)
-    .map(({ type }) => (typeof type === 'string' ? { type } : {}));
+    .map(({ type, url }) => {
+      const ref: ExternalReference = {};
+      if (typeof type === 'string') ref.type = type;
+      if (typeof url === 'string') ref.url = url;
+      return ref;
+    });
 }
 
 function getNumber(record: Record<string, unknown>, key: string): number | undefined {
@@ -181,6 +203,49 @@ function getNumber(record: Record<string, unknown>, key: string): number | undef
   return typeof value === 'number' ? value : undefined;
 }
 
+/**
+ * Extract a date value as an ISO date string (YYYY-MM-DD).
+ * Handles both string dates and Date objects (from Zod/Astro parsing).
+ */
+function getDateString(record: Record<string, unknown>, key: string): string | undefined {
+  const value = record[key];
+  if (typeof value === 'string') return value;
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return undefined;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/**
+ * Get the last git modification date for each file path.
+ * Uses `git log` to find the most recent commit date for each file.
+ * Returns only entries where the file exists and has git history.
+ */
+function getFileModifiedDates(root: string, filePaths: string[]): FileModifiedDate[] {
+  const results: FileModifiedDate[] = [];
+
+  for (const filePath of filePaths) {
+    const fullPath = join(root, filePath);
+    if (!existsSync(fullPath)) continue;
+
+    try {
+      const output = execSync(`git log -1 --format=%aI -- "${filePath}"`, {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }).trim();
+
+      if (output) {
+        // Extract YYYY-MM-DD from ISO date
+        const lastModified = output.slice(0, 10);
+        results.push({ filePath, lastModified });
+      }
+    } catch {
+      // Git not available or file not tracked — skip
+    }
+  }
+
+  return results;
 }

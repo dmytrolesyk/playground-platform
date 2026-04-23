@@ -1,5 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { MODULES } from '../../content/knowledge/modules';
 import graphData from '../../data/knowledge-graph.json';
 import LearnLayout from '../../layouts/LearnLayout.astro';
@@ -8,6 +10,16 @@ import { computeGraphStats } from '../../utils/graph-stats';
 export const prerender = true;
 
 const stats = computeGraphStats(graphData);
+
+// Count flagged articles
+let flaggedCount = 0;
+try {
+  const flagDir = join(process.cwd(), 'src/data/review-flags');
+  const files = readdirSync(flagDir).filter((f) => f.endsWith('.json'));
+  flaggedCount = files.length;
+} catch {
+  // Directory doesn't exist or can't be read — 0 flags
+}
 
 interface KnowledgeEntry {
   id: string;
@@ -125,6 +137,10 @@ const sortedModules = [...MODULES].sort((a, b) => a.order - b.order);
             <div class="graph-stats__card">
               <span class="graph-stats__number">{stats.orphanArticles.length}</span>
               <span class="graph-stats__label">Orphan articles</span>
+            </div>
+            <div class="graph-stats__card">
+              <span class="graph-stats__number">{flaggedCount}</span>
+              <span class="graph-stats__label">Flagged for review</span>
             </div>
           </div>
 
