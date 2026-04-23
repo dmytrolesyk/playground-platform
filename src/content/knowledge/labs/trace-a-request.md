@@ -28,6 +28,9 @@ externalReferences:
   - title: "MDN — Fetch API"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
     type: docs
+  - title: "Resend GitHub Repository"
+    url: "https://github.com/resend/resend-node"
+    type: repo
 prerequisites:
   - architecture/contact-system
   - technologies/resend
@@ -44,7 +47,7 @@ moduleOrder: 99
 
 ## Why This Lab Exists
 
-Most web developers work on either the frontend or the backend. This codebase has both in one repo: a SolidJS component sends a `fetch()` request to an Astro server endpoint, which calls the Resend API. Understanding this full path — and being able to trace it with DevTools — is a core skill for full-stack work. This lab walks you through every layer.
+Most web developers work on either the frontend or the backend. This codebase has both in one repo: a SolidJS component sends a [`fetch()`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) request to an [Astro server endpoint](https://docs.astro.build/en/guides/endpoints/), which calls the [Resend API](https://resend.com/docs/api-reference/emails/send-email). Understanding this full path — and being able to trace it with DevTools — is a core skill for full-stack work. This lab walks you through every layer.
 
 ## Setup
 

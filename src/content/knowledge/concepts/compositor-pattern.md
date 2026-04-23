@@ -123,7 +123,7 @@ With 8 open windows and CRT overlay effects, the `left`/`top` approach could eas
 
 ## Layers and GPU Promotion
 
-The compositor works with **layers** — independent bitmaps stored in GPU memory. Not every element gets its own layer (that would exhaust GPU memory). Elements are promoted to layers when:
+The compositor works with **layers** — independent bitmaps stored in [GPU memory](https://developer.chrome.com/blog/inside-browser-part3). Not every element gets its own layer (that would exhaust GPU memory). Elements are promoted to layers when:
 
 1. **`will-change: transform`** or `will-change: opacity`
 2. A CSS `transform` or `opacity` animation is active
@@ -133,7 +133,7 @@ The compositor works with **layers** — independent bitmaps stored in GPU memor
 
 ## The will-change Pattern
 
-`will-change` tells the browser to promote an element to its own layer **before** you start animating it. In `Window.tsx`, it's applied only during active drag:
+[`will-change`](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change) tells the browser to promote an element to its own layer **before** you start animating it. In `Window.tsx`, it's applied only during active drag:
 
 ```typescript
 const handleDragStart = (e: PointerEvent): void => {
@@ -155,7 +155,7 @@ const handleDragEnd = (e: PointerEvent): void => {
 
 ### Why Not Leave will-change On Permanently?
 
-Every promoted layer consumes GPU memory. A layer stores a bitmap at the element's rendered size:
+Every promoted layer consumes [GPU memory](https://web.dev/articles/animations-guide). A layer stores a bitmap at the element's rendered size:
 
 ```
 One window at 640×480 at 2x DPR:

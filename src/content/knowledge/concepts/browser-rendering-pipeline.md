@@ -62,7 +62,7 @@ Every CSS property you change triggers a different amount of work in the pipelin
 
 ## The Five Stages
 
-The browser rendering pipeline converts your HTML, CSS, and JavaScript into pixels on screen through five stages:
+The browser [rendering pipeline](https://developer.chrome.com/docs/devtools/performance/rendering) converts your HTML, CSS, and JavaScript into pixels on screen through five stages:
 
 ```mermaid
 flowchart LR
@@ -80,7 +80,7 @@ flowchart LR
 
 ### Stage 1: Parse
 
-The browser parses HTML into the **DOM tree** and CSS into the **CSSOM** (CSS Object Model). These are combined into the **render tree** — a tree of only visible elements with their computed styles.
+The browser parses HTML into the **DOM tree** and CSS into the **[CSSOM](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model)** (CSS Object Model). These are combined into the **render tree** — a tree of only visible elements with their computed styles.
 
 ### Stage 2: Style Calculation
 
@@ -102,7 +102,7 @@ Properties that trigger paint (but not layout): `color`, `background-color`, `ba
 
 The browser takes painted layers and combines them on the GPU. This is the cheapest step because the GPU is optimized for this exact operation — moving and blending pre-painted bitmaps.
 
-Properties that only trigger composite: **`transform`**, **`opacity`**. These are the "free" properties.
+Properties that only trigger composite: **[`transform`](https://developer.mozilla.org/en-US/docs/Web/CSS/transform)**, **[`opacity`](https://developer.mozilla.org/en-US/docs/Web/CSS/opacity)**. These are the "free" properties.
 
 ## Why Transform Is "Free"
 

@@ -63,7 +63,7 @@ exercises:
 
 When you right-click inside a window on this desktop, the browser needs to figure out *which* window you clicked. It doesn't search every element on the page — it walks up the DOM tree from the click target using `closest('.win-container')`. When SolidJS renders the window list, it traverses the component tree from `Desktop` down through `WindowManager` to each `Window`. When the browser paints the screen, it traverses the render tree to calculate layout.
 
-Trees are everywhere in frontend development. The DOM is a tree. The component hierarchy is a tree. The CSS selector engine traverses trees. Understanding tree structures and traversal algorithms isn't abstract computer science — it's the mental model you need to reason about how every click, render, and layout calculation actually works.
+Trees are everywhere in frontend development. The [DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) is a tree. The component hierarchy is a tree. The CSS selector engine traverses trees. Understanding tree structures and [traversal algorithms](https://en.wikipedia.org/wiki/Tree_traversal) isn't abstract computer science — it's the mental model you need to reason about how every click, render, and layout calculation actually works.
 
 ## Trees: The Core Abstraction
 
@@ -153,7 +153,7 @@ const handleDragStart = (e: PointerEvent): void => {
 };
 ```
 
-`Element.closest(selector)` walks the **ancestor chain** — from the clicked element up through parents toward the document root. It's a linear walk up one branch of the tree, not a full traversal. The DOM spec defines it as: "return the first ancestor (or self) that matches the selector."
+[`Element.closest(selector)`](https://developer.mozilla.org/en-US/docs/Web/API/Element/closest) walks the **ancestor chain** — from the clicked element up through parents toward the document root. It's a linear walk up one branch of the tree, not a full traversal. The DOM spec defines it as: "return the first ancestor (or self) that matches the selector."
 
 This is the browser's built-in tree navigation. Every DOM node has a `parentElement` reference, making upward traversal O(d) where d is the depth. The desktop's DOM is shallow — typically 5-8 levels from a button inside a window to the root — so `closest()` is effectively instant.
 

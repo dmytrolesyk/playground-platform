@@ -35,6 +35,7 @@ externalReferences:
   - title: "Ryan Carniato — SolidJS: Reactivity to Rendering"
     url: "https://www.youtube.com/watch?v=J70HXl1KhWE"
     type: talk
+diagramRef: desktop-store
 module: reactivity
 moduleOrder: 3
 estimatedMinutes: 20
@@ -84,7 +85,7 @@ This is intentionally flat. There's no per-app state, no UI state mixed with dom
 
 ## Proxy-Based Reactivity Deep Dive
 
-SolidJS stores use JavaScript Proxies (see [JavaScript Proxies](/learn/concepts/javascript-proxies)) to track reads and writes at the property level. Here's what happens when a component reads window position:
+SolidJS stores use [JavaScript Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) (see [JavaScript Proxies](/learn/concepts/javascript-proxies)) to track reads and writes at the property level. Here's what happens when a component reads window position:
 
 ```mermaid
 flowchart LR
@@ -103,7 +104,7 @@ SolidJS optimizes this: it tracks at the deepest level read. So the expression t
 
 ## produce(): Immer-like Mutations
 
-Nested state updates use `produce()` from `solid-js/store` — an API inspired by Immer that lets you write mutable-looking code that produces immutable updates:
+Nested state updates use [`produce()`](https://docs.solidjs.com/reference/store-utilities/produce) from `solid-js/store` — an API inspired by [Immer](https://immerjs.github.io/immer/) that lets you write mutable-looking code that produces immutable updates:
 
 ```typescript
 // Opening a window — multiple nested changes in one batch
@@ -129,7 +130,7 @@ setState('startMenuOpen', false);
 
 ## Context Distribution
 
-The store is created once and distributed via SolidJS context in `src/components/desktop/store/context.tsx`:
+The store is created once and distributed via [SolidJS context](https://docs.solidjs.com/reference/component-apis/create-context) in `src/components/desktop/store/context.tsx`:
 
 ```typescript
 const DesktopContext = createContext<[DesktopState, DesktopActions]>();
@@ -247,3 +248,13 @@ Since there are no Redux-style DevTools, debugging the store uses browser DevToo
 2. **Console logging** — Temporarily add `console.log(JSON.parse(JSON.stringify(state)))` to snapshot the store (use `JSON.parse(JSON.stringify())` to unwrap Proxies)
 3. **Reactive debugging** — `createEffect(() => console.log('windows:', Object.keys(state.windows)))` logs whenever windows change
 4. **Component DevTools** — SolidJS's browser extension shows the component tree and reactive dependencies
+
+## Evolution: When the Store Outgrows One File
+
+The current store is ~200 lines — well within the manageable range for a single module. But if the project added features like collaborative window state, persistent layout preferences across sessions, or undo/redo for window operations, the store would grow. The natural evolution path follows domain-driven separation:
+
+1. **Extract action groups** — Window management, menu state, and mobile detection become separate modules that each export action creators.
+2. **Compose into a single store** — The top-level store imports and combines actions from each module, maintaining the single-store architecture.
+3. **Keep the context API** — Components still call `useDesktop()` and get `[state, actions]`. The internal reorganization is invisible to consumers.
+
+This is the [Facade pattern](https://refactoring.guru/design-patterns/facade) applied to state management: the public API stays simple and stable while the implementation behind it can be restructured freely. The key insight is that consumers never depend on the store's internal organization — only on the `[state, actions]` tuple returned by `useDesktop()`.

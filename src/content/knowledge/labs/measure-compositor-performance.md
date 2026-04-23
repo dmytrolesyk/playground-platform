@@ -43,7 +43,7 @@ moduleOrder: 99
 
 ## Why This Lab Exists
 
-This codebase positions windows with `transform: translate(x, y)` instead of CSS `left`/`top`. The architecture guidelines say this "enables GPU-accelerated movement during drag." But how much does it actually matter? This lab gives you the tools to measure it yourself, so you can make informed decisions about CSS performance instead of repeating rules from blog posts.
+This codebase positions windows with `transform: translate(x, y)` instead of CSS `left`/`top`. The architecture guidelines say this "enables [GPU-accelerated movement](https://developer.chrome.com/docs/devtools/performance/rendering) during drag." But how much does it actually matter? This lab gives you the tools to measure it yourself using [Chrome DevTools Performance panel](https://developer.chrome.com/docs/devtools/performance) and the [Layers panel](https://developer.chrome.com/docs/devtools/layers), so you can make informed decisions about CSS performance instead of repeating rules from blog posts.
 
 ## Setup
 

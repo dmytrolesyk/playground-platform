@@ -30,6 +30,7 @@ externalReferences:
   - title: "SPF, DKIM, DMARC — Email Authentication"
     url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
     type: article
+diagramRef: api-contact
 module: full-stack
 moduleOrder: 1
 estimatedMinutes: 15
@@ -55,7 +56,7 @@ exercises:
 
 ## Why Should I Care?
 
-The contact system is the only server-side runtime code in the entire application. Everything else is static. Understanding why this one endpoint needs SSR — and the `import.meta.env` landmine that nearly broke it — teaches you about the boundary between build-time and runtime in Astro, and a Vite behavior that bites every project that deploys with environment variables.
+The contact system is the only server-side runtime code in the entire application. Everything else is static. Understanding why this one endpoint needs SSR — and the `import.meta.env` landmine that nearly broke it — teaches you about the boundary between build-time and runtime in [Astro's hybrid rendering model](https://docs.astro.build/en/guides/on-demand-rendering/), and a [Vite environment variable behavior](https://vite.dev/guide/env-and-mode) that bites every project that deploys with runtime secrets.
 
 ## The Complete Request Flow
 
@@ -139,7 +140,7 @@ This is the most dangerous gotcha in the codebase. It's documented in AGENTS.md,
 
 ### The Problem
 
-Vite (Astro's build tool) performs a **string replacement** on `import.meta.env` at build time. It finds every occurrence of `import.meta.env.SOME_VAR` in your source code and replaces it with the literal value from the build environment:
+[Vite](https://vite.dev/guide/env-and-mode) (Astro's build tool) performs a **string replacement** on `import.meta.env` at build time. It finds every occurrence of `import.meta.env.SOME_VAR` in your source code and replaces it with the literal value from the build environment:
 
 ```typescript
 // Source code:
@@ -202,7 +203,7 @@ const telegram = import.meta.env.PUBLIC_TELEGRAM_USERNAME;
 
 ## The Resend SDK Pattern
 
-The Resend SDK has a non-standard error handling pattern that catches developers off guard:
+The [Resend SDK](https://resend.com/docs/sdks/node) has a non-standard error handling pattern that catches developers off guard:
 
 ```typescript
 const resend = new Resend(apiKey);
@@ -256,3 +257,23 @@ The current implementation doesn't include server-side rate limiting. For a pers
 | **Turnstile/reCAPTCHA** | Add a challenge widget to the form | Effective but adds friction and a third-party dependency |
 
 For the current scale, the honeypot is sufficient.
+
+## Testing the Contact System
+
+Because the contact endpoint makes a real API call to Resend, it's not covered by unit tests — there's no pure function to test in isolation. The endpoint's correctness is verified through:
+
+1. **Type checking** — `astro check` validates the endpoint's TypeScript types, ensuring the `APIRoute` type is satisfied and `process.env` access is correct.
+2. **Manual testing** — Filling out the form on `localhost:4321` and verifying the email arrives. Requires `RESEND_API_KEY` and other secrets in `.env`.
+3. **Code review** — The endpoint is small enough (~50 lines) to verify by inspection. The critical paths (honeypot, validation, error handling) are each a few lines.
+
+This is an acceptable trade-off for a single endpoint. If the project had multiple API routes, a test harness with mocked Resend would be worthwhile.
+
+## Key Design Decisions
+
+The contact system embodies several architectural choices that apply broadly:
+
+**Minimal SSR surface.** Only one endpoint needs server-side rendering. Everything else stays static. This keeps the deployment simple — most of the site works even if the Node.js process crashes, because the static pages are served from disk.
+
+**Fail silently for spam, loudly for errors.** The honeypot returns 200 to fool bots, but Resend errors return 500 with a user-visible message. The distinction matters: spam handling should be invisible (so bots can't adapt), but real errors should surface immediately so the user knows to retry or use Telegram instead.
+
+**Secrets at the boundary.** Environment variables are read once at the top of the handler, validated, and passed to the SDK. This concentrates the `process.env` access in one place rather than scattering it throughout the function, making the landmine visible and auditable. If the project ever moves to a different deployment platform that handles secrets differently, only the top-of-handler code needs to change.

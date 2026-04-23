@@ -43,7 +43,7 @@ moduleOrder: 99
 
 ## Why This Lab Exists
 
-Memory leaks in SolidJS are subtle. Unlike React, SolidJS components run their setup code **once** — there's no re-render cycle to accidentally create duplicate timers. But when a component mounts, creates a `setInterval` or event listener, and then unmounts without cleaning up, the timer keeps firing forever. Since there's no re-render, there's no natural opportunity to notice the leak. The component is gone from the screen, but its timer is alive, holding references to DOM nodes that the garbage collector can't free. This lab teaches you to create, detect, and fix this exact scenario.
+Memory leaks in SolidJS are subtle. Unlike React, SolidJS components run their setup code **once** — there's no re-render cycle to accidentally create duplicate timers. But when a component mounts, creates a [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval) or event listener, and then unmounts without cleaning up, the timer keeps firing forever. Since there's no re-render, there's no natural opportunity to notice the leak. The component is gone from the screen, but its timer is alive, holding references to DOM nodes that the [garbage collector](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_management) can't free. This lab teaches you to create, detect, and fix this exact scenario using Chrome DevTools' [Memory panel](https://developer.chrome.com/docs/devtools/memory-problems).
 
 ## Setup
 

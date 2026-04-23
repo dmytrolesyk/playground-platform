@@ -147,11 +147,11 @@ sequenceDiagram
 
 Without pointer capture, moving the mouse quickly can leave the title bar element. Pointer events would then fire on whatever element is under the cursor — an iframe, another window, or the desktop background. The window stops following the cursor.
 
-`setPointerCapture(e.pointerId)` locks all subsequent pointer events to the title bar element, regardless of where the pointer actually moves. This is the same technique used by native OS window managers.
+[`setPointerCapture(e.pointerId)`](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture) locks all subsequent pointer events to the title bar element, regardless of where the pointer actually moves. This is the same technique used by native OS window managers.
 
 ### GPU-Accelerated Movement
 
-Window position is applied via `transform: translate(x, y)` — not CSS `left`/`top`:
+Window position is applied via [`transform: translate(x, y)`](https://developer.mozilla.org/en-US/docs/Web/CSS/transform) — not CSS `left`/`top`:
 
 ```typescript
 style={{
@@ -159,7 +159,7 @@ style={{
 }}
 ```
 
-This keeps the window on its own compositor layer, making movement GPU-accelerated with no layout reflow. The browser skips the Style → Layout → Paint stages and goes straight to Composite — moving a pre-painted bitmap.
+This keeps the window on its own compositor layer, making movement GPU-accelerated with no [layout reflow](https://developer.chrome.com/docs/devtools/performance/rendering). The browser skips the Style → Layout → Paint stages and goes straight to Composite — moving a pre-painted bitmap.
 
 The `will-change: transform` hint is applied only during active drag (promoting the window to its own GPU layer) and removed after (freeing GPU memory):
 

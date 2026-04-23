@@ -55,7 +55,7 @@ exercises:
 
 ## Why Should I Care?
 
-Building a convincing retro UI sounds like a pixel-art exercise, but 98.css reveals something deeper: Windows 98's entire visual language was built from a handful of CSS-level primitives — `border-style: outset/inset`, one-pixel box shadows, and two-tone color pairs. Understanding how 98.css recreates this teaches you how visual depth perception works in flat screens and why modern "flat design" was a deliberate reaction to these exact techniques.
+Building a convincing retro UI sounds like a pixel-art exercise, but [98.css](https://jdan.github.io/98.css/) reveals something deeper: Windows 98's entire visual language was built from a handful of CSS-level primitives — [`border-style: outset/inset`](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style), one-pixel [box shadows](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow), and two-tone color pairs. Understanding how 98.css recreates this teaches you how visual depth perception works in flat screens and why modern "flat design" was a deliberate reaction to these exact techniques.
 
 ## How 98.css Creates Depth
 
@@ -102,7 +102,7 @@ This is pure CSS — no images, no SVG, no JavaScript. The entire library is a s
 | **Tabs** | Tab strip with `.tab` items | Outset tabs, the active tab "connects" to content |
 | **Progress bars** | `<div role="progressbar">` | Segmented blue blocks inside an inset track |
 
-The key design principle: **98.css styles semantic HTML**. Buttons are `<button>`, inputs are `<input>`, trees use ARIA roles. You don't add special framework-specific classes to get the look — you write accessible HTML and 98.css handles the visual.
+The key design principle: **98.css styles [semantic HTML](https://developer.mozilla.org/en-US/docs/Glossary/Semantics#semantics_in_html)**. Buttons are `<button>`, inputs are `<input>`, trees use ARIA roles. You don't add special framework-specific classes to get the look — you write accessible HTML and 98.css handles the visual.
 
 ## The Rule: 98.css Is Law
 

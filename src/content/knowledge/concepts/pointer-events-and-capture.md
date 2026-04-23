@@ -25,6 +25,9 @@ externalReferences:
   - title: "getCoalescedEvents() — MDN"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/getCoalescedEvents"
     type: docs
+  - title: "Pointer Events — javascript.info"
+    url: "https://javascript.info/pointer-events"
+    type: article
 module: window-manager
 moduleOrder: 2
 estimatedMinutes: 15
@@ -50,7 +53,7 @@ exercises:
 
 ## Why Should I Care?
 
-Every drag operation on the desktop — window dragging, window resizing — depends on pointer events with capture. Without pointer capture, moving the mouse quickly causes the cursor to leave the title bar element, and the drag breaks. Without pointer events (using mouse events instead), you'd need separate handlers for touch, mouse, and stylus input. Understanding this API explains why the window manager handles all input types with one set of handlers and why drag never "sticks" or "drops" unexpectedly.
+Every drag operation on the desktop — window dragging, window resizing — depends on [pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) with capture. Without [pointer capture](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture), moving the mouse quickly causes the cursor to leave the title bar element, and the drag breaks. Without pointer events (using mouse events instead), you'd need separate handlers for touch, mouse, and stylus input. Understanding this API explains why the window manager handles all input types with one set of handlers and why drag never "sticks" or "drops" unexpectedly.
 
 ## The Fast-Mouse Problem
 
@@ -194,7 +197,7 @@ The pointer events API abstracts input differences, but some differences leak th
 
 ## Coalesced Events for High-Frequency Input
 
-At 60fps, the browser fires at most one `pointermove` per frame. But the input device may report movement at 120Hz, 240Hz, or higher. The "lost" events between frames are accessible via `getCoalescedEvents()`:
+At 60fps, the browser fires at most one `pointermove` per frame. But the input device may report movement at 120Hz, 240Hz, or higher. The "lost" events between frames are accessible via [`getCoalescedEvents()`](https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/getCoalescedEvents):
 
 ```typescript
 const handleDragMove = (e: PointerEvent): void => {

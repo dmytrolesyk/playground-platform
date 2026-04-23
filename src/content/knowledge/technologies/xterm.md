@@ -33,6 +33,8 @@ externalReferences:
   - title: "xterm.js Addons Listing"
     url: "https://github.com/xtermjs/xterm.js/tree/master/addons"
     type: repo
+module: extensibility
+moduleOrder: 4
 estimatedMinutes: 15
 prerequisites:
   - concepts/lazy-loading-and-code-splitting
@@ -56,11 +58,11 @@ exercises:
 
 ## Why Should I Care?
 
-A terminal emulator in a browser sounds like a novelty, but the engineering inside xterm.js is serious: it implements the same VT100/VT220 escape code parser that real terminals like GNOME Terminal and iTerm2 use, renders to a `<canvas>` element using GPU-accelerated techniques borrowed from game engines, and handles the surprising complexity of keyboard input across operating systems and IME methods. Understanding how xterm.js works teaches you about the terminal abstraction itself — a concept that predates the web by decades and still powers every developer's workflow.
+A terminal emulator in a browser sounds like a novelty, but the engineering inside [xterm.js](https://xtermjs.org/) is serious: it implements the same [VT100/VT220 escape code](https://en.wikipedia.org/wiki/ANSI_escape_code) parser that real terminals like GNOME Terminal and iTerm2 use, renders to a `<canvas>` element using GPU-accelerated techniques borrowed from game engines, and handles the surprising complexity of keyboard input across operating systems and IME methods. Understanding how xterm.js works teaches you about the terminal abstraction itself — a concept that predates the web by decades and still powers every developer's workflow.
 
 ## Terminal Emulation Concepts
 
-A physical terminal was a screen + keyboard connected to a mainframe via serial line. The mainframe sent character streams with embedded **escape codes** — special byte sequences starting with `ESC` (0x1B) — that controlled cursor position, text color, screen clearing, and more. A terminal emulator reproduces this behavior in software.
+A physical terminal was a screen + keyboard connected to a mainframe via serial line. The mainframe sent character streams with embedded **escape codes** — special byte sequences starting with `ESC` (0x1B) — that controlled cursor position, text color, screen clearing, and more. A [terminal emulator](https://github.com/xtermjs/xterm.js) reproduces this behavior in software.
 
 ```mermaid
 flowchart LR

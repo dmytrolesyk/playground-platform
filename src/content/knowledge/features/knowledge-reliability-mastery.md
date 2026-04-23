@@ -41,6 +41,9 @@ externalReferences:
   - title: "Playwright Visual Comparisons"
     url: "https://playwright.dev/docs/test-snapshots"
     type: docs
+  - title: "Spaced Repetition and Learning Science"
+    url: "https://www.supermemo.com/en/blog/twenty-rules-of-formulating-knowledge"
+    type: article
 diagramRef: "mastery-progress"
 module: learning-system-reliability
 moduleOrder: 3
@@ -68,9 +71,9 @@ exercises:
 
 ## Why This Matters
 
-The knowledge base is only useful if it stays trustworthy. A stale article, a broken prerequisite, or a diagram node that links nowhere teaches the wrong lesson at exactly the moment the reader is trying to build a mental model. This feature turns the learning system into a self-checking artifact: the content still lives as Markdown, but the repo now has executable rules that verify the graph around it.
+The knowledge base is only useful if it stays trustworthy. A stale article, a broken prerequisite, or a diagram node that links nowhere teaches the wrong lesson at exactly the moment the reader is trying to build a mental model. This feature turns the learning system into a self-checking artifact: the content still lives as Markdown, but the repo now has [executable rules](https://martinfowler.com/bliki/SelfTestingCode.html) that verify the graph around it.
 
-It also makes progress more honest. Reading an article is not the same thing as practicing it. The staged model keeps that distinction visible without adding accounts, a database, or a quiz engine.
+It also makes progress more honest. Reading an article is not the same thing as practicing it. The [staged mastery model](https://www.supermemo.com/en/blog/twenty-rules-of-formulating-knowledge) keeps that distinction visible without adding accounts, a database, or a quiz engine.
 
 ## The Reliability Loop
 
@@ -102,7 +105,7 @@ The page marks an article as `read` on load. Opening an exercise answer or click
 
 That choice matters. A system that automatically marks a page as complete after a visit is convenient, but it lies. This codebase is supposed to teach engineering judgment, so it should preserve friction where friction means "pause and prove you understand."
 
-The implementation is progressive enhancement. `/learn` pages are static Astro HTML first. If JavaScript fails, the article, prerequisites, source files, and external references remain readable. If JavaScript runs, `LearnLayout.astro` imports the progress module, renders the tracker, and updates module summaries from `localStorage`.
+The implementation is [progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement). `/learn` pages are static Astro HTML first. If JavaScript fails, the article, prerequisites, source files, and external references remain readable. If JavaScript runs, `LearnLayout.astro` imports the progress module, renders the tracker, and updates module summaries from [`localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
 
 ## Library and Architecture Explorer Stay Connected
 
@@ -118,4 +121,4 @@ This keeps the desktop shell simple. The store still has no knowledge-specific s
 
 Without the audit, a renamed article can silently break prerequisites. Without graph validation, Architecture Explorer can render an edge whose endpoint does not exist. Without staged progress, the learner sees a completion percentage that rewards opening tabs more than doing exercises. Without e2e coverage, a production-only hydration issue on `/learn` or a Library iframe bug can slip through unit tests.
 
-The feature does not make the system perfect. It does make the failure modes visible, fast, and local. That is the difference between documentation that decays and a learning system that can be trusted.
+The feature does not make the system perfect. It does make the failure modes visible, fast, and local. That is the difference between documentation that decays and a learning system that can be trusted over time as the codebase evolves and new articles are added.

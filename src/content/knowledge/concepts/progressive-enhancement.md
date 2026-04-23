@@ -57,9 +57,9 @@ exercises:
 
 ## Why Should I Care?
 
-Progressive enhancement is the principle that the core content of a website should be accessible to everyone, regardless of their browser capabilities, network conditions, or whether JavaScript is enabled. It's the reason search engines can index your content, screen readers can read it, and users on slow connections see *something* before the full experience loads.
+[Progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement) is the principle that the core content of a website should be accessible to everyone, regardless of their browser capabilities, network conditions, or whether JavaScript is enabled. It's the reason search engines can index your content, [screen readers](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) can read it, and users on slow connections see *something* before the full experience loads.
 
-In this project, progressive enhancement isn't bolted on as an afterthought — Astro's static-first architecture makes it the default. The CV content, knowledge articles, and download links all work without a single byte of JavaScript. The interactive desktop is an enhancement layer on top.
+In this project, progressive enhancement isn't bolted on as an afterthought — [Astro's static-first architecture](https://docs.astro.build/en/basics/rendering/) makes it the default. The CV content, knowledge articles, and download links all work without a single byte of JavaScript. The interactive desktop is an enhancement layer on top.
 
 ## The Layer Cake Mental Model
 

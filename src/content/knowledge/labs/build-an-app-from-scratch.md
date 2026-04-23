@@ -45,7 +45,7 @@ moduleOrder: 99
 
 ## Why This Lab Exists
 
-The AGENTS.md says: "If you find yourself editing Desktop, WindowManager, Taskbar, or StartMenu to add a new app, you are doing it wrong." That's a bold claim. This lab proves it by having you build a complete Calculator app. You'll touch exactly two files: the new component and the manifest. Everything else — the desktop icon, start menu entry, window management, taskbar button, terminal `open` command — comes for free from the registry.
+The AGENTS.md says: "If you find yourself editing Desktop, WindowManager, Taskbar, or StartMenu to add a new app, you are doing it wrong." That's a bold claim. This lab proves it by having you build a complete Calculator app using [SolidJS](https://www.solidjs.com/) and the [98.css](https://jdan.github.io/98.css/) design system. You'll touch exactly two files: the new component and the manifest. Everything else — the desktop icon, start menu entry, window management, taskbar button, terminal `open` command — comes for free from the [registry pattern](https://refactoring.guru/design-patterns/registry).
 
 ## Setup
 

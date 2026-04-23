@@ -60,11 +60,11 @@ exercises:
 
 ## Why Should I Care?
 
-If you've ever dragged a window across a screen and felt the 30ms lag between your pointer and the title bar catching up, you know that UI framework overhead matters. SolidJS is the reason this desktop feels instant — every pixel of a dragged window updates through a direct DOM mutation, not a virtual DOM diff of the entire component tree. Understanding how SolidJS works unlocks the "why" behind every performance decision in this codebase.
+If you've ever dragged a window across a screen and felt the 30ms lag between your pointer and the title bar catching up, you know that UI framework overhead matters. [SolidJS](https://www.solidjs.com/) is the reason this desktop feels instant — every pixel of a dragged window updates through a direct DOM mutation, not a [virtual DOM diff](https://svelte.dev/blog/virtual-dom-is-pure-overhead) of the entire component tree. Understanding how SolidJS works unlocks the "why" behind every performance decision in this codebase.
 
 ## The Mental Model: Components Run Once
 
-The biggest conceptual leap coming from React is this: **SolidJS components are setup functions, not render functions**. A component executes exactly once. What it returns is a real DOM tree with reactive bindings wired in. When state changes, only those specific bindings re-execute — the component function never runs again.
+The biggest conceptual leap coming from React is this: **SolidJS components are [setup functions](https://www.solidjs.com/tutorial/introduction_basics), not render functions**. A component executes exactly once. What it returns is a real DOM tree with reactive bindings wired in. When state changes, only those specific bindings re-execute — the component function never runs again.
 
 ```mermaid
 sequenceDiagram
@@ -118,7 +118,7 @@ onMount(async () => {
 
 ### Stores — Nested Reactive State via Proxies
 
-For complex nested state, SolidJS provides `createStore`, which wraps objects in [JavaScript Proxies](/learn/concepts/javascript-proxies) for fine-grained nested tracking. Reading `state.windows[id].x` tracks only that specific property path — changing `state.windows[otherId].y` doesn't trigger an update.
+For complex nested state, SolidJS provides [`createStore`](https://docs.solidjs.com/concepts/stores), which wraps objects in [JavaScript Proxies](/learn/concepts/javascript-proxies) for fine-grained nested tracking. Reading `state.windows[id].x` tracks only that specific property path — changing `state.windows[otherId].y` doesn't trigger an update.
 
 ```typescript
 // src/components/desktop/store/desktop-store.ts

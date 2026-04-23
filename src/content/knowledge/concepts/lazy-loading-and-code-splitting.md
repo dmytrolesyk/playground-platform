@@ -55,7 +55,7 @@ xterm.js is ~300KB. If it loaded on page startup, the desktop would take seconds
 
 ## The Problem: Bundle Bloat
 
-Without code splitting, every `import` at the top of a file adds to the main bundle — the code that downloads before the page is usable:
+Without [code splitting](https://developer.mozilla.org/en-US/docs/Glossary/Code_splitting), every `import` at the top of a file adds to the main bundle — the code that downloads before the page is usable:
 
 ```typescript
 // ❌ All of these load on page startup
@@ -70,7 +70,7 @@ Time to interactive would increase from <1.5s to potentially 3-4s on mobile conn
 
 ## The Solution: Dynamic import() + lazy()
 
-Heavy apps are wrapped in `lazy()` in `src/components/desktop/apps/app-manifest.ts`:
+Heavy apps are wrapped in [`lazy()`](https://docs.solidjs.com/reference/component-apis/lazy) in `src/components/desktop/apps/app-manifest.ts`:
 
 ```typescript
 const TerminalApp = lazy(() =>
@@ -81,7 +81,7 @@ const SnakeGame = lazy(() =>
 );
 ```
 
-This tells the bundler (Vite/Rollup) to split each app and its dependencies into a separate chunk file. The chunk only downloads when the user first opens the app.
+This tells the bundler ([Vite/Rollup](https://vite.dev/guide/features.html#async-chunk-loading-optimization)) to split each app and its dependencies into a separate chunk file. The chunk only downloads when the user first opens the app.
 
 ## How It Works at Runtime
 

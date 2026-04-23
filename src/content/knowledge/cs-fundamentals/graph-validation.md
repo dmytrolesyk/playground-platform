@@ -177,3 +177,15 @@ Graphs fail in ways that look small but break trust:
 - Duplicate node ids cause one visual node to shadow another in lookup maps.
 
 The bug is not "documentation has a typo." The bug is "the graph no longer describes a coherent system." Once you name it that way, the fix becomes straightforward: parse the graph, validate the graph, fail the build when the graph lies.
+
+## Broader Applications of Graph Validation
+
+The techniques used in this codebase apply to many systems where relationships must be consistent:
+
+**Package dependency graphs** — Package managers like [npm](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) and pnpm perform cycle detection and reference validation when resolving dependencies. A `require('nonexistent')` is the same class of bug as a broken `prerequisites` link.
+
+**Database foreign keys** — Referential integrity constraints are graph validation rules enforced by the RDBMS. A [foreign key](https://www.postgresql.org/docs/current/tutorial-fk.html) that points to a deleted row is structurally identical to a `relatedConcepts` entry that points to a renamed article.
+
+**Compiler type checking** — When [TypeScript](https://www.typescriptlang.org/docs/handbook/2/types-from-types.html) checks that an import resolves to a real module, it's validating an edge in the module dependency graph. The knowledge audit does the same thing for content relationships.
+
+The common pattern: any system with entities and relationships between them benefits from automated validation that all references resolve and no cycles exist where they shouldn't. The specific algorithms (DFS for cycles, set membership for references) are the same regardless of domain.

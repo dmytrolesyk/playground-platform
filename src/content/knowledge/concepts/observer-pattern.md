@@ -56,9 +56,9 @@ exercises:
 
 ## Why Should I Care?
 
-Every interactive UI faces the same fundamental problem: when data changes, the screen needs to update. The Observer pattern is the oldest and most battle-tested solution to this problem — and if you understand it, you'll understand why SolidJS signals feel like a natural evolution rather than magic.
+Every interactive UI faces the same fundamental problem: when data changes, the screen needs to update. The [Observer pattern](https://refactoring.guru/design-patterns/observer) is the oldest and most battle-tested solution to this problem — and if you understand it, you'll understand why SolidJS signals feel like a natural evolution rather than magic.
 
-The Observer pattern is the conceptual root of DOM events, Node.js EventEmitters, RxJS Observables, Vue's reactivity, and SolidJS signals. Learning it once gives you a mental model that transfers across every reactive system you'll encounter.
+The Observer pattern is the conceptual root of [DOM events](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener), Node.js EventEmitters, [RxJS Observables](https://rxjs.dev/guide/observable), Vue's reactivity, and SolidJS signals. Learning it once gives you a mental model that transfers across every reactive system you'll encounter.
 
 ## The Core Idea
 

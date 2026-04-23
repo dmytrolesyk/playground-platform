@@ -61,11 +61,11 @@ exercises:
 
 ## Why Should I Care?
 
-Most web frameworks make you choose: either you build a static site and give up interactivity, or you build a single-page app and ship hundreds of kilobytes of JavaScript for what is mostly static content. Astro rejects the binary. It renders static HTML at build time and lets you **opt in** to JavaScript where you need it — component by component. For a CV/portfolio site that's 95% content and 5% interactive desktop, this is the ideal architecture.
+Most web frameworks make you choose: either you build a static site and give up interactivity, or you build a single-page app and ship hundreds of kilobytes of JavaScript for what is mostly static content. Astro rejects the binary. It renders static HTML at build time and lets you **opt in** to JavaScript where you need it — [component by component](https://docs.astro.build/en/concepts/islands/). For a CV/portfolio site that's 95% content and 5% interactive desktop, this is the ideal architecture.
 
 ## How Astro Works
 
-Astro is a build-time framework. `.astro` files are templates that execute at build time (or on the server for SSR routes) to produce HTML. The frontmatter between the `---` fences is Node.js code that runs at build time — fetching data, processing collections, computing values. The template below renders to HTML. **Zero JavaScript ships to the client by default.**
+[Astro](https://docs.astro.build/) is a build-time framework. `.astro` files are templates that execute at build time (or on the server for SSR routes) to produce HTML. The frontmatter between the `---` fences is Node.js code that runs at build time — fetching data, processing collections, computing values. The template below renders to HTML. **[Zero JavaScript ships to the client by default.](https://docs.astro.build/en/basics/astro-components/)**
 
 ```mermaid
 flowchart LR
@@ -83,7 +83,7 @@ The key insight is that Astro treats JavaScript as an explicit opt-in. An `.astr
 
 ## Content Collections
 
-Astro's content collections turn a directory of Markdown files into a typed, validated data source. In `src/content.config.ts`, we define two collections:
+Astro's [content collections](https://docs.astro.build/en/guides/content-collections/) turn a directory of Markdown files into a typed, validated data source. In `src/content.config.ts`, we define two collections:
 
 ```typescript
 // src/content.config.ts

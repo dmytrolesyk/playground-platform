@@ -70,7 +70,7 @@ That `Record<string, WindowState>` is a hash map. It's the reason `state.windows
 
 ## What Is a Hash Map?
 
-A hash map (also called hash table, dictionary, or associative array) stores key-value pairs with O(1) average-case lookup, insertion, and deletion. The trick: instead of searching through items to find a key, it computes a **hash function** on the key to jump directly to the storage location.
+A [hash map](https://en.wikipedia.org/wiki/Hash_table) (also called hash table, dictionary, or associative array) stores key-value pairs with O(1) average-case lookup, insertion, and deletion. The trick: instead of searching through items to find a key, it computes a **hash function** on the key to jump directly to the storage location.
 
 ```mermaid
 flowchart LR
@@ -176,9 +176,9 @@ When you type `open browser` in the terminal, the command handler does `APP_REGI
 
 In JavaScript, plain objects (`{}`) and `Map` are both hash maps, but they work differently under the hood.
 
-**Plain objects** — V8 uses **hidden classes** (also called "shapes" or "maps" internally) for objects with known property sets. When properties are added in a consistent order (like the `WindowState` interface), V8 creates a hidden class that maps property names to fixed memory offsets — even faster than hash lookup. But when objects have many dynamic keys added and deleted (like `state.windows` where window IDs come and go), V8 switches to **dictionary mode** — a true hash table.
+**Plain objects** — V8 uses **[hidden classes](https://v8.dev/blog/fast-properties)** (also called "shapes" or "maps" internally) for objects with known property sets. When properties are added in a consistent order (like the `WindowState` interface), V8 creates a hidden class that maps property names to fixed memory offsets — even faster than hash lookup. But when objects have many dynamic keys added and deleted (like `state.windows` where window IDs come and go), V8 switches to **dictionary mode** — a true hash table.
 
-**Map objects** — always use a hash table internally. They support any key type (not just strings), preserve insertion order, have a `.size` property, and are optimized for frequent additions and deletions.
+**[Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) objects** — always use a hash table internally. They support any key type (not just strings), preserve insertion order, have a `.size` property, and are optimized for frequent additions and deletions.
 
 For this codebase, plain objects win because:
 1. SolidJS's `createStore` wraps objects in Proxies for reactivity tracking — it expects plain objects

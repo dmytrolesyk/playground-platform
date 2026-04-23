@@ -75,8 +75,8 @@ Understanding the big picture gives you a mental map for navigating the codebase
 
 This platform is built as three distinct layers, each with a clear responsibility:
 
-1. **Astro (Build Time)** — Static site generator. Renders HTML, processes Markdown content collections, serves static assets, and provides one SSR endpoint (`/api/contact`).
-2. **SolidJS (Client Runtime)** — A single hydrated "island" component (`<Desktop />`) that owns all interactive state — windows, taskbar, icons, and the entire desktop experience.
+1. **[Astro](https://docs.astro.build/) (Build Time)** — Static site generator. Renders HTML, processes Markdown content collections, serves static assets, and provides one SSR endpoint (`/api/contact`).
+2. **[SolidJS](https://www.solidjs.com/) (Client Runtime)** — A single hydrated "island" component (`<Desktop />`) that owns all interactive state — windows, taskbar, icons, and the entire desktop experience.
 3. **App Registry (Extensibility)** — A central registry where `registerApp()` wires an app into the desktop icons, start menu, terminal, and window manager with a single function call.
 
 ```mermaid

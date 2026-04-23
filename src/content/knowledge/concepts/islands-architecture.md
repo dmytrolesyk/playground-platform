@@ -59,7 +59,7 @@ In this project, understanding islands explains why the desktop is a single Soli
 
 In traditional SPAs (Create React App, Vite + React), the entire page is JavaScript-rendered. The browser downloads a JS bundle, parses it, executes it, and then generates HTML. Until that's done, users see nothing.
 
-In islands architecture, the page is server-rendered static HTML with isolated "islands" of interactivity:
+In [islands architecture](https://jasonformat.com/islands-architecture/), the page is server-rendered static HTML with isolated "islands" of interactivity:
 
 ```mermaid
 flowchart TB
@@ -86,7 +86,7 @@ Each island:
 
 ## Why One Island?
 
-This site has exactly **one** island: `<Desktop client:load />` in `src/pages/index.astro`. Why not split it into multiple?
+This site has exactly **one** island: `<Desktop client:load />` in `src/pages/index.astro`. Why not split it into multiple? [Astro's island model](https://docs.astro.build/en/concepts/islands/) is designed for pages with isolated interactive widgets, but this page IS one giant interactive widget.
 
 ### The Shared State Problem
 
@@ -142,7 +142,7 @@ With one island, step 2-5 collapse into a single synchronous reactive update —
 
 ## Astro Hydration Directives
 
-Astro controls when islands hydrate with `client:*` directives:
+Astro controls when islands hydrate with [`client:*` directives](https://docs.astro.build/en/reference/directives-reference/#client-directives):
 
 | Directive | When it Hydrates | Use Case |
 |---|---|---|

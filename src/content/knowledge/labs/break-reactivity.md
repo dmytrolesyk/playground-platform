@@ -46,7 +46,7 @@ moduleOrder: 99
 
 ## Why This Lab Exists
 
-SolidJS reactivity feels magical — until it silently stops working. Unlike React, which re-runs entire components on every state change, SolidJS builds a dependency graph at **first execution time**. If a signal isn't read during that first synchronous pass, SolidJS never knows about it. The result: your UI freezes while your data changes underneath. This lab creates five of these breaks so you can recognize them instantly in real code.
+[SolidJS reactivity](https://www.solidjs.com/guides/reactivity) feels magical — until it silently stops working. Unlike React, which re-runs entire components on every state change, SolidJS builds a dependency graph at **first execution time**. If a signal isn't read during that first synchronous pass, SolidJS never knows about it. The result: your UI freezes while your data changes underneath. This lab creates five of these breaks so you can recognize them instantly in real code.
 
 ## Setup
 
@@ -90,9 +90,9 @@ const [name, setName] = createSignal("Alice");
 
 **OBSERVE:** The `<span>` still displays "Alice" after calling `setName("Bob")`. The UI is frozen. Open DevTools Console — no errors, no warnings. The breakage is completely silent.
 
-**EXPLAIN:** When you write `const { name } = props`, JavaScript reads `props.name` once and stores the string `"Alice"` in a local variable. SolidJS never re-invokes the component function (unlike React), so `name` stays `"Alice"` forever. The Proxy's getter was called during destructuring but never again — the reactive subscription was never created inside a tracking scope.
+**EXPLAIN:** When you write `const { name } = props`, JavaScript reads `props.name` once and stores the string `"Alice"` in a local variable. SolidJS never re-invokes the component function (unlike React), so `name` stays `"Alice"` forever. The [Proxy's](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) getter was called during destructuring but never again — the reactive subscription was never created inside a tracking scope.
 
-**FIX:** Always access props directly: `props.name`, or use `splitProps()` / `mergeProps()` which preserve reactivity:
+**FIX:** Always access props directly: `props.name`, or use [`splitProps()`](https://docs.solidjs.com/reference/component-apis/split-props) / `mergeProps()` which preserve reactivity:
 
 ```tsx
 function Greeting(props: { name: string }) {
