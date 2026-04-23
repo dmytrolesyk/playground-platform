@@ -3,102 +3,102 @@
     {
       "id": "concepts/fine-grained-reactivity",
       "label": "Fine-Grained Reactivity",
-      "score": 0.097879
+      "score": 0.097014
     },
     {
       "id": "concepts/browser-rendering-pipeline",
       "label": "The Browser Rendering Pipeline",
-      "score": 0.073205
+      "score": 0.072527
     },
     {
       "id": "concepts/progressive-enhancement",
       "label": "Progressive Enhancement",
-      "score": 0.069267
+      "score": 0.070232
     },
     {
       "id": "concepts/lazy-loading-and-code-splitting",
       "label": "Lazy Loading and Code Splitting",
-      "score": 0.063073
-    },
-    {
-      "id": "concepts/event-loop-and-microtasks",
-      "label": "The Event Loop & Microtasks",
-      "score": 0.062092
+      "score": 0.063561
     },
     {
       "id": "concepts/module-systems-and-bundling",
       "label": "Module Systems & Bundling",
-      "score": 0.061817
+      "score": 0.062302
+    },
+    {
+      "id": "concepts/event-loop-and-microtasks",
+      "label": "The Event Loop & Microtasks",
+      "score": 0.061404
     },
     {
       "id": "concepts/observer-pattern",
       "label": "The Observer Pattern",
-      "score": 0.060589
+      "score": 0.060006
     },
     {
       "id": "architecture/overview",
       "label": "The Big Picture",
-      "score": 0.043526
+      "score": 0.043674
     },
     {
       "id": "concepts/signals-vs-vdom",
       "label": "Signals vs Virtual DOM",
-      "score": 0.042826
+      "score": 0.042367
     },
     {
       "id": "concepts/javascript-proxies",
       "label": "JavaScript Proxy Objects",
-      "score": 0.040426
+      "score": 0.039988
     },
     {
       "id": "concepts/islands-architecture",
       "label": "Islands Architecture",
-      "score": 0.039216
+      "score": 0.039375
     },
     {
       "id": "concepts/executable-quality-gates",
       "label": "Executable Quality Gates",
-      "score": 0.03561
+      "score": 0.036443
     },
     {
       "id": "concepts/compositor-pattern",
       "label": "The Compositor Pattern",
-      "score": 0.034932
+      "score": 0.034518
     },
     {
       "id": "architecture/app-registry",
       "label": "The Registry Pattern",
-      "score": 0.02827
+      "score": 0.029064
     },
     {
       "id": "cs-fundamentals/hash-maps-and-lookup",
       "label": "Hash Maps and O(1) Lookup",
-      "score": 0.025764
+      "score": 0.02553
     },
     {
       "id": "cs-fundamentals/concurrency-models",
       "label": "Concurrency Models",
-      "score": 0.022982
+      "score": 0.02269
     },
     {
       "id": "concepts/inversion-of-control",
       "label": "Inversion of Control",
-      "score": 0.022493
+      "score": 0.022632
     },
     {
       "id": "cs-fundamentals/trees-and-traversal",
       "label": "Trees and Traversal",
-      "score": 0.019658
+      "score": 0.019478
     },
     {
       "id": "cs-fundamentals/graph-validation",
       "label": "Graph Validation",
-      "score": 0.017806
+      "score": 0.017817
     },
     {
       "id": "architecture/data-flow",
       "label": "From Markdown to Screen",
-      "score": 0.016612
+      "score": 0.016688
     }
   ],
   "prerequisiteDepth": {
@@ -118,7 +118,7 @@
       "2": 12,
       "3": 10,
       "4": 11,
-      "5": 6,
+      "5": 7,
       "6": 3,
       "7": 5,
       "8": 1
@@ -135,36 +135,18 @@
         "concepts/module-systems-and-bundling",
         "concepts/progressive-enhancement",
         "cs-fundamentals/networking-fundamentals",
-        "cs-fundamentals/type-systems",
         "features/cv-viewer",
         "labs/trace-a-request",
         "technologies/astro",
-        "technologies/resend",
-        "technologies/typescript"
+        "technologies/resend"
       ],
       "suggestedLabel": "The Foundation"
     },
     {
       "id": 1,
       "members": [
-        "architecture/window-manager",
-        "concepts/browser-rendering-pipeline",
-        "concepts/compositor-pattern",
-        "concepts/event-loop-and-microtasks",
-        "concepts/pointer-events-and-capture",
-        "cs-fundamentals/concurrency-models",
-        "cs-fundamentals/memory-management-and-gc",
-        "features/crt-monitor-frame",
-        "labs/measure-compositor-performance",
-        "technologies/98css",
-        "technologies/node"
-      ],
-      "suggestedLabel": "The Window Manager"
-    },
-    {
-      "id": 2,
-      "members": [
         "architecture/state-management",
+        "architecture/window-manager",
         "concepts/fine-grained-reactivity",
         "concepts/javascript-proxies",
         "concepts/observer-pattern",
@@ -172,13 +154,45 @@
         "cs-fundamentals/hash-maps-and-lookup",
         "cs-fundamentals/trees-and-traversal",
         "labs/break-reactivity",
-        "labs/create-a-memory-leak",
+        "labs/build-an-app-from-scratch",
         "technologies/solidjs"
       ],
       "suggestedLabel": "Why SolidJS?"
     },
     {
+      "id": 2,
+      "members": [
+        "concepts/browser-rendering-pipeline",
+        "concepts/compositor-pattern",
+        "concepts/event-loop-and-microtasks",
+        "concepts/pointer-events-and-capture",
+        "cs-fundamentals/concurrency-models",
+        "cs-fundamentals/memory-management-and-gc",
+        "features/crt-monitor-frame",
+        "labs/create-a-memory-leak",
+        "labs/measure-compositor-performance",
+        "technologies/98css",
+        "technologies/node"
+      ],
+      "suggestedLabel": "The Window Manager"
+    },
+    {
       "id": 3,
+      "members": [
+        "architecture/app-registry",
+        "concepts/inversion-of-control",
+        "concepts/lazy-loading-and-code-splitting",
+        "cs-fundamentals/type-systems",
+        "features/github-notifier",
+        "features/snake-game",
+        "features/terminal",
+        "technologies/typescript",
+        "technologies/xterm"
+      ],
+      "suggestedLabel": "Extensibility"
+    },
+    {
+      "id": 4,
       "members": [
         "concepts/executable-quality-gates",
         "concepts/ontology-engineering",
@@ -191,19 +205,6 @@
         "technologies/vitest"
       ],
       "suggestedLabel": "Learning System Reliability"
-    },
-    {
-      "id": 4,
-      "members": [
-        "architecture/app-registry",
-        "concepts/inversion-of-control",
-        "concepts/lazy-loading-and-code-splitting",
-        "features/snake-game",
-        "features/terminal",
-        "labs/build-an-app-from-scratch",
-        "technologies/xterm"
-      ],
-      "suggestedLabel": "Extensibility"
     }
   ],
   "coverageGaps": {
@@ -230,6 +231,15 @@
         "reasons": ["833 words below 1000-word target"]
       },
       {
+        "id": "concepts/executable-quality-gates",
+        "label": "Executable Quality Gates",
+        "incomingReferences": 12,
+        "exerciseCount": 3,
+        "estimatedMinutes": 14,
+        "wordCount": 997,
+        "reasons": ["997 words below 1000-word target"]
+      },
+      {
         "id": "concepts/observer-pattern",
         "label": "The Observer Pattern",
         "incomingReferences": 11,
@@ -237,15 +247,6 @@
         "estimatedMinutes": 15,
         "wordCount": 931,
         "reasons": ["931 words below 1000-word target"]
-      },
-      {
-        "id": "concepts/executable-quality-gates",
-        "label": "Executable Quality Gates",
-        "incomingReferences": 11,
-        "exerciseCount": 3,
-        "estimatedMinutes": 14,
-        "wordCount": 997,
-        "reasons": ["997 words below 1000-word target"]
       },
       {
         "id": "architecture/overview",
@@ -284,6 +285,15 @@
         "reasons": ["908 words below 1000-word target"]
       },
       {
+        "id": "architecture/app-registry",
+        "label": "The Registry Pattern",
+        "incomingReferences": 7,
+        "exerciseCount": 4,
+        "estimatedMinutes": 15,
+        "wordCount": 974,
+        "reasons": ["974 words below 1500-word target"]
+      },
+      {
         "id": "concepts/compositor-pattern",
         "label": "The Compositor Pattern",
         "incomingReferences": 6,
@@ -309,21 +319,12 @@
         "estimatedMinutes": 16,
         "wordCount": 936,
         "reasons": ["936 words below 1000-word target"]
-      },
-      {
-        "id": "architecture/app-registry",
-        "label": "The Registry Pattern",
-        "incomingReferences": 6,
-        "exerciseCount": 4,
-        "estimatedMinutes": 15,
-        "wordCount": 974,
-        "reasons": ["974 words below 1500-word target"]
       }
     ]
   },
   "summary": {
-    "nodeCount": 96,
-    "edgeCount": 404,
+    "nodeCount": 98,
+    "edgeCount": 415,
     "weaklyConnectedComponents": 3
   }
 }

@@ -326,6 +326,21 @@ export const NODES: ArchNode[] = [
     sourceFiles: ['src/components/desktop/apps/library/LibraryApp.tsx'],
   },
   {
+    id: 'github-notifier-app',
+    label: 'Github Notifier',
+    category: 'app',
+    x: 720,
+    y: 490,
+    width: 150,
+    height: 45,
+    description: 'External iframe app for subscribing to GitHub release notifications.',
+    knowledgeSlug: 'features/github-notifier',
+    sourceFiles: [
+      'src/components/desktop/apps/GithubNotifierApp.tsx',
+      'src/components/desktop/apps/app-manifest.ts',
+    ],
+  },
+  {
     id: 'architecture-explorer-app',
     label: 'ArchExplorer',
     category: 'app',
@@ -519,6 +534,18 @@ export const EDGES: ArchEdge[] = [
     from: 'window-manager',
     to: 'window',
     type: 'renders',
+  },
+  {
+    from: 'window',
+    to: 'github-notifier-app',
+    label: 'renders body',
+    type: 'renders',
+  },
+  {
+    from: 'app-registry',
+    to: 'github-notifier-app',
+    label: 'registerApp()',
+    type: 'dependency',
   },
 
   // Lazy load

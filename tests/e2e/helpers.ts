@@ -1,8 +1,15 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { Locator, Page } from '@playwright/test';
 
 const HYDRATION_TIMEOUT = 15_000;
 const SETTLE_DELAY = 1_000;
 const LEARNING_PROGRESS_KEY = 'kb-learning-progress';
+const FIXTURES_DIR = resolve(dirname(fileURLToPath(import.meta.url)), 'fixtures');
+
+function resolveFixturePath(filename: string): string {
+  return resolve(FIXTURES_DIR, filename);
+}
 
 /**
  * Wait for the SolidJS Desktop island to hydrate.
@@ -24,6 +31,59 @@ export async function clearLearningProgress(page: Page): Promise<void> {
     window.localStorage.removeItem(storageKey);
     window.sessionStorage.setItem(sentinel, 'true');
   }, LEARNING_PROGRESS_KEY);
+}
+
+export async function mockGithubNotifierEmbed(page: Page): Promise<void> {
+  await page.route('https://swe-school.dmytrolesyk.dev/embed/subscribe', async (route) => {
+    if (route.request().method() === 'POST') {
+      const formData = new URLSearchParams(route.request().postData() ?? '');
+      const repo = formData.get('repo') ?? 'unknown/repo';
+      const email = formData.get('email') ?? 'unknown@example.com';
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/html; charset=utf-8',
+        body: `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Subscription saved</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 16px;
+        background: #fff4c7;
+        color: #222;
+        font-family: Arial, sans-serif;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      p {
+        margin: 0;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Subscription saved</h1>
+    <p>Watching ${repo} for ${email}</p>
+  </body>
+</html>`,
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/html; charset=utf-8',
+      path: resolveFixturePath('github-notifier-embed.html'),
+    });
+  });
 }
 
 export function desktopWindow(page: Page, title: string): Locator {

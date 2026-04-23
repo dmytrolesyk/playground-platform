@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { closeTopWindow, openApp, waitForHydration } from './helpers';
+import {
+  ConsoleErrorCollector,
+  closeTopWindow,
+  mockGithubNotifierEmbed,
+  openApp,
+  waitForHydration,
+} from './helpers';
 
 test.describe('App Smoke Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -82,6 +88,50 @@ test.describe('App Smoke Tests', () => {
     const win = page.locator('.window.win-container').first();
     await expect(win.locator('.title-bar-text')).toContainText('Architecture');
     await expect(win.locator('.arch-explorer__canvas')).toBeVisible();
+
+    await closeTopWindow(page);
+  });
+
+  test('Github Notifier — opens and embeds notifier form', async ({ page }) => {
+    await mockGithubNotifierEmbed(page);
+    await openApp(page, 'Github Notifier');
+
+    const win = page.locator('.window.win-container').first();
+    await expect(win.locator('.title-bar-text')).toContainText('Github Notifier');
+    await expect(win.locator('iframe[title="Github Notifier"]')).toHaveAttribute(
+      'src',
+      'https://swe-school.dmytrolesyk.dev/embed/subscribe',
+    );
+
+    const frame = page.frameLocator('iframe[title="Github Notifier"]');
+    await expect(
+      frame.getByRole('heading', { level: 1, name: 'Release Notifier XP' }),
+    ).toBeVisible();
+    await expect(frame.getByLabel('Repository')).toBeVisible();
+    await expect(frame.getByLabel('Email')).toBeVisible();
+
+    await closeTopWindow(page);
+  });
+
+  test('Github Notifier — submits form without wrapper errors', async ({ page }) => {
+    const collector = new ConsoleErrorCollector();
+    collector.attach(page);
+
+    await mockGithubNotifierEmbed(page);
+    await openApp(page, 'Github Notifier');
+
+    const frame = page.frameLocator('iframe[title="Github Notifier"]');
+    await frame.getByLabel('Repository').fill('openai/openai-node');
+    await frame.getByLabel('Email').fill('alice@example.com');
+    await frame.getByRole('button', { name: 'Start Watching' }).click();
+
+    await expect(
+      frame.getByRole('heading', { level: 1, name: 'Subscription saved' }),
+    ).toBeVisible();
+    await expect(
+      frame.getByText('Watching openai/openai-node for alice@example.com'),
+    ).toBeVisible();
+    expect(collector.errors).toEqual([]);
 
     await closeTopWindow(page);
   });

@@ -18,6 +18,6 @@ test.describe('Page Health', () => {
 
     const icons = page.locator('.desktop-icon');
     const count = await icons.count();
-    expect(count).toBe(7);
+    expect(count).toBe(8);
   });
 });

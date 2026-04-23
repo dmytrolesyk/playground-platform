@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openApp, waitForHydration } from './helpers';
+import { mockGithubNotifierEmbed, openApp, waitForHydration } from './helpers';
 
 test.describe('Visual Regression', () => {
   test('empty desktop', async ({ page }) => {
@@ -71,6 +71,22 @@ test.describe('Visual Regression', () => {
     await expect(page.locator('.library-app')).toBeVisible();
 
     await expect(page).toHaveScreenshot('window-knowledge-base.png');
+  });
+
+  test('desktop window open — Github Notifier', async ({ page }, testInfo) => {
+    if (testInfo.project.name === 'mobile') {
+      testInfo.skip();
+      return;
+    }
+
+    await mockGithubNotifierEmbed(page);
+    await page.goto('/');
+    await waitForHydration(page);
+
+    await openApp(page, 'Github Notifier');
+    await expect(page.locator('.github-notifier-app')).toBeVisible();
+
+    await expect(page).toHaveScreenshot('window-github-notifier.png');
   });
 
   test('desktop window open — Architecture Explorer', async ({ page }) => {

@@ -3,6 +3,7 @@ import { BrowserApp } from './BrowserApp';
 import { ContactApp } from './ContactApp';
 import { EmailApp } from './EmailApp';
 import { ExplorerApp } from './ExplorerApp';
+import { GithubNotifierApp } from './GithubNotifierApp';
 import { registerApp } from './registry';
 
 const TerminalApp = lazy(() => import('./TerminalApp').then((m) => ({ default: m.TerminalApp })));
@@ -39,6 +40,19 @@ registerApp({
   startMenuCategory: 'Programs',
   singleton: true,
   defaultSize: { width: 500, height: 350 },
+});
+
+registerApp({
+  id: 'github-notifier',
+  title: 'Github Notifier',
+  icon: '/icons/github_notifier_icon.png',
+  component: GithubNotifierApp,
+  desktop: true,
+  startMenu: true,
+  startMenuCategory: 'Programs',
+  singleton: true,
+  defaultSize: { width: 460, height: 420 },
+  minSize: { width: 360, height: 320 },
 });
 
 // Email app — opened from ContactApp, not shown on desktop/start menu directly
