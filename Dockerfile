@@ -3,8 +3,10 @@ RUN corepack enable
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json pnpm-lock.yaml ./
+# Install dependencies — copy workspace config + all package.json files
+# so pnpm can resolve workspace links and install sub-package deps (e.g. zod).
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/knowledge-engine/package.json ./packages/knowledge-engine/
 RUN pnpm install --frozen-lockfile
 
 # Build
