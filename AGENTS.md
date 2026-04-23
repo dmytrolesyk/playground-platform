@@ -227,13 +227,13 @@ Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `C
 
 ## CV File Generation
 
-PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by `pnpm generate-cv`. This script requires Chrome and pandoc. CI auto-regenerates and commits updated files on push to main (via the `cv-generate` job). You can also run `pnpm generate-cv` locally to preview changes.
+PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by `pnpm generate-cv`. This script requires Chrome and pandoc. To regenerate in CI, manually trigger the **Generate CV** workflow (`cv-generate.yml`) from the Actions tab — it creates a PR with updated files. You can also run `pnpm generate-cv` locally to preview changes.
 
 ## Deployment
 
 - **Target:** Railway. Builds via `Dockerfile` (node:24-slim multi-stage), NOT nixpacks.
 - **Start command:** `node dist/server/entry.mjs`
-- **CI:** Single `ci.yml` workflow with four jobs: `verify` (lint + typecheck + unit tests + build, runs on all PRs and main push), `e2e` (Playwright E2E tests against production build, runs after verify on all PRs and main push), `cv-generate` (regenerates CV files and auto-commits if changed, main only, after verify), `deploy` (Railway deploy, main only, after verify + e2e + cv-generate).
+- **CI:** `ci.yml` has three jobs on main push: `verify` (lint + typecheck + unit tests + build), `e2e` (Playwright E2E tests), `deploy` (Railway deploy, after verify + e2e). PRs run `verify` and `e2e`. CV generation is a separate manually-triggered workflow (`cv-generate.yml`) that creates a PR with updated files.
 - **Branch protection:** main branch is protected — PRs only, merge blocked until `verify` and `e2e` pass.
 - **Railway env vars:** `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST=0.0.0.0`. `PUBLIC_*` must be set at build time (Astro inlines them). `PUBLIC_*` vars need `ARG` + `ENV` in the Dockerfile to be available during Docker build.
 - **Deploy secret:** `RAILWAY_TOKEN` GitHub secret needed for deploy job.
