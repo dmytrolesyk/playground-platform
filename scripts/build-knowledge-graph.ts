@@ -4,7 +4,7 @@
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { extractKnowledgeGraph } from './knowledge-graph/extract.ts';
+import { extractKnowledgeGraph } from '@playground/knowledge-engine/graph';
 import { loadExtractionInput } from './knowledge-graph/load.ts';
 
 const ROOT = process.cwd();

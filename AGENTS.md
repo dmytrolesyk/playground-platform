@@ -94,11 +94,30 @@ When `verify:knowledge` fails with these codes, fix the content — do not suppr
 ### Knowledge graph (generated artifact)
 `src/data/knowledge-graph.json` is generated at build time by `scripts/build-knowledge-graph.ts`. It is a derived artifact — never edit it manually. It is regenerated on every build via the `prebuild` script. If you change any knowledge article frontmatter, architecture-data.ts, or modules.ts, the graph JSON updates automatically on next build.
 
+### Knowledge engine package
+The reusable knowledge engine lives in `packages/knowledge-engine/`. It contains:
+- Schema types (`@playground/knowledge-engine/schema`)
+- Audit rules (`@playground/knowledge-engine/audit`)
+- Graph extraction (`@playground/knowledge-engine/graph`)
+- Progress model (`@playground/knowledge-engine/progress`)
+
+**Import paths:** Always use `@playground/knowledge-engine/*` — never import directly from `packages/knowledge-engine/src/`. The workspace package resolution handles this.
+
+**Where to make changes:**
+- Changing the knowledge article schema (Zod types, adding/removing fields) → edit `packages/knowledge-engine/src/schema.ts`
+- Adding or modifying audit rules → edit `packages/knowledge-engine/src/audit/rules.ts`
+- Changing graph extraction logic or graph types → edit `packages/knowledge-engine/src/graph/`
+- Changing progress model → edit `packages/knowledge-engine/src/progress.ts`
+
+**Boundary rule:** The package must have ZERO Astro dependencies. It uses only `zod`, `yaml`, and standard Node.js APIs. If you need Astro-specific code, put it in the main project (`src/`), not in the package.
+
+**Content stays in main project:** Article Markdown files (`src/content/knowledge/`), Astro pages (`src/pages/learn/`), presentation components, and project-specific data (architecture-data.ts, modules.ts) remain in the main project.
+
 ### Knowledge base is a learning system, not documentation
 The knowledge base exists to make the human developer a rockstar engineer — not to document the codebase. Every article must include `learningObjectives` (what you should be able to DO after reading), `exercises` (2-4 per article with answers, at least one `predict` or `do` type), `prerequisites` (which articles to read first), and `estimatedMinutes`. Articles are grouped into curriculum modules via the `module` frontmatter field. Labs (`labs/` directory, `category: lab`) are hands-on guided experiments. CS fundamentals (`cs-fundamentals` category) cover foundational CS concepts grounded in THIS codebase. See `docs/features/knowledge-base.md` for the canonical active system design.
 
 ### Staged mastery progress
-`src/scripts/learn-progress.ts` is the canonical progress module. Progress is local-only in `localStorage` under `kb-learning-progress` and has four stages: `read`, `checked`, `practiced`, `mastered`. Do not reintroduce a binary completed-only model. `/learn` pages must remain fully readable without JavaScript; progress controls are progressive enhancement.
+The canonical progress module is `packages/knowledge-engine/src/progress.ts` (imported as `@playground/knowledge-engine/progress`). Progress is local-only in `localStorage` under `kb-learning-progress` and has four stages: `read`, `checked`, `practiced`, `mastered`. Do not reintroduce a binary completed-only model. `/learn` pages must remain fully readable without JavaScript; progress controls are progressive enhancement.
 
 ### Knowledge article quality bar
 All knowledge articles must meet the canonical standards in `docs/features/knowledge-base.md`. Key requirements: open with motivation (not definition), ≥1 Mermaid diagram, reference actual source files, connect to broader CS concepts, include edge cases/gotchas, 3–6 external references with diverse types, meet minimum word counts (architecture: 1500–2500, concepts: 1000–1800, technologies: 800–1400, features: 600–1000, cs-fundamentals: 1000-1800, labs: 800-1500). Additionally: 2-4 exercises per article, learning objectives, prerequisites, module assignment, estimated reading time. Never create shallow placeholder articles — every article must teach something a working engineer would find valuable.

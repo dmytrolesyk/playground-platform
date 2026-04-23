@@ -1,6 +1,6 @@
+import { extractKnowledgeGraph, formatTechnologyLabel } from '@playground/knowledge-engine/graph';
+import type { ExtractionInput } from '@playground/knowledge-engine/graph/types';
 import { describe, expect, it } from 'vitest';
-import { extractKnowledgeGraph, formatTechnologyLabel } from './extract.ts';
-import type { ExtractionInput } from './types.ts';
 
 const FIXED_DATE = '2026-04-22T00:00:00.000Z';
 

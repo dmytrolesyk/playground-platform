@@ -74,8 +74,8 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
     markArticleMastered,
     markArticlePracticed,
     markArticleRead,
-  } from '../scripts/learn-progress';
-  import type { MasteryStage } from '../scripts/learn-progress';
+  } from '@playground/knowledge-engine/progress';
+  import type { MasteryStage } from '@playground/knowledge-engine/progress';
 
   const STAGE_LABELS: Record<MasteryStage, string> = {
     read: 'Read',

@@ -1,0 +1,19 @@
+{
+  "name": "@playground/knowledge-engine",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./schema": "./src/schema.ts",
+    "./audit": "./src/audit/rules.ts",
+    "./audit/types": "./src/audit/types.ts",
+    "./audit/load": "./src/audit/load.ts",
+    "./audit/report": "./src/audit/report.ts",
+    "./graph": "./src/graph/extract.ts",
+    "./graph/types": "./src/graph/types.ts",
+    "./progress": "./src/progress.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.8.3",
+    "zod": "^4.3.6"
+  }
+}

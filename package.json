@@ -41,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "@playground/knowledge-engine": "workspace:*",
     "@astrojs/check": "^0.9.8",
     "@biomejs/biome": "^2.4.12",
     "@playwright/test": "^1.59.1",
