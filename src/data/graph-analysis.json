@@ -3,102 +3,102 @@
     {
       "id": "concepts/fine-grained-reactivity",
       "label": "Fine-Grained Reactivity",
-      "score": 0.099637
+      "score": 0.097879
     },
     {
       "id": "concepts/browser-rendering-pipeline",
       "label": "The Browser Rendering Pipeline",
-      "score": 0.074777
+      "score": 0.073205
     },
     {
       "id": "concepts/progressive-enhancement",
       "label": "Progressive Enhancement",
-      "score": 0.069025
-    },
-    {
-      "id": "concepts/event-loop-and-microtasks",
-      "label": "The Event Loop & Microtasks",
-      "score": 0.063595
+      "score": 0.069267
     },
     {
       "id": "concepts/lazy-loading-and-code-splitting",
       "label": "Lazy Loading and Code Splitting",
-      "score": 0.063321
+      "score": 0.063073
     },
     {
-      "id": "concepts/observer-pattern",
-      "label": "The Observer Pattern",
-      "score": 0.061973
+      "id": "concepts/event-loop-and-microtasks",
+      "label": "The Event Loop & Microtasks",
+      "score": 0.062092
     },
     {
       "id": "concepts/module-systems-and-bundling",
       "label": "Module Systems & Bundling",
-      "score": 0.061476
+      "score": 0.061817
     },
     {
-      "id": "concepts/signals-vs-vdom",
-      "label": "Signals vs Virtual DOM",
-      "score": 0.043813
+      "id": "concepts/observer-pattern",
+      "label": "The Observer Pattern",
+      "score": 0.060589
     },
     {
       "id": "architecture/overview",
       "label": "The Big Picture",
-      "score": 0.043608
+      "score": 0.043526
+    },
+    {
+      "id": "concepts/signals-vs-vdom",
+      "label": "Signals vs Virtual DOM",
+      "score": 0.042826
     },
     {
       "id": "concepts/javascript-proxies",
       "label": "JavaScript Proxy Objects",
-      "score": 0.041344
+      "score": 0.040426
     },
     {
       "id": "concepts/islands-architecture",
       "label": "Islands Architecture",
-      "score": 0.039321
-    },
-    {
-      "id": "concepts/compositor-pattern",
-      "label": "The Compositor Pattern",
-      "score": 0.035855
+      "score": 0.039216
     },
     {
       "id": "concepts/executable-quality-gates",
       "label": "Executable Quality Gates",
-      "score": 0.032643
+      "score": 0.03561
+    },
+    {
+      "id": "concepts/compositor-pattern",
+      "label": "The Compositor Pattern",
+      "score": 0.034932
     },
     {
       "id": "architecture/app-registry",
       "label": "The Registry Pattern",
-      "score": 0.028592
+      "score": 0.02827
     },
     {
       "id": "cs-fundamentals/hash-maps-and-lookup",
       "label": "Hash Maps and O(1) Lookup",
-      "score": 0.025496
+      "score": 0.025764
     },
     {
       "id": "cs-fundamentals/concurrency-models",
       "label": "Concurrency Models",
-      "score": 0.023619
+      "score": 0.022982
     },
     {
       "id": "concepts/inversion-of-control",
       "label": "Inversion of Control",
-      "score": 0.022844
+      "score": 0.022493
     },
     {
       "id": "cs-fundamentals/trees-and-traversal",
       "label": "Trees and Traversal",
-      "score": 0.019447
-    },
-    {
-      "id": "architecture/data-flow",
-      "label": "From Markdown to Screen",
-      "score": 0.015569
+      "score": 0.019658
     },
     {
       "id": "cs-fundamentals/graph-validation",
       "label": "Graph Validation",
-      "score": 0.014837
+      "score": 0.017806
+    },
+    {
+      "id": "architecture/data-flow",
+      "label": "From Markdown to Screen",
+      "score": 0.016612
     }
   ],
   "prerequisiteDepth": {
@@ -119,8 +119,8 @@
       "3": 10,
       "4": 11,
       "5": 6,
-      "6": 2,
-      "7": 4,
+      "6": 3,
+      "7": 5,
       "8": 1
     }
   },
@@ -131,36 +131,45 @@
         "architecture/contact-system",
         "architecture/data-flow",
         "architecture/overview",
-        "concepts/executable-quality-gates",
         "concepts/islands-architecture",
         "concepts/module-systems-and-bundling",
         "concepts/progressive-enhancement",
-        "cs-fundamentals/graph-validation",
         "cs-fundamentals/networking-fundamentals",
+        "cs-fundamentals/type-systems",
         "features/cv-viewer",
-        "features/knowledge-reliability-mastery",
-        "labs/repair-a-knowledge-graph",
         "labs/trace-a-request",
         "technologies/astro",
-        "technologies/biome",
-        "technologies/node",
-        "technologies/playwright",
         "technologies/resend",
-        "technologies/vitest"
+        "technologies/typescript"
       ],
-      "suggestedLabel": "Technology cluster"
+      "suggestedLabel": "The Foundation"
     },
     {
       "id": 1,
       "members": [
-        "architecture/state-management",
+        "architecture/window-manager",
+        "concepts/browser-rendering-pipeline",
+        "concepts/compositor-pattern",
         "concepts/event-loop-and-microtasks",
+        "concepts/pointer-events-and-capture",
+        "cs-fundamentals/concurrency-models",
+        "cs-fundamentals/memory-management-and-gc",
+        "features/crt-monitor-frame",
+        "labs/measure-compositor-performance",
+        "technologies/98css",
+        "technologies/node"
+      ],
+      "suggestedLabel": "The Window Manager"
+    },
+    {
+      "id": 2,
+      "members": [
+        "architecture/state-management",
         "concepts/fine-grained-reactivity",
         "concepts/javascript-proxies",
         "concepts/observer-pattern",
         "concepts/signals-vs-vdom",
         "cs-fundamentals/hash-maps-and-lookup",
-        "cs-fundamentals/memory-management-and-gc",
         "cs-fundamentals/trees-and-traversal",
         "labs/break-reactivity",
         "labs/create-a-memory-leak",
@@ -169,33 +178,32 @@
       "suggestedLabel": "Why SolidJS?"
     },
     {
-      "id": 2,
+      "id": 3,
+      "members": [
+        "concepts/executable-quality-gates",
+        "concepts/ontology-engineering",
+        "cs-fundamentals/graph-validation",
+        "features/knowledge-reliability-mastery",
+        "labs/build-a-tiny-ontology",
+        "labs/repair-a-knowledge-graph",
+        "technologies/biome",
+        "technologies/playwright",
+        "technologies/vitest"
+      ],
+      "suggestedLabel": "Learning System Reliability"
+    },
+    {
+      "id": 4,
       "members": [
         "architecture/app-registry",
         "concepts/inversion-of-control",
         "concepts/lazy-loading-and-code-splitting",
-        "cs-fundamentals/type-systems",
         "features/snake-game",
         "features/terminal",
         "labs/build-an-app-from-scratch",
-        "technologies/typescript",
         "technologies/xterm"
       ],
       "suggestedLabel": "Extensibility"
-    },
-    {
-      "id": 3,
-      "members": [
-        "architecture/window-manager",
-        "concepts/browser-rendering-pipeline",
-        "concepts/compositor-pattern",
-        "concepts/pointer-events-and-capture",
-        "cs-fundamentals/concurrency-models",
-        "features/crt-monitor-frame",
-        "labs/measure-compositor-performance",
-        "technologies/98css"
-      ],
-      "suggestedLabel": "The Window Manager"
     }
   ],
   "coverageGaps": {
@@ -207,7 +215,7 @@
         "id": "concepts/fine-grained-reactivity",
         "label": "Fine-Grained Reactivity",
         "incomingReferences": 16,
-        "exerciseCount": 3,
+        "exerciseCount": 5,
         "estimatedMinutes": 20,
         "wordCount": 812,
         "reasons": ["812 words below 1000-word target"]
@@ -225,16 +233,25 @@
         "id": "concepts/observer-pattern",
         "label": "The Observer Pattern",
         "incomingReferences": 11,
-        "exerciseCount": 3,
+        "exerciseCount": 5,
         "estimatedMinutes": 15,
         "wordCount": 931,
         "reasons": ["931 words below 1000-word target"]
       },
       {
+        "id": "concepts/executable-quality-gates",
+        "label": "Executable Quality Gates",
+        "incomingReferences": 11,
+        "exerciseCount": 3,
+        "estimatedMinutes": 14,
+        "wordCount": 997,
+        "reasons": ["997 words below 1000-word target"]
+      },
+      {
         "id": "architecture/overview",
         "label": "The Big Picture",
         "incomingReferences": 10,
-        "exerciseCount": 3,
+        "exerciseCount": 4,
         "estimatedMinutes": 20,
         "wordCount": 1041,
         "reasons": ["1041 words below 1500-word target"]
@@ -247,15 +264,6 @@
         "estimatedMinutes": 20,
         "wordCount": 849,
         "reasons": ["849 words below 1000-word target"]
-      },
-      {
-        "id": "concepts/executable-quality-gates",
-        "label": "Executable Quality Gates",
-        "incomingReferences": 9,
-        "exerciseCount": 3,
-        "estimatedMinutes": 14,
-        "wordCount": 997,
-        "reasons": ["997 words below 1000-word target"]
       },
       {
         "id": "concepts/lazy-loading-and-code-splitting",
@@ -288,16 +296,25 @@
         "id": "concepts/javascript-proxies",
         "label": "JavaScript Proxy Objects",
         "incomingReferences": 6,
-        "exerciseCount": 3,
+        "exerciseCount": 4,
         "estimatedMinutes": 18,
         "wordCount": 917,
         "reasons": ["917 words below 1000-word target"]
       },
       {
+        "id": "cs-fundamentals/graph-validation",
+        "label": "Graph Validation",
+        "incomingReferences": 6,
+        "exerciseCount": 3,
+        "estimatedMinutes": 16,
+        "wordCount": 936,
+        "reasons": ["936 words below 1000-word target"]
+      },
+      {
         "id": "architecture/app-registry",
         "label": "The Registry Pattern",
         "incomingReferences": 6,
-        "exerciseCount": 3,
+        "exerciseCount": 4,
         "estimatedMinutes": 15,
         "wordCount": 974,
         "reasons": ["974 words below 1500-word target"]
@@ -305,8 +322,8 @@
     ]
   },
   "summary": {
-    "nodeCount": 94,
-    "edgeCount": 391,
+    "nodeCount": 96,
+    "edgeCount": 404,
     "weaklyConnectedComponents": 3
   }
 }
