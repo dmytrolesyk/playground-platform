@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Release Notifier XP</title>
+    <style>
+      body {
+        margin: 0;
+        background: #c0c0c0;
+        color: #222;
+        font-family: Arial, sans-serif;
+      }
+
+      .window {
+        margin: 12px;
+        border: 2px solid #000;
+        background: #ffc62e;
+        box-shadow: inset 2px 2px 0 #ffe08a;
+      }
+
+      .body {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+        background: #fff4c7;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      label {
+        font-weight: 700;
+      }
+
+      input {
+        min-height: 28px;
+        padding: 4px 6px;
+        border: 1px solid #4d4d4d;
+      }
+
+      button {
+        width: fit-content;
+        min-height: 30px;
+        padding: 4px 12px;
+      }
+
+      .status {
+        min-height: 20px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="window">
+      <form class="body" action="/embed/subscribe" method="post" data-subscribe-form>
+        <h1>Release Notifier XP</h1>
+        <label for="repo">Repository</label>
+        <input id="repo" name="repo" type="text" value="nodejs/node">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="alice@example.com">
+        <button type="submit">Start Watching</button>
+        <div class="status" data-status role="status">Standing by for a repository and inbox.</div>
+      </form>
+    </section>
+    <script>
+      const form = document.querySelector('[data-subscribe-form]');
+      const status = document.querySelector('[data-status]');
+
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const body = new URLSearchParams(new FormData(form)).toString();
+        status.textContent = 'Submitting...';
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            },
+            body,
+          });
+
+          const html = await response.text();
+          document.open();
+          document.write(html);
+          document.close();
+        } catch {
+          status.textContent = 'Submission failed.';
+        }
+      });
+    </script>
+  </body>
+</html>
