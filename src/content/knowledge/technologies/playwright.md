@@ -3,6 +3,12 @@ title: "Playwright — E2E Testing Across Viewports"
 category: technology
 summary: "The browser automation framework that tests the full desktop experience — hydration, drag interactions, responsive behavior, and visual regression across desktop and mobile viewports."
 difficulty: intermediate
+prefLabel: "Playwright"
+altLabels:
+  - "E2E testing"
+  - "end-to-end testing"
+  - "browser automation"
+  - "Playwright testing"
 relatedConcepts:
   - concepts/executable-quality-gates
   - concepts/progressive-enhancement

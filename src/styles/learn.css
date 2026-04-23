@@ -286,6 +286,44 @@ body {
 }
 
 /* Prerequisites */
+/* Epistemic metadata banners */
+.learn-epistemic {
+  border-radius: 4px;
+  padding: 10px 16px;
+  margin: 0 0 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.learn-epistemic--probable {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+}
+
+.learn-epistemic--uncertain {
+  background: #f8d7da;
+  border: 1px solid #dc3545;
+}
+
+.learn-epistemic--speculative {
+  background: #f8d7da;
+  border: 1px solid #c82333;
+}
+
+.learn-epistemic--established {
+  background: #cce5ff;
+  border: 1px solid #007bff;
+}
+
+.learn-epistemic p {
+  margin: 4px 0;
+}
+
+.learn-epistemic__contested {
+  font-weight: 600;
+}
+
 .learn-prerequisites {
   background: #fff3cd;
   border: 1px solid #ffc107;

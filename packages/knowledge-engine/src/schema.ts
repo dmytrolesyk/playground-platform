@@ -37,6 +37,20 @@ export const knowledgeSchema = z.object({
   estimatedMinutes: z.number().optional(),
   module: z.string().optional(),
   moduleOrder: z.number().optional(),
+
+  // SKOS-inspired vocabulary management
+  prefLabel: z.string().optional(),
+  altLabels: z.array(z.string()).default([]),
+  broader: z.array(z.string()).default([]),
+  narrower: z.array(z.string()).default([]),
+  conceptScheme: z.string().default('playground-platform'),
+
+  // Epistemic metadata
+  confidence: z
+    .enum(['established', 'probable', 'uncertain', 'speculative'])
+    .default('established'),
+  evidenceType: z.enum(['authoritative', 'derived', 'empirical', 'analogical']).optional(),
+  isContested: z.boolean().default(false),
 });
 
 export type KnowledgeArticleSchema = z.infer<typeof knowledgeSchema>;

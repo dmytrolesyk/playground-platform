@@ -3,6 +3,11 @@ title: "Vitest — Unit Testing with Vite Speed"
 category: technology
 summary: "The Vite-native test runner used for pure functions, audit rules, and engine logic — how it's configured, what it tests, and when to use it vs Playwright."
 difficulty: beginner
+prefLabel: "Vitest"
+altLabels:
+  - "Vite test runner"
+  - "vitest testing"
+  - "unit testing framework"
 relatedConcepts:
   - concepts/executable-quality-gates
   - concepts/module-systems-and-bundling

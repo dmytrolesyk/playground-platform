@@ -69,6 +69,8 @@ function loadArticles(contentRoot: string): ArticleInput[] {
       technologies: getStringArray(frontmatter, 'technologies'),
       relatedConcepts: getStringArray(frontmatter, 'relatedConcepts'),
       prerequisites: getStringArray(frontmatter, 'prerequisites'),
+      broader: getStringArray(frontmatter, 'broader'),
+      narrower: getStringArray(frontmatter, 'narrower'),
       diagramRef: getString(frontmatter, 'diagramRef'),
       exerciseCount: getArray(frontmatter, 'exercises').length,
       learningObjectiveCount: getStringArray(frontmatter, 'learningObjectives').length,

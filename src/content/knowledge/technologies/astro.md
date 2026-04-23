@@ -3,6 +3,12 @@ title: "Astro — Static First, Islands Where Needed"
 category: technology
 summary: "The meta-framework that renders static HTML at build time and hydrates interactive islands on the client."
 difficulty: beginner
+prefLabel: "Astro"
+altLabels:
+  - "Astro framework"
+  - "Astro SSG"
+  - "Astro static site generator"
+  - "astro.build"
 relatedConcepts:
   - concepts/islands-architecture
   - concepts/progressive-enhancement

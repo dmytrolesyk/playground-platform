@@ -39,7 +39,9 @@ export type KnowledgeAuditIssueCode =
   | 'missing-last-updated'
   | 'stale-code-reference'
   | 'uncited-reference'
-  | 'unlisted-inline-citation';
+  | 'unlisted-inline-citation'
+  | 'missing-broader-target'
+  | 'missing-narrower-target';
 
 export interface KnowledgeAuditIssue {
   severity: KnowledgeAuditSeverity;
@@ -74,6 +76,12 @@ export interface KnowledgeArticle {
   externalReferences?: readonly ExternalReference[];
   broader?: readonly string[];
   narrower?: readonly string[];
+  altLabels?: readonly string[];
+  prefLabel?: string;
+  conceptScheme?: string;
+  confidence?: string;
+  evidenceType?: string;
+  isContested?: boolean;
   lastUpdated?: string;
 }
 

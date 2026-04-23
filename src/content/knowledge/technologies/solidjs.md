@@ -3,6 +3,12 @@ title: "SolidJS — Signals, Not Virtual DOM"
 category: technology
 summary: "The reactive UI framework powering the desktop — how it works, why it was chosen, and how we use it."
 difficulty: beginner
+prefLabel: "SolidJS"
+altLabels:
+  - "Solid.js"
+  - "Solid JS"
+  - "solid"
+  - "signals framework"
 relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/signals-vs-vdom

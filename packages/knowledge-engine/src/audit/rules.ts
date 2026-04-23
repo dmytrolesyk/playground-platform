@@ -45,6 +45,8 @@ export function auditArticleReferences(input: KnowledgeAuditInput): KnowledgeAud
   return input.articles.flatMap((article) => [
     ...auditRelatedConcepts(article, articleIds),
     ...auditPrerequisites(article, articleIds),
+    ...auditBroaderTargets(article, articleIds),
+    ...auditNarrowerTargets(article, articleIds),
     ...auditArticleModule(article, moduleIds),
     ...auditArticleDiagramRef(article, nodeIds),
   ]);
@@ -76,6 +78,36 @@ function auditPrerequisites(
         'missing-prerequisite',
         article.id,
         `${article.id} lists prerequisite "${prerequisite}", but no article has that id.`,
+      ),
+    );
+}
+
+function auditBroaderTargets(
+  article: KnowledgeArticle,
+  articleIds: ReadonlySet<string>,
+): KnowledgeAuditIssue[] {
+  return (article.broader ?? [])
+    .filter((broaderId) => !articleIds.has(broaderId))
+    .map((broaderId) =>
+      error(
+        'missing-broader-target',
+        article.id,
+        `${article.id} lists "${broaderId}" in broader, but no article has that id.`,
+      ),
+    );
+}
+
+function auditNarrowerTargets(
+  article: KnowledgeArticle,
+  articleIds: ReadonlySet<string>,
+): KnowledgeAuditIssue[] {
+  return (article.narrower ?? [])
+    .filter((narrowerId) => !articleIds.has(narrowerId))
+    .map((narrowerId) =>
+      error(
+        'missing-narrower-target',
+        article.id,
+        `${article.id} lists "${narrowerId}" in narrower, but no article has that id.`,
       ),
     );
 }

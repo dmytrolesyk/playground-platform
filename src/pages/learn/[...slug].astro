@@ -23,6 +23,16 @@ interface KnowledgeEntry {
     estimatedMinutes?: number;
     module?: string;
     moduleOrder?: number;
+    // SKOS fields
+    altLabels: string[];
+    broader: string[];
+    narrower: string[];
+    prefLabel?: string;
+    conceptScheme: string;
+    // Epistemic metadata
+    confidence: 'established' | 'probable' | 'uncertain' | 'speculative';
+    evidenceType?: 'authoritative' | 'derived' | 'empirical' | 'analogical';
+    isContested: boolean;
   };
   rendered?: { html: string };
   body?: string;
@@ -117,6 +127,30 @@ const exerciseTypeLabels: Record<string, string> = {
 const html = entry.rendered?.html ?? entry.body ?? '';
 const hasPracticeCheckpoint =
   entry.data.category === 'lab' || entry.data.exercises.some((exercise) => exercise.type === 'do');
+
+// Resolve broader/narrower to actual entries
+const broaderEntries = (entry.data.broader ?? [])
+  .map((slug: string) =>
+    allEntries.find((e: KnowledgeEntry) => e.id === slug || e.id.endsWith(`/${slug}`)),
+  )
+  .filter((e): e is KnowledgeEntry => e !== undefined);
+
+const narrowerEntries = (entry.data.narrower ?? [])
+  .map((slug: string) =>
+    allEntries.find((e: KnowledgeEntry) => e.id === slug || e.id.endsWith(`/${slug}`)),
+  )
+  .filter((e): e is KnowledgeEntry => e !== undefined);
+
+// Epistemic metadata
+const confidence = entry.data.confidence ?? 'established';
+const isContested = entry.data.isContested ?? false;
+const showEpistemicBanner = confidence !== 'established' || isContested;
+
+const confidenceMessages: Record<string, string> = {
+  probable: '⚠️ This content is based on good evidence but is not definitive.',
+  uncertain: '⚠️ This content has limited supporting evidence.',
+  speculative: '⚠️ This content is speculative — inferred but not verified.',
+};
 ---
 
 <LearnLayout title={entry.data.title}>
@@ -157,6 +191,20 @@ const hasPracticeCheckpoint =
       {/* Estimated reading time */}
       {entry.data.estimatedMinutes && (
         <p class="learn-meta__time">⏱️ Estimated: {entry.data.estimatedMinutes} minutes</p>
+      )}
+
+      {/* Epistemic metadata banner */}
+      {showEpistemicBanner && (
+        <div class={`learn-epistemic learn-epistemic--${confidence}`}>
+          {isContested && (
+            <p class="learn-epistemic__contested">
+              ⚖️ This is a contested topic — multiple valid perspectives exist.
+            </p>
+          )}
+          {confidence !== 'established' && confidenceMessages[confidence] && (
+            <p class="learn-epistemic__confidence">{confidenceMessages[confidence]}</p>
+          )}
+        </div>
       )}
 
       {/* Prerequisites */}
@@ -224,6 +272,28 @@ const hasPracticeCheckpoint =
       )}
 
       <section class="learn-related">
+        {broaderEntries.length > 0 && (
+          <>
+            <h2>🔼 Broader Concepts</h2>
+            <ul>
+              {broaderEntries.map((e: KnowledgeEntry) => (
+                <li><a href={`/learn/${e.id}`}>{e.data.title}</a> — {e.data.summary}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {narrowerEntries.length > 0 && (
+          <>
+            <h2>🔽 Narrower Concepts</h2>
+            <ul>
+              {narrowerEntries.map((e: KnowledgeEntry) => (
+                <li><a href={`/learn/${e.id}`}>{e.data.title}</a> — {e.data.summary}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
         {relatedEntries.length > 0 && (
           <>
             <h2>📎 Related Concepts</h2>
