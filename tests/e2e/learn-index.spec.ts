@@ -30,6 +30,23 @@ test.describe('Learn index page', () => {
     expect(count).toBeGreaterThan(0);
   });
 
+  test('displays network analysis results in the stats dashboard', async ({ page }) => {
+    await page.goto('/learn');
+
+    await page.locator('.graph-stats__toggle').click();
+
+    const analysisSection = page.locator('[data-cy="graph-analysis"]');
+    await expect(analysisSection).toBeVisible();
+    await expect(
+      analysisSection.getByRole('heading', { name: 'Top Central Concepts (PageRank)' }),
+    ).toBeVisible();
+
+    const centralityRows = analysisSection.locator(
+      '[data-cy="graph-analysis-centrality"] tbody tr',
+    );
+    await expect(centralityRows).toHaveCount(5);
+  });
+
   test('navigates to the graph page via the nav link', async ({ page }) => {
     await page.goto('/learn');
 

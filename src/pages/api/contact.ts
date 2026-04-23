@@ -61,11 +61,15 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
   const fromEmail = process.env['CONTACT_FROM_EMAIL'];
 
   if (!(apiKey && toEmail && fromEmail)) {
-    console.error('[contact] Missing env vars:', {
-      hasApiKey: Boolean(apiKey),
-      hasToEmail: Boolean(toEmail),
-      hasFromEmail: Boolean(fromEmail),
-    });
+    process.stderr.write(
+      `${JSON.stringify({
+        scope: 'contact',
+        message: 'Missing env vars',
+        hasApiKey: Boolean(apiKey),
+        hasToEmail: Boolean(toEmail),
+        hasFromEmail: Boolean(fromEmail),
+      })}\n`,
+    );
     return new Response(JSON.stringify({ ok: false, error: 'Server configuration error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -86,7 +90,9 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
   });
 
   if (error) {
-    console.error('[contact] Resend error:', JSON.stringify(error));
+    process.stderr.write(
+      `${JSON.stringify({ scope: 'contact', message: 'Resend error', error })}\n`,
+    );
     return new Response(
       JSON.stringify({ ok: false, error: 'Failed to send email. Please try again later.' }),
       {

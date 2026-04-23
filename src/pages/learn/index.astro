@@ -3,8 +3,11 @@ import { getCollection } from 'astro:content';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { MODULES } from '../../content/knowledge/modules';
+import graphAnalysisData from '../../data/graph-analysis.json';
 import graphData from '../../data/knowledge-graph.json';
 import LearnLayout from '../../layouts/LearnLayout.astro';
+import type { GraphAnalysis } from '../../utils/graph-analysis';
+import { prepareGraphAnalysisDisplay } from '../../utils/graph-analysis';
 import { computeGraphStats } from '../../utils/graph-stats';
 
 export const prerender = true;
@@ -16,6 +19,13 @@ export const prerender = true;
 // title + altLabels + summary.
 
 const stats = computeGraphStats(graphData);
+const graphAnalysis = prepareGraphAnalysisDisplay(graphAnalysisData as GraphAnalysis);
+const articleLabelById = new Map<string, string>(
+  graphData.nodes.filter((node) => node.type === 'article').map((node) => [node.id, node.label]),
+);
+const getArticleLabel = (id: string): string => articleLabelById.get(id) ?? id;
+const topCentrality = graphAnalysis.centrality.slice(0, 5);
+const topCommunities = graphAnalysis.communities.slice(0, 4);
 
 // Count flagged articles
 let flaggedCount = 0;
@@ -210,13 +220,164 @@ const sortedModules = [...MODULES].sort((a, b) => a.order - b.order);
               <h4 class="graph-stats__heading">Longest Prerequisite Chain ({stats.longestPrerequisiteChain} steps)</h4>
               <ol class="graph-stats__chain">
                 {stats.prerequisiteChainPath.map((id) => (
-                  <li><a href={`/learn/${id}`}>{id}</a></li>
+                  <li><a href={`/learn/${id}`}>{getArticleLabel(id)}</a></li>
                 ))}
               </ol>
             </div>
           )}
 
-          {/* Row 6: Technology gaps */}
+          {/* Row 6: NetworkX analysis */}
+          <div data-cy="graph-analysis">
+            <h4 class="graph-stats__heading">Network Analysis</h4>
+            <div class="graph-stats__grid">
+              <div class="graph-stats__card">
+                <span class="graph-stats__number">{graphAnalysis.communities.length}</span>
+                <span class="graph-stats__label">Communities</span>
+              </div>
+              <div class="graph-stats__card">
+                <span class="graph-stats__number">{graphAnalysis.summary.weaklyConnectedComponents}</span>
+                <span class="graph-stats__label">Full-graph components</span>
+              </div>
+              <div class="graph-stats__card">
+                <span class="graph-stats__number">{graphAnalysis.coverageGaps.disconnectedComponents.length}</span>
+                <span class="graph-stats__label">Disconnected semantic clusters</span>
+              </div>
+              <div class="graph-stats__card">
+                <span class="graph-stats__number">{graphAnalysis.coverageGaps.highTrafficLowContent.length}</span>
+                <span class="graph-stats__label">Priority content upgrades</span>
+              </div>
+            </div>
+
+            <div class="graph-stats__tables">
+              <div>
+                <h4 class="graph-stats__heading">Top Central Concepts (PageRank)</h4>
+                <table class="graph-stats__table" data-cy="graph-analysis-centrality">
+                  <thead><tr><th>#</th><th>Concept</th><th>Score</th></tr></thead>
+                  <tbody>
+                    {topCentrality.map((entry, index) => (
+                      <tr>
+                        <td>{index + 1}</td>
+                        <td><a href={`/learn/${entry.id}`}>{entry.label}</a></td>
+                        <td>{entry.score.toFixed(4)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4 class="graph-stats__heading">Prerequisite Depth Distribution</h4>
+                <table class="graph-stats__table">
+                  <thead><tr><th>Depth</th><th>Articles</th></tr></thead>
+                  <tbody>
+                    {graphAnalysis.depthDistribution.map(({ depth, count }) => (
+                      <tr><td>{depth}</td><td>{count}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {graphAnalysis.prerequisiteDepth.longestPath.length > 0 && (
+              <div>
+                <h4 class="graph-stats__heading">Critical Learning Path ({graphAnalysis.prerequisiteDepth.maxDepth} articles)</h4>
+                <p class="graph-stats__note">Learning-order view from foundational prerequisite to the most dependent article.</p>
+                <ol class="graph-stats__chain">
+                  {graphAnalysis.prerequisiteDepth.longestPath.map((id) => (
+                    <li><a href={`/learn/${id}`}>{getArticleLabel(id)}</a></li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {topCommunities.length > 0 && (
+              <div>
+                <h4 class="graph-stats__heading">Detected Communities</h4>
+                <table class="graph-stats__table">
+                  <thead><tr><th>Label</th><th>Size</th><th>Sample members</th></tr></thead>
+                  <tbody>
+                    {topCommunities.map((community) => (
+                      <tr>
+                        <td>{community.suggestedLabel}</td>
+                        <td>{community.size}</td>
+                        <td>
+                          {community.members.slice(0, 3).map((memberId, memberIndex) => (
+                            <span>
+                              {memberIndex > 0 && ', '}
+                              <a href={`/learn/${memberId}`}>{getArticleLabel(memberId)}</a>
+                            </span>
+                          ))}
+                          {community.size > 3 && ` +${community.size - 3} more`}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {graphAnalysis.coverageGaps.highTrafficLowContent.length > 0 && (
+              <div>
+                <h4 class="graph-stats__heading">High-Traffic, Low-Content Articles</h4>
+                <p class="graph-stats__note">Articles in the top quartile for incoming concept references that are still short for their category.</p>
+                <table class="graph-stats__table">
+                  <thead><tr><th>Article</th><th>Incoming refs</th><th>Words</th><th>Why it needs work</th></tr></thead>
+                  <tbody>
+                    {graphAnalysis.coverageGaps.highTrafficLowContent.map((entry) => (
+                      <tr>
+                        <td><a href={`/learn/${entry.id}`}>{entry.label}</a></td>
+                        <td>{entry.incomingReferences}</td>
+                        <td>{entry.wordCount ?? '—'}</td>
+                        <td>{entry.reasons.join('; ')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {graphAnalysis.coverageGaps.uncoveredTechnologies.length > 0 && (
+              <div>
+                <h4 class="graph-stats__heading">Uncovered Technologies</h4>
+                <ul class="graph-stats__list">
+                  {graphAnalysis.coverageGaps.uncoveredTechnologies.map((technology) => (
+                    <li>{technology}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {graphAnalysis.coverageGaps.deadEndArticles.length > 0 && (
+              <div>
+                <h4 class="graph-stats__heading">Dead-End Articles</h4>
+                <ul class="graph-stats__list">
+                  {graphAnalysis.coverageGaps.deadEndArticles.map((id) => (
+                    <li><a href={`/learn/${id}`}>{getArticleLabel(id)}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {graphAnalysis.coverageGaps.disconnectedComponents.length > 0 && (
+              <div>
+                <h4 class="graph-stats__heading">Disconnected Semantic Clusters</h4>
+                <p class="graph-stats__note">These article groups are disconnected from the main article graph and likely need cross-domain links.</p>
+                <ul class="graph-stats__list">
+                  {graphAnalysis.coverageGaps.disconnectedComponents.map((component) => (
+                    <li>
+                      {component.map((id, index) => (
+                        <span>
+                          {index > 0 && ', '}
+                          <a href={`/learn/${id}`}>{getArticleLabel(id)}</a>
+                        </span>
+                      ))}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Row 7: Technology gaps */}
           {stats.technologyGaps.length > 0 && (
             <div>
               <h4 class="graph-stats__heading">Technology Coverage Gaps</h4>
@@ -229,14 +390,14 @@ const sortedModules = [...MODULES].sort((a, b) => a.order - b.order);
             </div>
           )}
 
-          {/* Row 7: Orphan articles */}
+          {/* Row 8: Orphan articles */}
           {stats.orphanArticles.length > 0 && (
             <div>
               <h4 class="graph-stats__heading">Orphan Articles</h4>
               <p class="graph-stats__note">Articles not referenced by any other article's prerequisites or related concepts:</p>
               <ul class="graph-stats__list">
                 {stats.orphanArticles.map(({ id }) => (
-                  <li><a href={`/learn/${id}`}>{id}</a></li>
+                  <li><a href={`/learn/${id}`}>{getArticleLabel(id)}</a></li>
                 ))}
               </ul>
             </div>

@@ -104,6 +104,15 @@ test.describe('Knowledge Graph page', () => {
     await architectureCheckbox.uncheck();
 
     // Architecture nodes should now be hidden
+    await page.waitForFunction(
+      () => {
+        const cy = window.__cyGraph;
+        if (!cy) return false;
+        return cy.nodes('[category="architecture"]:visible').length === 0;
+      },
+      undefined,
+      { timeout: 5_000 },
+    );
     const after = await page.evaluate(() => {
       const cy = window.__cyGraph;
       if (!cy) throw new Error('Cytoscape not initialised');

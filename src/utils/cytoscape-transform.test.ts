@@ -51,7 +51,10 @@ describe('toCytoscapeElements', () => {
     const result = toCytoscapeElements(graph);
     expect(result.nodes).toHaveLength(1);
 
-    const node = result.nodes[0]!;
+    const [node] = result.nodes;
+    expect(node).toBeDefined();
+    if (!node) throw new Error('Expected transformed node');
+
     expect(node.data.id).toBe('architecture/overview');
     expect(node.data.label).toBe('Architecture Overview');
     expect(node.data.nodeType).toBe('article');
@@ -86,7 +89,7 @@ describe('toCytoscapeElements', () => {
             id: `test/${categories[i]}`,
             type: 'article',
             label: `Test ${categories[i]}`,
-            category: categories[i]!,
+            category: categories[i] ?? 'concept',
             difficulty: null,
             module: null,
             estimatedMinutes: null,
@@ -205,7 +208,10 @@ describe('toCytoscapeElements', () => {
     const result = toCytoscapeElements(graph);
     expect(result.edges).toHaveLength(1);
 
-    const edge = result.edges[0]!;
+    const [edge] = result.edges;
+    expect(edge).toBeDefined();
+    if (!edge) throw new Error('Expected transformed edge');
+
     expect(edge.data.source).toBe('a');
     expect(edge.data.target).toBe('b');
     expect(edge.data.edgeType).toBe('prerequisite');
