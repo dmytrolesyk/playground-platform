@@ -32,3 +32,6 @@ src/data/knowledge-graph.json
 
 # Review flags (runtime data, not committed)
 src/data/review-flags/*.json
+
+# AI quality reports (runtime data, not committed)
+src/data/quality-reports/*.json

@@ -140,6 +140,21 @@ The audit pipeline checks if source files referenced by an article have been mod
 ### External link checking
 `pnpm check:links` sends HEAD requests to all `externalReferences` URLs and reports dead links, redirects, timeouts, and errors. Run manually before major releases — it is NOT part of `pnpm verify` (network-dependent and slow).
 
+### Content quality review (AI-assisted)
+After writing or significantly updating a knowledge article, run the quality review:
+`REVIEW_API_KEY=sk-... node --experimental-strip-types scripts/review-article.ts {article-slug}`
+
+The review scores 5 dimensions (1-5 each): grounding, depth, coverage, exercise quality, reference quality. Articles scoring below 3.0 overall must be revised before merging.
+
+When revising based on quality feedback:
+- Grounding issues: re-read the actual source files in `relatedFiles`, correct inaccuracies
+- Depth issues: add WHY explanations, connect to underlying principles, discuss tradeoffs
+- Coverage issues: address the specific missing topics listed in the report
+- Exercise issues: add predict/do exercises, make answers more thorough
+- Reference issues: find authoritative sources (official docs, reputable authors)
+
+Environment variables: `REVIEW_API_KEY` (required), `REVIEW_MODEL` (default: claude-sonnet-4-20250514), `REVIEW_PROVIDER` (anthropic or openai, default: anthropic), `REVIEW_BASE_URL` (optional override). Quality reports are saved to `src/data/quality-reports/` (gitignored).
+
 ### Flag for review
 Article pages have a "Flag for review" button. Flags are stored as JSON files in `src/data/review-flags/` (gitignored). `pnpm verify:knowledge` reports flagged articles as informational. The stats dashboard shows the flagged count.
 
