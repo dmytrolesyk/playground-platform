@@ -83,6 +83,57 @@ exercises:
       - description: "D executes exactly once with both fresh values"
         expectedState: "D sees consistent state from B and C. No glitch — no double execution."
     answer: "The push-pull hybrid prevents glitches (double-execution). Push: A notifies B, C they may be stale. Pull: D waits and lazily pulls fresh values from B and C before executing. Without glitch prevention, D would fire twice — once when B updates and again when C updates — potentially showing inconsistent intermediate state."
+  - question: "Write a minimal EventEmitter class with on, off, and emit methods."
+    type: code
+    language: javascript
+    starterCode: |
+      class EventEmitter {
+        constructor() {
+          this.listeners = {};
+        }
+
+        on(event, fn) {
+          // your implementation here
+        }
+
+        off(event, fn) {
+          // your implementation here
+        }
+
+        emit(event, ...args) {
+          // your implementation here
+        }
+      }
+    solution: |
+      class EventEmitter {
+        constructor() {
+          this.listeners = {};
+        }
+
+        on(event, fn) {
+          if (!this.listeners[event]) this.listeners[event] = [];
+          this.listeners[event].push(fn);
+        }
+
+        off(event, fn) {
+          if (!this.listeners[event]) return;
+          this.listeners[event] = this.listeners[event].filter(f => f !== fn);
+        }
+
+        emit(event, ...args) {
+          if (!this.listeners[event]) return;
+          for (const fn of this.listeners[event]) fn(...args);
+        }
+      }
+    testCases:
+      - input: "const e = new EventEmitter(); let v = 0; e.on('x', () => v = 1); e.emit('x'); v;"
+        expected: "v is 1"
+      - input: "const e = new EventEmitter(); let v = 0; const fn = () => v = 1; e.on('x', fn); e.off('x', fn); e.emit('x'); v;"
+        expected: "v is 0"
+    hint: "Use an object to map event names to arrays of listener functions. The off method should filter out the given function."
+    answer: "This is the Observer pattern in its simplest form. The EventEmitter is the subject, and each listener function is an observer. The on() method is subscribe, off() is unsubscribe, and emit() is notifyAll. Node.js EventEmitter, DOM addEventListener, and reactive signals all build on this same core: a registry of callbacks keyed by event name, with a dispatch mechanism that iterates and calls each one. SolidJS signals abstract this further by making subscription automatic via tracking."
+    targetConcepts:
+      - concepts/observer-pattern
 ---
 
 ## Why Should I Care?

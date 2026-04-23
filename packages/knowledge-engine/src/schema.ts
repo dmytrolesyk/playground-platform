@@ -31,7 +31,7 @@ export const knowledgeSchema = z.object({
         hint: z.string().optional(),
         answer: z.string(),
         type: z
-          .enum(['predict', 'explain', 'do', 'debug', 'arrange', 'compare', 'trace'])
+          .enum(['predict', 'explain', 'do', 'debug', 'arrange', 'compare', 'trace', 'code'])
           .default('explain'),
         // 'arrange' (Parsons problems) — fragments in scrambled order, learner determines correct sequence
         fragments: z.array(z.string()).optional(),
@@ -48,6 +48,18 @@ export const knowledgeSchema = z.object({
             }),
           )
           .optional(),
+        // 'code' — write or fix code in an in-page editor
+        starterCode: z.string().optional(),
+        solution: z.string().optional(),
+        testCases: z
+          .array(
+            z.object({
+              input: z.string(),
+              expected: z.string(),
+            }),
+          )
+          .optional(),
+        language: z.enum(['typescript', 'javascript', 'python', 'html', 'css']).optional(),
         // Links exercise to concept article IDs (for future mastery assessment)
         targetConcepts: z.array(z.string()).optional(),
       }),
