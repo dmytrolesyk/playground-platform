@@ -238,7 +238,9 @@ function main(): void {
   if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
 
   const sections = loadSections();
-  console.log(`Loaded ${sections.length} CV sections: ${sections.map((s) => s.slug).join(', ')}`);
+  process.stdout.write(
+    `Loaded ${sections.length} CV sections: ${sections.map((s) => s.slug).join(', ')}\n`,
+  );
 
   // PDF
   const html = buildPdfHtml(sections);
@@ -246,7 +248,7 @@ function main(): void {
   writeFileSync(tmpHtml, html);
 
   const chrome = findChrome();
-  console.log(`Using Chrome: ${chrome}`);
+  process.stdout.write(`Using Chrome: ${chrome}\n`);
 
   execSync(
     `"${chrome}" --headless --disable-gpu --no-sandbox --print-to-pdf="${join(OUT_DIR, 'cv.pdf')}" --no-margins "${tmpHtml}"`,
@@ -264,7 +266,7 @@ function main(): void {
 
   const pdfSize = readFileSync(join(OUT_DIR, 'cv.pdf')).length;
   const docxSize = readFileSync(join(OUT_DIR, 'cv.docx')).length;
-  console.log(`Done. PDF: ${pdfSize} bytes, DOCX: ${docxSize} bytes`);
+  process.stdout.write(`Done. PDF: ${pdfSize} bytes, DOCX: ${docxSize} bytes\n`);
 }
 
 main();

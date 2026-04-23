@@ -17,7 +17,7 @@ technologies:
   - typescript
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Astro — Server Endpoints (API Routes)"
     url: "https://docs.astro.build/en/guides/endpoints/#server-endpoints-api-routes"
