@@ -64,6 +64,24 @@ exercises:
     type: do
     hint: "If SolidJS DevTools aren't installed, you can use the console to dispatch a minimize action."
     answer: "The window disappears from the screen (display: none or equivalent), and its taskbar button changes appearance to show it's minimized. Only the specific Window component and Taskbar button for that window ID update — no other windows or UI elements re-render. This demonstrates fine-grained reactivity: changing one path in the store only affects subscribers of that exact path."
+  - question: "Compare these two approaches for updating multiple window properties during a drag operation:"
+    type: compare
+    approachA: |
+      // Path-based setState calls
+      setState('windows', id, 'x', newX);
+      setState('windows', id, 'y', newY);
+      setState('windows', id, 'isDragging', true);
+      // Each call triggers separate subscriber notifications
+    approachB: |
+      // produce() batched mutation
+      setState(produce(s => {
+        const win = s.windows[id];
+        win.x = newX;
+        win.y = newY;
+        win.isDragging = true;
+      }));
+      // All mutations batched, subscribers notified once
+    answer: "Approach A fires three separate reactive updates — subscribers of x, y, and isDragging each get notified individually, potentially causing intermediate renders. Approach B uses produce() to batch all mutations into a single reactive update — subscribers see the final state only. For drag operations happening 60 times per second, the batching in Approach B prevents jank from redundant intermediate renders. The tradeoff: produce() adds a dependency on Immer-style proxies and is slightly harder to read for single-property changes."
 ---
 
 ## Why Should I Care?

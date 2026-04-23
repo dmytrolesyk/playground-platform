@@ -68,6 +68,19 @@ exercises:
     type: do
     hint: "Compare this to what React would do."
     answer: "The console.log appears exactly once — when the component first renders. In SolidJS, component functions run once and never re-execute. Only the specific JSX expression bound to count() updates when the signal changes. In React, the entire component function would re-run on every click (6 logs total), and React would diff the virtual DOM to find what changed."
+  - question: "Trace what happens when setCount(5) is called in a SolidJS component with a <span>{count()}</span> element:"
+    type: trace
+    hint: "Remember: SolidJS component functions run once. Only the bound expressions update."
+    steps:
+      - description: "setCount(5) is called"
+        expectedState: "count signal internal value changes from 0 to 5"
+      - description: "SolidJS equality check: is 5 === 0?"
+        expectedState: "Values differ, so propagation proceeds"
+      - description: "SolidJS checks the subscriber list for count"
+        expectedState: "One subscriber found: the JSX expression {count()} in the <span>"
+      - description: "The subscriber effect re-runs"
+        expectedState: "Only the <span> text node updates to '5'. Component function does NOT re-run. No parent notification."
+    answer: "The key insight: only the specific DOM node bound to count() updates. No virtual DOM diff, no component re-render, no parent notification. This is fine-grained reactivity — the signal directly knows which DOM node to update and bypasses the entire component tree."
 ---
 
 ## Why Should I Care?

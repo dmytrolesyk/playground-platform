@@ -203,6 +203,22 @@ Article pages have a "Flag for review" button. Flags are stored as JSON files in
 ### Knowledge exercise and lab creation
 Exercises must test real understanding, not recall. Prefer `predict` ("What will happen if...") and `do` ("Open DevTools and...") types over `explain`. Answers must be thorough explanations, not yes/no. Labs must include exact setup instructions (git branch, files to create), a DO → OBSERVE → EXPLAIN structure for each experiment, and cleanup steps. Labs must link back to ≥2 theory articles. Every exercise and lab must be something the developer can actually perform in this codebase or browser.
 
+### Exercise type guide
+
+Seven exercise types are available. Choose based on what you're testing:
+
+- `predict` — "What will happen if...?" Tests causal reasoning. Best for: reactivity, state changes, build pipeline behavior.
+- `explain` — "Why does X work this way?" Tests conceptual understanding. Best for: design decisions, pattern rationale, tradeoffs.
+- `do` — "Open DevTools and..." Tests hands-on ability. Best for: debugging, profiling, browser APIs.
+- `debug` — "This code has a bug..." Tests diagnostic skill. Best for: common mistakes, edge cases.
+- `arrange` — "Put these steps in order." Tests procedural understanding. Best for: build pipelines, request lifecycles, multi-step processes. Uses `fragments` (string array) and `correctOrder` (number array of indices).
+- `compare` — "Compare approaches A and B." Tests analytical reasoning. Best for: architecture decisions, library comparisons, pattern tradeoffs. Uses `approachA` and `approachB` (string fields, typically code blocks).
+- `trace` — "Trace execution step by step." Tests runtime mental model. Best for: reactivity propagation, event handling, async flows. Uses `steps` (array of `{ description, expectedState }`).
+
+All exercise types also support an optional `targetConcepts` field (array of article IDs) for linking exercises to specific concepts.
+
+Every article must have at least 1 `predict` or `do` exercise (enforced by audit). Aim for type diversity: don't make all exercises `explain`.
+
 ## Secrets
 
 Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST`.
@@ -211,13 +227,13 @@ Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `C
 
 ## CV File Generation
 
-PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by `pnpm generate-cv`. This script requires Chrome and pandoc. CI auto-regenerates and commits updated files on push to main (via the `cv-generate` job). You can also run `pnpm generate-cv` locally to preview changes.
+PDF and DOCX in `public/downloads/` are generated from `src/content/cv/*.md` by `pnpm generate-cv`. This script requires Chrome and pandoc. To regenerate in CI, manually trigger the **Generate CV** workflow (`cv-generate.yml`) from the Actions tab — it creates a PR with updated files. You can also run `pnpm generate-cv` locally to preview changes.
 
 ## Deployment
 
 - **Target:** Railway. Builds via `Dockerfile` (node:24-slim multi-stage), NOT nixpacks.
 - **Start command:** `node dist/server/entry.mjs`
-- **CI:** Single `ci.yml` workflow with four jobs: `verify` (lint + typecheck + unit tests + build, runs on all PRs and main push), `e2e` (Playwright E2E tests against production build, runs after verify on all PRs and main push), `cv-generate` (regenerates CV files and auto-commits if changed, main only, after verify), `deploy` (Railway deploy, main only, after verify + e2e + cv-generate).
+- **CI:** `ci.yml` has three jobs on main push: `verify` (lint + typecheck + unit tests + build), `e2e` (Playwright E2E tests), `deploy` (Railway deploy, after verify + e2e). PRs run `verify` and `e2e`. CV generation is a separate manually-triggered workflow (`cv-generate.yml`) that creates a PR with updated files.
 - **Branch protection:** main branch is protected — PRs only, merge blocked until `verify` and `e2e` pass.
 - **Railway env vars:** `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST=0.0.0.0`. `PUBLIC_*` must be set at build time (Astro inlines them). `PUBLIC_*` vars need `ARG` + `ENV` in the Dockerfile to be available during Docker build.
 - **Deploy secret:** `RAILWAY_TOKEN` GitHub secret needed for deploy job.

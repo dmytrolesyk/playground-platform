@@ -22,7 +22,7 @@ technologies:
   - solidjs
 order: 2
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Virtual DOM is pure overhead — Rich Harris"
     url: "https://svelte.dev/blog/virtual-dom-is-pure-overhead"
@@ -69,6 +69,29 @@ exercises:
     type: predict
     hint: "Think about bulk updates that change many things at once."
     answer: "VDOM can batch large structural changes more efficiently. If 80% of a complex UI changes at once (e.g., a route transition replacing the entire page), VDOM diffs the whole tree and applies changes in one pass. Signals would fire hundreds of individual updates. In practice, this rarely matters because route transitions are infrequent and browsers batch DOM mutations. Signals win in the common case: frequent, small, localized updates like drag, typing, and animations."
+  - question: "Compare these two approaches for updating a list item's text:"
+    type: compare
+    approachA: |
+      // React VDOM approach
+      function ItemList({ items }) {
+        return items.map(item =>
+          <li key={item.id}>{item.text}</li>
+        );
+      }
+      // Changing one item re-runs the component,
+      // diffs all 1000 <li> virtual nodes,
+      // patches the one real DOM node that changed.
+    approachB: |
+      // SolidJS signals approach
+      function ItemList(props) {
+        return <For each={props.items}>{item =>
+          <li>{item.text}</li>
+        }</For>;
+      }
+      // Changing one item's text signal updates
+      // only that specific <li> text node.
+      // No diffing, no parent re-execution.
+    answer: "Approach A (React) must re-run the component function and diff all 1000 virtual list items to find the one change — O(n) work for an O(1) change. Approach B (SolidJS) directly updates the single text node via the signal subscription — O(1) work. The tradeoff: React's model is simpler to reason about (just re-render everything and let the framework optimize), while SolidJS requires understanding signal boundaries but delivers better runtime performance. For this project's window manager with frequent drag/resize updates, SolidJS's O(1) updates are the clear winner."
 ---
 
 ## Why Should I Care?
