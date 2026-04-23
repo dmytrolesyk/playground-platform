@@ -1,2 +1,0 @@
-networkx==3.5
-python-louvain==0.16

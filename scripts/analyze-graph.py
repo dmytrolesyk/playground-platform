@@ -2,7 +2,7 @@
 """Analyze the knowledge graph with NetworkX and write graph-analysis.json.
 
 Run with:
-    python3 scripts/analyze-graph.py
+    uv run python scripts/analyze-graph.py
 
 Optional flags:
     --input  Path to knowledge-graph.json
@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -23,7 +24,7 @@ try:
     import networkx as nx
 except ImportError as exc:  # pragma: no cover - import guard
     sys.stderr.write(
-        "Missing dependency: networkx. Install with `python3 -m pip install -r requirements.txt`.\n"
+        "Missing dependency: networkx. Run `uv sync` or `uv run python scripts/analyze-graph.py`.\n"
     )
     raise SystemExit(1) from exc
 
@@ -31,7 +32,7 @@ try:
     import community as community_louvain
 except ImportError as exc:  # pragma: no cover - import guard
     sys.stderr.write(
-        "Missing dependency: python-louvain. Install with `python3 -m pip install -r requirements.txt`.\n"
+        "Missing dependency: python-louvain. Run `uv sync` or `uv run python scripts/analyze-graph.py`.\n"
     )
     raise SystemExit(1) from exc
 
@@ -48,6 +49,7 @@ WORD_COUNT_MINIMUMS = {
     'cs-fundamentals': 1000,
     'lab': 800,
 }
+COMMUNITY_RANDOM_STATE = 42
 
 
 def parse_args() -> argparse.Namespace:
@@ -219,7 +221,10 @@ def compute_communities(graph_data: dict[str, Any]) -> list[dict[str, Any]]:
     if undirected_graph.number_of_nodes() == 0:
         return []
 
-    partition = community_louvain.best_partition(undirected_graph)
+    partition = community_louvain.best_partition(
+        undirected_graph,
+        random_state=COMMUNITY_RANDOM_STATE,
+    )
     grouped_members: dict[int, list[str]] = {}
     for member, community_id in partition.items():
         grouped_members.setdefault(community_id, []).append(member)
@@ -368,6 +373,11 @@ def build_analysis(graph_data: dict[str, Any]) -> dict[str, Any]:
 def write_analysis(output_path: Path, analysis: dict[str, Any]) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(f"{json.dumps(analysis, indent=2)}\n", encoding='utf-8')
+    subprocess.run(
+        ['pnpm', 'exec', 'biome', 'format', '--write', str(output_path)],
+        cwd=ROOT,
+        check=True,
+    )
 
 
 def main() -> int:
