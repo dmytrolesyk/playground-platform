@@ -6,6 +6,8 @@ import type {
   ArchitectureEdge,
   ArchitectureNode,
   CurriculumModule,
+  Exercise,
+  ExternalReference,
   KnowledgeArticle,
   KnowledgeAuditInput,
 } from './types.ts';
@@ -68,8 +70,12 @@ function loadKnowledgeArticles(contentRoot: string): KnowledgeArticle[] {
       diagramRef: getString(frontmatter, 'diagramRef'),
       relatedFiles: getStringArray(frontmatter, 'relatedFiles'),
       learningObjectives: getStringArray(frontmatter, 'learningObjectives'),
-      exercises: getArray(frontmatter, 'exercises'),
+      exercises: getExercises(frontmatter),
       estimatedMinutes: getNumber(frontmatter, 'estimatedMinutes'),
+      technologies: getStringArray(frontmatter, 'technologies'),
+      externalReferences: getExternalReferences(frontmatter),
+      broader: getStringArray(frontmatter, 'broader'),
+      narrower: getStringArray(frontmatter, 'narrower'),
     };
   });
 }
@@ -141,6 +147,18 @@ function getStringArray(record: Record<string, unknown>, key: string): string[] 
 function getArray(record: Record<string, unknown>, key: string): unknown[] {
   const value = record[key];
   return Array.isArray(value) ? value : [];
+}
+
+function getExercises(record: Record<string, unknown>): Exercise[] {
+  return getArray(record, 'exercises')
+    .filter(isRecord)
+    .map((item) => ({ type: typeof item.type === 'string' ? item.type : undefined }));
+}
+
+function getExternalReferences(record: Record<string, unknown>): ExternalReference[] {
+  return getArray(record, 'externalReferences')
+    .filter(isRecord)
+    .map((item) => ({ type: typeof item.type === 'string' ? item.type : undefined }));
 }
 
 function getNumber(record: Record<string, unknown>, key: string): number | undefined {

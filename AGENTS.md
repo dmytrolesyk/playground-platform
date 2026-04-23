@@ -74,6 +74,23 @@ Use `transform: translate(x, y)` for window position — not CSS `left`/`top`. T
 ### Knowledge base content collection
 Learning content lives in `src/content/knowledge/` as Markdown with Zod-validated frontmatter (category, relatedConcepts, relatedFiles, technologies, externalReferences, diagramRef, prerequisites, learningObjectives, exercises, estimatedMinutes, module, moduleOrder). Six directories: `architecture/`, `concepts/`, `technologies/`, `features/`, `cs-fundamentals/`, `labs/`. Every new feature must include knowledge entries in its feature doc. The Architecture Explorer data in `architecture-data.ts` is a renderer-agnostic graph contract — keep node ids stable, keep edges valid, and update nodes/edges when adding apps or changing architecture.
 
+### Knowledge audit rules
+`pnpm verify:knowledge` enforces 23 audit rules. Errors block the pipeline; warnings are reported but don't fail. Key rules agents must know:
+- Minimum 2 exercises per non-lab article (error)
+- Minimum 1 learning objective per article (error)
+- Minimum 1 relatedConcept per article (warning)
+- Architecture articles must have diagramRef (warning)
+- Labs must have prerequisites (warning)
+- No orphan articles — every article must be referenced or assigned to a module (warning)
+- Technology tags must have matching technology articles (warning)
+- Curriculum modules must have ≥2 articles (warning)
+- Word count minimums per category: architecture 1500, concept 1000, technology 800, feature 600, cs-fundamentals 1000, lab 800 (warning)
+- Exercise type diversity — at least 1 predict or do type (warning)
+- Minimum 2 external references with 2+ types (warning)
+- Minimum 3 inline citations (external hyperlinks) in article body (warning)
+
+When `verify:knowledge` fails with these codes, fix the content — do not suppress the rule.
+
 ### Knowledge graph (generated artifact)
 `src/data/knowledge-graph.json` is generated at build time by `scripts/build-knowledge-graph.ts`. It is a derived artifact — never edit it manually. It is regenerated on every build via the `prebuild` script. If you change any knowledge article frontmatter, architecture-data.ts, or modules.ts, the graph JSON updates automatically on next build.
 

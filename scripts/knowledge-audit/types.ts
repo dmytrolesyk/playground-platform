@@ -22,13 +22,34 @@ export type KnowledgeAuditIssueCode =
   | 'invalid-node-category'
   | 'invalid-edge-type'
   | 'bad-knowledge-slug'
-  | 'prerequisite-cycle';
+  | 'prerequisite-cycle'
+  | 'minimum-related-concepts'
+  | 'minimum-exercises'
+  | 'required-learning-objectives'
+  | 'architecture-requires-diagram'
+  | 'lab-requires-prerequisites'
+  | 'no-orphan-articles'
+  | 'technology-coverage'
+  | 'module-completeness'
+  | 'broader-narrower-symmetry'
+  | 'minimum-word-count'
+  | 'exercise-type-diversity'
+  | 'external-reference-minimum'
+  | 'inline-citation-density';
 
 export interface KnowledgeAuditIssue {
   severity: KnowledgeAuditSeverity;
   code: KnowledgeAuditIssueCode;
   subject: string;
   message: string;
+}
+
+export interface ExternalReference {
+  type?: string;
+}
+
+export interface Exercise {
+  type?: string;
 }
 
 export interface KnowledgeArticle {
@@ -42,8 +63,12 @@ export interface KnowledgeArticle {
   diagramRef?: string;
   relatedFiles?: readonly string[];
   learningObjectives?: readonly string[];
-  exercises?: readonly unknown[];
+  exercises?: readonly Exercise[];
   estimatedMinutes?: number;
+  technologies?: readonly string[];
+  externalReferences?: readonly ExternalReference[];
+  broader?: readonly string[];
+  narrower?: readonly string[];
 }
 
 export interface CurriculumModule {
