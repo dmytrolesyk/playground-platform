@@ -4,14 +4,14 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { parse as parseYaml } from 'yaml';
 import type {
   ArchitectureEdgeInput,
   ArchitectureNodeInput,
   ArticleInput,
   ExtractionInput,
   ModuleInput,
-} from './types.ts';
+} from '@playground/knowledge-engine/graph/types';
+import { parse as parseYaml } from 'yaml';
 
 const MARKDOWN_EXTENSION_PATTERN = /\.md$/;
 const FRONTMATTER_PATTERN = /^---\r?\n(?<frontmatter>[\s\S]*?)\r?\n---/u;

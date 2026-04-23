@@ -1,1 +1,3 @@
+packages:
+  - 'packages/*'
 approveBuildsAllow: esbuild,sharp

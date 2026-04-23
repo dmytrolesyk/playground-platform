@@ -1,4 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getModuleProgress,
   getProgress,
@@ -8,7 +7,8 @@ import {
   markArticlePracticed,
   markArticleRead,
   resetProgress,
-} from './learn-progress';
+} from '@playground/knowledge-engine/progress';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const STORAGE_KEY = 'kb-learning-progress';
 

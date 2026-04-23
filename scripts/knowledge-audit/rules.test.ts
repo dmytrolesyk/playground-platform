@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import {
   auditArchitectureRequiresDiagram,
   auditBroaderNarrowerSymmetry,
@@ -15,8 +14,12 @@ import {
   auditRequiredLearningObjectives,
   auditTechnologyCoverage,
   countWords,
-} from './rules';
-import type { KnowledgeArticle, KnowledgeAuditInput } from './types';
+} from '@playground/knowledge-engine/audit';
+import type {
+  KnowledgeArticle,
+  KnowledgeAuditInput,
+} from '@playground/knowledge-engine/audit/types';
+import { describe, expect, it } from 'vitest';
 
 function issueCodesFor(input: KnowledgeAuditInput): string[] {
   return auditKnowledgeRules(input).map((issue) => issue.code);

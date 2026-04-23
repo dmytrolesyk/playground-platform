@@ -1,6 +1,9 @@
-import { loadKnowledgeAuditInput } from './knowledge-audit/load.ts';
-import { formatKnowledgeAuditReport, hasKnowledgeAuditErrors } from './knowledge-audit/report.ts';
-import { auditKnowledgeRules } from './knowledge-audit/rules.ts';
+import { auditKnowledgeRules } from '@playground/knowledge-engine/audit';
+import { loadKnowledgeAuditInput } from '@playground/knowledge-engine/audit/load';
+import {
+  formatKnowledgeAuditReport,
+  hasKnowledgeAuditErrors,
+} from '@playground/knowledge-engine/audit/report';
 
 try {
   const input = await loadKnowledgeAuditInput();

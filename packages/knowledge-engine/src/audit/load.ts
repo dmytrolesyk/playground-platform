@@ -41,11 +41,16 @@ export async function loadKnowledgeAuditInput(
   return {
     articles: loadKnowledgeArticles(contentRoot),
     modules: moduleData.MODULES.map((module) => ({ id: module.id })),
-    architectureNodes: architectureData.NODES.map((node) => ({
-      id: node.id,
-      category: node.category,
-      knowledgeSlug: node.knowledgeSlug,
-    })),
+    architectureNodes: architectureData.NODES.map((node) => {
+      const result: ArchitectureNode = {
+        id: node.id,
+        category: node.category,
+      };
+      if (node.knowledgeSlug !== undefined) {
+        result.knowledgeSlug = node.knowledgeSlug;
+      }
+      return result;
+    }),
     architectureEdges: architectureData.EDGES.map((edge) => ({
       from: edge.from,
       to: edge.to,
@@ -59,24 +64,32 @@ function loadKnowledgeArticles(contentRoot: string): KnowledgeArticle[] {
     const source = readFileSync(filePath, 'utf8');
     const { frontmatter, body } = parseFrontmatter(source, filePath);
 
-    return {
+    const article: KnowledgeArticle = {
       id: articleIdFromPath(contentRoot, filePath),
       category: getString(frontmatter, 'category') ?? '',
       frontmatter,
       body,
       relatedConcepts: getStringArray(frontmatter, 'relatedConcepts'),
       prerequisites: getStringArray(frontmatter, 'prerequisites'),
-      module: getString(frontmatter, 'module'),
-      diagramRef: getString(frontmatter, 'diagramRef'),
       relatedFiles: getStringArray(frontmatter, 'relatedFiles'),
       learningObjectives: getStringArray(frontmatter, 'learningObjectives'),
       exercises: getExercises(frontmatter),
-      estimatedMinutes: getNumber(frontmatter, 'estimatedMinutes'),
       technologies: getStringArray(frontmatter, 'technologies'),
       externalReferences: getExternalReferences(frontmatter),
       broader: getStringArray(frontmatter, 'broader'),
       narrower: getStringArray(frontmatter, 'narrower'),
     };
+
+    const module = getString(frontmatter, 'module');
+    if (module !== undefined) article.module = module;
+
+    const diagramRef = getString(frontmatter, 'diagramRef');
+    if (diagramRef !== undefined) article.diagramRef = diagramRef;
+
+    const estimatedMinutes = getNumber(frontmatter, 'estimatedMinutes');
+    if (estimatedMinutes !== undefined) article.estimatedMinutes = estimatedMinutes;
+
+    return article;
   });
 }
 
@@ -108,14 +121,16 @@ function parseFrontmatter(
     return { frontmatter: {}, body: source };
   }
 
-  const parsed = parseYaml(match.groups.frontmatter ?? '');
+  const { frontmatter: rawFrontmatter, body: rawBody } = match.groups;
+
+  const parsed = parseYaml(rawFrontmatter ?? '');
   if (!isRecord(parsed)) {
     throw new Error(`Frontmatter in ${filePath} must parse to an object.`);
   }
 
   return {
     frontmatter: parsed,
-    body: match.groups.body ?? '',
+    body: rawBody ?? '',
   };
 }
 
@@ -152,13 +167,13 @@ function getArray(record: Record<string, unknown>, key: string): unknown[] {
 function getExercises(record: Record<string, unknown>): Exercise[] {
   return getArray(record, 'exercises')
     .filter(isRecord)
-    .map((item) => ({ type: typeof item.type === 'string' ? item.type : undefined }));
+    .map(({ type }) => (typeof type === 'string' ? { type } : {}));
 }
 
 function getExternalReferences(record: Record<string, unknown>): ExternalReference[] {
   return getArray(record, 'externalReferences')
     .filter(isRecord)
-    .map((item) => ({ type: typeof item.type === 'string' ? item.type : undefined }));
+    .map(({ type }) => (typeof type === 'string' ? { type } : {}));
 }
 
 function getNumber(record: Record<string, unknown>, key: string): number | undefined {

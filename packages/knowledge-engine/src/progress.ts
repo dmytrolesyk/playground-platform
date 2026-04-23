@@ -1,4 +1,5 @@
-// src/scripts/learn-progress.ts
+// Mastery progress model for knowledge articles
+// Uses localStorage for persistence — browser-only
 
 export type MasteryStage = 'read' | 'checked' | 'practiced' | 'mastered';
 
