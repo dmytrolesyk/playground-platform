@@ -12,13 +12,13 @@
  */
 
 import { type Component, createSignal, type JSX, onCleanup, onMount, Show } from 'solid-js';
+import {
+  type TestCase,
+  type ValidationResult,
+  validateCode,
+} from '../../utils/code-exercise-validation';
 
 // ── Types ───────────────────────────────────────────────────────────
-
-interface TestCase {
-  input: string;
-  expected: string;
-}
 
 interface Props {
   starterCode: string;
@@ -31,83 +31,6 @@ interface Props {
 }
 
 type EditorView = import('@codemirror/view').EditorView;
-
-interface ValidationResult {
-  passed: boolean;
-  message: string;
-  details: string[];
-}
-
-// ── Validation helpers ──────────────────────────────────────────────
-
-function findMissingDefinitions(code: string, solution: string): string[] {
-  const solutionFunctions = [
-    ...solution.matchAll(/(?:function\s+(\w+)|(?:const|let|var)\s+(\w+)\s*=)/g),
-  ]
-    .map((m) => m[1] ?? m[2])
-    .filter((name): name is string => name !== undefined);
-
-  return solutionFunctions.filter(
-    (name) => !new RegExp(`(?:function\\s+${name}|(?:const|let|var)\\s+${name}\\s*=)`).test(code),
-  );
-}
-
-function runTestCases(
-  code: string,
-  testCases: TestCase[],
-): { passedTests: number; details: string[] } {
-  const details: string[] = [];
-  let passedTests = 0;
-
-  for (const testCase of testCases) {
-    try {
-      const wrapped = `${code}\n;\n${testCase.input}`;
-      const fn = new Function(wrapped);
-      fn();
-      passedTests++;
-      details.push(`✅ Test passed: ${testCase.input.slice(0, 60)}…`);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      details.push(`❌ Test failed: ${testCase.input.slice(0, 60)}… — ${msg}`);
-    }
-  }
-
-  return { passedTests, details };
-}
-
-function validateCode(code: string, solution: string, testCases: TestCase[]): ValidationResult {
-  const trimmedCode = code.trim();
-
-  if (!trimmedCode) {
-    return { passed: false, message: 'No code written yet.', details: [] };
-  }
-
-  const missingDefinitions = findMissingDefinitions(trimmedCode, solution.trim());
-  const details: string[] = missingDefinitions.map((name) => `Missing definition: ${name}`);
-
-  if (testCases.length > 0) {
-    const testResult = runTestCases(trimmedCode, testCases);
-    details.push(...testResult.details);
-
-    return testResult.passedTests === testCases.length
-      ? { passed: true, message: `All ${testCases.length} test(s) passed!`, details }
-      : {
-          passed: false,
-          message: `${testResult.passedTests}/${testCases.length} test(s) passed.`,
-          details,
-        };
-  }
-
-  if (missingDefinitions.length === 0) {
-    return {
-      passed: true,
-      message: 'Code structure looks correct! Compare with the solution to verify.',
-      details: ['All expected definitions found.'],
-    };
-  }
-
-  return { passed: false, message: 'Some definitions are missing. Check the hints.', details };
-}
 
 // ── Language loading ────────────────────────────────────────────────
 

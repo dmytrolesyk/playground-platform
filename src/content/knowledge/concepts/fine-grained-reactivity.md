@@ -81,6 +81,52 @@ exercises:
       - description: "The subscriber effect re-runs"
         expectedState: "Only the <span> text node updates to '5'. Component function does NOT re-run. No parent notification."
     answer: "The key insight: only the specific DOM node bound to count() updates. No virtual DOM diff, no component re-render, no parent notification. This is fine-grained reactivity — the signal directly knows which DOM node to update and bypasses the entire component tree."
+  - question: "Write a minimal createSignal and createEffect that demonstrates automatic dependency tracking."
+    type: code
+    language: javascript
+    starterCode: |
+      function createSignal(initialValue) {
+        // your implementation here
+      }
+
+      function createEffect(fn) {
+        // your implementation here
+      }
+    solution: |
+      let currentEffect = null;
+
+      function createSignal(initialValue) {
+        let value = initialValue;
+        const subscribers = new Set();
+
+        function read() {
+          if (currentEffect) subscribers.add(currentEffect);
+          return value;
+        }
+
+        function write(newValue) {
+          value = newValue;
+          for (const sub of subscribers) sub();
+        }
+
+        return [read, write];
+      }
+
+      function createEffect(fn) {
+        currentEffect = fn;
+        fn();
+        currentEffect = null;
+      }
+    testCases:
+      - input: "const [count, setCount] = createSignal(0); count();"
+        expected: "returns 0"
+      - input: "const [count, setCount] = createSignal(0); setCount(5); count();"
+        expected: "returns 5"
+    hint: "Use a global variable to track 'the currently running effect'. In the signal's read function, if there's a current effect, add it to the subscriber set."
+    answer: "This is the core of fine-grained reactivity in ~20 lines. The key insight is the global `currentEffect` variable: when createEffect runs the function, it sets currentEffect first. Any signal read during that function execution sees currentEffect and adds it to its subscriber set. When the signal's value changes via the write function, it iterates subscribers and re-runs them. This automatic tracking means you never manually subscribe — the system discovers dependencies by running the code."
+    targetConcepts:
+      - concepts/fine-grained-reactivity
+      - concepts/observer-pattern
 ---
 
 ## Why Should I Care?
