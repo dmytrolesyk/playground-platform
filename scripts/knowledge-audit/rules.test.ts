@@ -201,6 +201,36 @@ describe('auditKnowledgeRules', () => {
     expect(codes).toContain('bad-knowledge-slug');
   });
 
+  it('reports broader targets that do not resolve to articles', () => {
+    const codes = issueCodesFor(
+      baseInput({
+        articles: [
+          cleanArticle({
+            id: 'concepts/fine-grained-reactivity',
+            category: 'concept',
+            broader: ['concepts/nonexistent'],
+          }),
+        ],
+      }),
+    );
+    expect(codes).toContain('missing-broader-target');
+  });
+
+  it('reports narrower targets that do not resolve to articles', () => {
+    const codes = issueCodesFor(
+      baseInput({
+        articles: [
+          cleanArticle({
+            id: 'concepts/fine-grained-reactivity',
+            category: 'concept',
+            narrower: ['concepts/nonexistent'],
+          }),
+        ],
+      }),
+    );
+    expect(codes).toContain('missing-narrower-target');
+  });
+
   it('reports prerequisite cycles', () => {
     const issues = auditKnowledgeRules(
       baseInput({

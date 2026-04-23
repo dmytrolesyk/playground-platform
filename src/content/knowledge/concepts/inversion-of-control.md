@@ -3,6 +3,12 @@ title: "Inversion of Control"
 category: concept
 summary: "The design principle behind the app registry — why apps don't know about the desktop, and the desktop doesn't know about apps."
 difficulty: beginner
+prefLabel: "Inversion of Control"
+altLabels:
+  - "IoC"
+  - "dependency inversion"
+  - "Hollywood principle"
+  - "don't call us we'll call you"
 relatedConcepts:
   - concepts/lazy-loading-and-code-splitting
   - concepts/observer-pattern

@@ -3,6 +3,15 @@ title: "The Observer Pattern"
 category: concept
 summary: "From Gang of Four to reactive signals — how one-to-many dependency relationships evolved into the reactivity model that powers this desktop."
 difficulty: intermediate
+prefLabel: "Observer Pattern"
+altLabels:
+  - "pub-sub"
+  - "publish-subscribe"
+  - "event emitter pattern"
+  - "one-to-many dependency"
+broader: []
+narrower:
+  - concepts/fine-grained-reactivity
 relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/signals-vs-vdom

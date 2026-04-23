@@ -3,6 +3,12 @@ title: "TypeScript — Type Safety Without a Build Step"
 category: technology
 summary: "How this project uses TypeScript with Astro's strictest config, native Node.js type stripping for scripts, and Zod for runtime validation."
 difficulty: beginner
+prefLabel: "TypeScript"
+altLabels:
+  - "TS"
+  - "typed JavaScript"
+  - "TypeScript language"
+  - ".ts files"
 relatedConcepts:
   - cs-fundamentals/type-systems
   - concepts/module-systems-and-bundling

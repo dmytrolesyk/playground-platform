@@ -3,6 +3,15 @@ title: "Graph Validation"
 category: cs-fundamentals
 summary: "How directed graphs, DAGs, edge endpoint checks, and cycle detection keep the knowledge base and Architecture Explorer coherent."
 difficulty: intermediate
+prefLabel: "Graph Validation"
+altLabels:
+  - "DAG validation"
+  - "cycle detection"
+  - "graph integrity"
+  - "directed acyclic graph"
+broader:
+  - cs-fundamentals/trees-and-traversal
+narrower: []
 relatedConcepts:
   - concepts/executable-quality-gates
   - cs-fundamentals/hash-maps-and-lookup

@@ -128,6 +128,48 @@ Every new feature must produce knowledge content proportional to its complexity.
 ### Knowledge e2e expectations
 Run `pnpm test:e2e` before opening a PR for any change that touches `/learn`, `LearnLayout.astro`, `learn-progress.ts`, Library iframe behavior, Architecture Explorer graph/navigation, or knowledge visual styling. Update snapshots with `pnpm test:e2e:update` only for intentional visual changes and inspect the new images before committing.
 
+### Knowledge graph relationship types — CRITICAL DISTINCTION
+
+Three relationship types exist between articles. They mean different things. Do not confuse them:
+
+**`prerequisites`** = learning order. "You must understand A before you can understand B."
+- Example: `prerequisites: [architecture/app-registry]` on the IoC article means "read the app registry article first."
+- This is about the LEARNER's sequence, not conceptual containment.
+- Creates directed edges in the learning path DAG. Must not create cycles.
+
+**`broader` / `narrower`** = conceptual hierarchy. "A is a more general concept that contains B."
+- Example: "Observer Pattern" is `broader` than "Fine-Grained Reactivity."
+- This is about CONCEPT CONTAINMENT, not learning order.
+- A concept can be narrower than something that is NOT its prerequisite.
+- MUST be symmetric: if A lists B in `broader`, B must list A in `narrower`.
+
+**`relatedConcepts`** = associative link. "A and B are related but neither contains the other and neither is a prerequisite of the other."
+- Example: "JavaScript Proxies" is `relatedConcept` of "Fine-Grained Reactivity" — they're related but neither contains the other.
+- This is the loosest relationship. Use it when the other two don't apply.
+
+**Decision guide for agents:**
+- "Must I understand A before B?" → `prerequisites`
+- "Is A a sub-topic of B?" → `broader`/`narrower`
+- "Are A and B related but independent?" → `relatedConcepts`
+
+### SKOS vocabulary fields
+
+When creating or updating articles:
+- `prefLabel`: Set to the canonical display name. Usually same as `title`.
+- `altLabels`: Add 3-5 alternative names, synonyms, abbreviations that a learner might search for. Think: "what would someone type if they were looking for this concept but didn't know its exact name?"
+- `broader`/`narrower`: Only set if there's a clear conceptual hierarchy. Not every article needs these. Leaf concepts have `narrower: []`. Top-level concepts have `broader: []`.
+- `conceptScheme`: Leave as default ('playground-platform') unless working with multi-project content.
+
+### Epistemic metadata fields
+
+These fields communicate trust and certainty to the learner. Set them honestly:
+
+- `confidence`: How certain is this article's content? Default is 'established'. Set to 'probable' if based on good but not definitive sources, 'uncertain' if limited evidence, 'speculative' if inferred. Most articles will be 'established'.
+- `evidenceType`: What kind of evidence? 'authoritative' for official docs/specs, 'derived' for content synthesized from multiple sources, 'empirical' for tested/measured claims, 'analogical' for reasoning by analogy. Optional — omit if not relevant.
+- `isContested`: Set to true if multiple valid perspectives exist. When true, the article body MUST present competing views fairly, not just pick one side.
+
+**Trust principle:** Never claim more confidence than the evidence warrants. An honest 'uncertain' is better than a false 'established'. The system's value comes from epistemic transparency, not authoritative posturing.
+
 ### Knowledge article research process
 Articles are written by AI agents, but must be grounded in thorough research — not generated from training data alone. Before writing or enriching any article, the agent must: (1) **read the actual source code** referenced in `relatedFiles` and understand the real implementation, not assumed patterns; (2) **consult official documentation** for every technology mentioned — read the docs pages, not just recall them; (3) **search the web** for authoritative explanations, talks, and blog posts to verify claims and find the best external references; (4) **analyze the codebase architecture** by reading `docs/architecture-guidelines.md`, related feature docs, and tracing actual data flows through the code; (5) **synthesize across sources** — cross-reference documentation, source code, and external resources to produce accurate, nuanced explanations. Do not write from memory. Every factual claim should be verifiable against docs or source code. If you're unsure about a detail, look it up.
 

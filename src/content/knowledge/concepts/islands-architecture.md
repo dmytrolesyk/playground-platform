@@ -3,6 +3,15 @@ title: "Islands Architecture"
 category: concept
 summary: "How Astro delivers static HTML with targeted JavaScript hydration — and why this site uses exactly one island."
 difficulty: beginner
+prefLabel: "Islands Architecture"
+altLabels:
+  - "partial hydration"
+  - "island components"
+  - "selective hydration"
+  - "Astro islands"
+broader: []
+narrower:
+  - concepts/lazy-loading-and-code-splitting
 relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/progressive-enhancement

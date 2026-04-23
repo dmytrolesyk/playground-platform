@@ -3,6 +3,15 @@ title: "Fine-Grained Reactivity"
 category: concept
 summary: "Why SolidJS updates only what changed — no virtual DOM, no diffing, no wasted work."
 difficulty: intermediate
+prefLabel: "Fine-Grained Reactivity"
+altLabels:
+  - "reactive programming"
+  - "push-based reactivity"
+  - "signal-based reactivity"
+  - "granular reactivity"
+broader:
+  - concepts/observer-pattern
+narrower: []
 relatedConcepts:
   - concepts/signals-vs-vdom
   - concepts/observer-pattern

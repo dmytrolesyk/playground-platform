@@ -3,6 +3,13 @@ title: "The Event Loop & Microtasks"
 category: concept
 summary: "How the browser schedules work — the call stack, task queue, microtask queue, and rendering steps that make reactive UIs possible."
 difficulty: advanced
+prefLabel: "Event Loop & Microtasks"
+altLabels:
+  - "event loop"
+  - "microtask queue"
+  - "task queue"
+  - "JavaScript concurrency"
+  - "call stack"
 relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/observer-pattern

@@ -108,6 +108,12 @@ function buildArticleEdges(article: ExtractionInput['articles'][number]): GraphE
   for (const prereq of article.prerequisites) {
     edges.push({ source: article.id, target: prereq, type: 'prerequisite' });
   }
+  for (const broaderId of article.broader) {
+    edges.push({ source: article.id, target: broaderId, type: 'broader' });
+  }
+  for (const narrowerId of article.narrower) {
+    edges.push({ source: article.id, target: narrowerId, type: 'narrower' });
+  }
   for (const tech of article.technologies) {
     edges.push({ source: article.id, target: `tech:${tech}`, type: 'usesTechnology' });
   }

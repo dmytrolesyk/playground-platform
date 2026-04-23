@@ -3,6 +3,17 @@ title: "Trees and Traversal"
 category: cs-fundamentals
 summary: "Tree data structures, DOM traversal, component hierarchies, and the BFS/DFS algorithms that power everything from querySelector to rendering order."
 difficulty: intermediate
+prefLabel: "Trees & Traversal"
+altLabels:
+  - "tree data structure"
+  - "DOM traversal"
+  - "BFS"
+  - "DFS"
+  - "breadth-first search"
+  - "depth-first search"
+broader: []
+narrower:
+  - cs-fundamentals/graph-validation
 relatedConcepts:
   - architecture/overview
   - cs-fundamentals/hash-maps-and-lookup

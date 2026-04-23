@@ -69,6 +69,8 @@ export interface ArticleInput {
   technologies: string[];
   relatedConcepts: string[];
   prerequisites: string[];
+  broader: string[];
+  narrower: string[];
   diagramRef: string | undefined;
   exerciseCount: number;
   learningObjectiveCount: number;

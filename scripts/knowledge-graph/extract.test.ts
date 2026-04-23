@@ -17,6 +17,8 @@ function baseInput(overrides: Partial<ExtractionInput> = {}): ExtractionInput {
         technologies: ['solidjs', 'astro'],
         relatedConcepts: ['concepts/fine-grained-reactivity'],
         prerequisites: [],
+        broader: [],
+        narrower: ['concepts/fine-grained-reactivity'],
         diagramRef: 'desktop',
         exerciseCount: 3,
         learningObjectiveCount: 2,
@@ -31,6 +33,8 @@ function baseInput(overrides: Partial<ExtractionInput> = {}): ExtractionInput {
         technologies: ['solidjs'],
         relatedConcepts: [],
         prerequisites: ['architecture/overview'],
+        broader: ['architecture/overview'],
+        narrower: [],
         diagramRef: undefined,
         exerciseCount: 0,
         learningObjectiveCount: 0,
@@ -102,6 +106,8 @@ describe('extractKnowledgeGraph', () => {
           technologies: [],
           relatedConcepts: [],
           prerequisites: [],
+          broader: [],
+          narrower: [],
           diagramRef: undefined,
           exerciseCount: 0,
           learningObjectiveCount: 0,
@@ -177,6 +183,30 @@ describe('extractKnowledgeGraph', () => {
         source: 'concepts/fine-grained-reactivity',
         target: 'architecture/overview',
         type: 'prerequisite',
+      },
+    ]);
+  });
+
+  it('creates broader edges', () => {
+    const graph = extractKnowledgeGraph(baseInput(), FIXED_DATE);
+    const broaderEdges = graph.edges.filter((e) => e.type === 'broader');
+    expect(broaderEdges).toEqual([
+      {
+        source: 'concepts/fine-grained-reactivity',
+        target: 'architecture/overview',
+        type: 'broader',
+      },
+    ]);
+  });
+
+  it('creates narrower edges', () => {
+    const graph = extractKnowledgeGraph(baseInput(), FIXED_DATE);
+    const narrowerEdges = graph.edges.filter((e) => e.type === 'narrower');
+    expect(narrowerEdges).toEqual([
+      {
+        source: 'architecture/overview',
+        target: 'concepts/fine-grained-reactivity',
+        type: 'narrower',
       },
     ]);
   });

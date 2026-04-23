@@ -3,6 +3,12 @@ title: "JavaScript Proxy Objects"
 category: concept
 summary: "How JavaScript Proxies intercept property access — and why SolidJS uses them to track exactly which state each component reads."
 difficulty: intermediate
+prefLabel: "JavaScript Proxies"
+altLabels:
+  - "JS Proxy"
+  - "Proxy handler"
+  - "metaprogramming"
+  - "property interception"
 relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/observer-pattern

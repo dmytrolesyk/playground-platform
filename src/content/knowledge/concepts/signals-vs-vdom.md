@@ -3,6 +3,15 @@ title: "Signals vs Virtual DOM"
 category: concept
 summary: "Two fundamentally different approaches to keeping UI in sync with state — and why SolidJS chose signals."
 difficulty: intermediate
+prefLabel: "Signals vs Virtual DOM"
+altLabels:
+  - "signals vs VDOM"
+  - "fine-grained vs diffing"
+  - "SolidJS vs React rendering"
+  - "push vs pull rendering"
+broader: []
+narrower: []
+isContested: true
 relatedConcepts:
   - concepts/fine-grained-reactivity
   - concepts/observer-pattern

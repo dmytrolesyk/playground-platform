@@ -9,6 +9,12 @@ import { computeGraphStats } from '../../utils/graph-stats';
 
 export const prerender = true;
 
+// TODO: Future search feature should index article altLabels alongside titles.
+// The SKOS altLabels field was designed to power synonym-aware search
+// (e.g., searching "IoC" should find "Inversion of Control").
+// When adding Pagefind or Fuse.js, configure it to search across
+// title + altLabels + summary.
+
 const stats = computeGraphStats(graphData);
 
 // Count flagged articles

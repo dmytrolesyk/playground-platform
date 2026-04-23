@@ -3,6 +3,16 @@ title: "Lazy Loading and Code Splitting"
 category: concept
 summary: "How dynamic import() and SolidJS lazy() keep the initial bundle small by loading heavy apps on demand."
 difficulty: beginner
+prefLabel: "Lazy Loading & Code Splitting"
+altLabels:
+  - "dynamic import"
+  - "code splitting"
+  - "lazy loading"
+  - "bundle splitting"
+  - "on-demand loading"
+broader:
+  - concepts/islands-architecture
+narrower: []
 relatedConcepts:
   - concepts/inversion-of-control
   - concepts/module-systems-and-bundling
