@@ -399,6 +399,15 @@ body {
 .exercise--debug {
   border-left-color: #e74c3c;
 }
+.exercise--arrange {
+  border-left-color: #2ecc71;
+}
+.exercise--compare {
+  border-left-color: #1abc9c;
+}
+.exercise--trace {
+  border-left-color: #f39c12;
+}
 
 .exercise__label {
   font-family: Arial, Helvetica, sans-serif;
@@ -444,6 +453,110 @@ body {
   border-radius: 3px;
   font-size: 15px;
   line-height: 1.6;
+}
+
+/* Exercise type-specific content */
+
+.exercise__fragments {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  counter-reset: fragment;
+}
+
+.exercise__fragments li {
+  counter-increment: fragment;
+  padding: 8px 12px;
+  margin: 0 0 4px;
+  background: var(--learn-code-bg);
+  border-radius: 3px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.exercise__fragments li::before {
+  content: counter(fragment) ". ";
+  font-weight: 700;
+  color: #666;
+  margin-right: 4px;
+}
+
+.exercise__approaches {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 0 0 12px;
+}
+
+@media (max-width: 768px) {
+  .exercise__approaches {
+    grid-template-columns: 1fr;
+  }
+}
+
+.exercise__approach {
+  background: var(--learn-code-bg);
+  border-radius: 3px;
+  padding: 12px 16px;
+}
+
+.exercise__approach-label {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 0 0 8px;
+}
+
+.exercise__approach pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.exercise__steps {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.exercise__steps li {
+  counter-increment: step;
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  background: var(--learn-code-bg);
+  border-radius: 3px;
+  border-left: 3px solid #f39c12;
+}
+
+.exercise__steps li::before {
+  content: "Step " counter(step);
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 0 0 4px;
+}
+
+.exercise__step-description {
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 4px;
+}
+
+.exercise__step-state {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+  font-style: italic;
 }
 
 /* ===== v2: Module navigation ===== */

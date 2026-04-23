@@ -68,6 +68,21 @@ exercises:
   - question: "Why does the Observer pattern use 'one-to-many' rather than 'one-to-one' relationships?"
     type: explain
     answer: "A signal (observable) represents shared state that multiple independent consumers need. For example, state.windows['browser-1'].isMinimized is read by Window.tsx (to hide itself), Taskbar.tsx (to style the button), and potentially keyboard shortcuts (to handle Alt+Tab). Each consumer has a different reaction to the same change. One-to-one would require the signal to know about each consumer, breaking decoupling. One-to-many lets consumers subscribe independently."
+  - question: "Trace the reactive propagation when signal A changes in a diamond dependency graph where A feeds memos B and C, and both B and C feed effect D:"
+    type: trace
+    hint: "SolidJS uses topological sorting with a clock-based push-pull system."
+    steps:
+      - description: "Signal A's value changes"
+        expectedState: "A is marked as updated, global clock increments"
+      - description: "SolidJS pushes stale notifications to A's direct subscribers"
+        expectedState: "Memos B and C are both marked as potentially stale (but NOT yet recomputed)"
+      - description: "Effect D is scheduled for execution"
+        expectedState: "D is queued but waits for its dependencies to be fresh"
+      - description: "D pulls values from B and C"
+        expectedState: "B recomputes lazily (reads A's new value), then C recomputes lazily. Both are now fresh."
+      - description: "D executes exactly once with both fresh values"
+        expectedState: "D sees consistent state from B and C. No glitch — no double execution."
+    answer: "The push-pull hybrid prevents glitches (double-execution). Push: A notifies B, C they may be stale. Pull: D waits and lazily pulls fresh values from B and C before executing. Without glitch prevention, D would fire twice — once when B updates and again when C updates — potentially showing inconsistent intermediate state."
 ---
 
 ## Why Should I Care?

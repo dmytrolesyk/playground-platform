@@ -30,7 +30,26 @@ export const knowledgeSchema = z.object({
         question: z.string(),
         hint: z.string().optional(),
         answer: z.string(),
-        type: z.enum(['predict', 'explain', 'do', 'debug']).default('explain'),
+        type: z
+          .enum(['predict', 'explain', 'do', 'debug', 'arrange', 'compare', 'trace'])
+          .default('explain'),
+        // 'arrange' (Parsons problems) — fragments in scrambled order, learner determines correct sequence
+        fragments: z.array(z.string()).optional(),
+        correctOrder: z.array(z.number()).optional(),
+        // 'compare' — two approaches with tradeoff analysis
+        approachA: z.string().optional(),
+        approachB: z.string().optional(),
+        // 'trace' — step-by-step execution tracing
+        steps: z
+          .array(
+            z.object({
+              description: z.string(),
+              expectedState: z.string(),
+            }),
+          )
+          .optional(),
+        // Links exercise to concept article IDs (for future mastery assessment)
+        targetConcepts: z.array(z.string()).optional(),
       }),
     )
     .default([]),

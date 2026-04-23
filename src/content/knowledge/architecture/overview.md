@@ -69,6 +69,16 @@ exercises:
     type: do
     hint: "Look at the page source, not the network requests."
     answer: "The CV content is embedded directly in the HTML as a <script type='application/json' id='cv-data'> tag. There is no fetch request. The SolidJS component reads it with JSON.parse(document.getElementById('cv-data').textContent). This is zero-overhead: no runtime request, no loading state."
+  - question: "Arrange these steps in the correct order for the platform's page load sequence:"
+    type: arrange
+    fragments:
+      - "Astro renders index.astro at build time, embedding CV data as JSON"
+      - "Browser downloads the static HTML page"
+      - "SolidJS hydrates the single Desktop island via client:load"
+      - "Desktop component reads APP_REGISTRY to render icons and taskbar"
+      - "User clicks an icon, openWindow() creates a new entry in the store"
+    correctOrder: [0, 1, 2, 3, 4]
+    answer: "The pipeline flows: build → download → hydrate → read registry → interact. Astro pre-renders everything at build time. The browser gets a complete HTML page. SolidJS hydrates the single island immediately (client:load). The Desktop reads from the registry to render the UI. Finally, user actions mutate the store. The key insight is that content processing happens entirely at build time — SolidJS never touches Markdown."
 ---
 
 ## Why Should I Care?

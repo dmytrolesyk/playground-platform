@@ -74,6 +74,17 @@ exercises:
   - question: "Why is there no loading spinner when the CV content appears in the BrowserApp?"
     type: explain
     answer: "The CV content is already in the HTML page as a JSON script tag — it was embedded at build time. The SolidJS component calls JSON.parse() synchronously during initialization, so the content is available immediately. There's no network request, no async fetch, no promise to await. The data is already on the page before any JavaScript runs."
+  - question: "Arrange these steps in the correct order for how CV content flows from Markdown files to the user's screen:"
+    type: arrange
+    fragments:
+      - "Developer writes Markdown files in src/content/cv/ with title and order frontmatter"
+      - "Astro validates frontmatter against the Zod schema at build time"
+      - "Astro compiles Markdown to HTML and makes it available via getCollection('cv')"
+      - "index.astro serializes the collection as JSON inside a <script type='application/json'> tag"
+      - "SolidJS reads the JSON synchronously with JSON.parse() during hydration"
+      - "BrowserApp component renders the HTML content inside an iframe-like window"
+    correctOrder: [0, 1, 2, 3, 4, 5]
+    answer: "The pipeline is strictly unidirectional: write → validate → compile → serialize → parse → render. The critical insight is that the Markdown-to-HTML transformation happens entirely at build time (steps 1–4). The SolidJS runtime (steps 5–6) never processes Markdown — it only reads pre-compiled HTML. This eliminates the need for any client-side Markdown library, keeping the JavaScript bundle small."
 ---
 
 ## Why Should I Care?

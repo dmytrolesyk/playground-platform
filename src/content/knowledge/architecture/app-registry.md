@@ -19,7 +19,7 @@ technologies:
 diagramRef: "app-registry"
 order: 3
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-21
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Inversion of Control — Martin Fowler"
     url: "https://martinfowler.com/bliki/InversionOfControl.html"
@@ -57,6 +57,17 @@ exercises:
     type: do
     hint: "The key insight is what DesktopIconGrid does NOT import."
     answer: "app-manifest.ts has one registerApp() call per app (typically 7-8). DesktopIconGrid.tsx does NOT import any app component — it imports only getDesktopApps() from the registry and renders icons based on the returned metadata. The component is completely decoupled from any specific app. This is the Open/Closed Principle: the grid is closed for modification but open for extension via the registry."
+  - question: "Arrange these steps in the correct order for adding a new app to the platform:"
+    type: arrange
+    fragments:
+      - "Create a new component file in src/components/desktop/apps/"
+      - "Call registerApp() in app-manifest.ts with the app's metadata"
+      - "The app appears in DesktopIconGrid via getDesktopApps()"
+      - "The app appears in StartMenu via getStartMenuApps()"
+      - "The terminal can open the app via the registry lookup"
+    correctOrder: [0, 1, 2, 3, 4]
+    hint: "Think about what happens automatically after registerApp()."
+    answer: "First you create the component, then register it. Steps 2–4 all happen automatically because DesktopIconGrid, StartMenu, and the terminal all read from the same APP_REGISTRY object. You never edit those consumer files. This is the registry pattern's power: one registration point, multiple consumers. The order of the automatic steps (3, 4, 5) is technically simultaneous — they all read from the registry on next render."
 ---
 
 ## Why Should I Care?

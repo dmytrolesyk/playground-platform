@@ -58,6 +58,20 @@ exercises:
     type: do
     hint: "The Resend SDK has an unusual error contract."
     answer: "It uses return value checking: const { data, error } = await resend.emails.send(...), then checks if (error). The Resend SDK does NOT throw exceptions on API errors — it returns { data: null, error: ResendError }. Using try/catch would miss all API errors (invalid key, domain mismatch, rate limits) because they don't throw. Only network failures throw."
+  - question: "Trace what happens when a user submits the contact form with valid data:"
+    type: trace
+    steps:
+      - description: "User clicks Send in the ContactApp component"
+        expectedState: "Client-side JavaScript sends a POST request to /api/contact with JSON body"
+      - description: "Astro server endpoint receives the request"
+        expectedState: "The handler parses JSON body and extracts name, email, message fields"
+      - description: "Server-side validation runs"
+        expectedState: "Honeypot field is checked (must be empty), required fields are validated"
+      - description: "Resend SDK sends the email"
+        expectedState: "resend.emails.send() is called with process.env runtime secrets, returns { data, error }"
+      - description: "Response is returned to the client"
+        expectedState: "HTTP 200 with { ok: true } — ContactApp shows success message"
+    answer: "The key architectural points: (1) validation happens server-side, not client-side, because client validation can be bypassed; (2) Resend SDK returns errors in { data, error } instead of throwing; (3) process.env is used instead of import.meta.env because secrets must be read at runtime, not inlined at build time; (4) the honeypot returns 200 even for bots to avoid giving them feedback."
 ---
 
 ## Why Should I Care?

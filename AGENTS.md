@@ -203,6 +203,22 @@ Article pages have a "Flag for review" button. Flags are stored as JSON files in
 ### Knowledge exercise and lab creation
 Exercises must test real understanding, not recall. Prefer `predict` ("What will happen if...") and `do` ("Open DevTools and...") types over `explain`. Answers must be thorough explanations, not yes/no. Labs must include exact setup instructions (git branch, files to create), a DO → OBSERVE → EXPLAIN structure for each experiment, and cleanup steps. Labs must link back to ≥2 theory articles. Every exercise and lab must be something the developer can actually perform in this codebase or browser.
 
+### Exercise type guide
+
+Seven exercise types are available. Choose based on what you're testing:
+
+- `predict` — "What will happen if...?" Tests causal reasoning. Best for: reactivity, state changes, build pipeline behavior.
+- `explain` — "Why does X work this way?" Tests conceptual understanding. Best for: design decisions, pattern rationale, tradeoffs.
+- `do` — "Open DevTools and..." Tests hands-on ability. Best for: debugging, profiling, browser APIs.
+- `debug` — "This code has a bug..." Tests diagnostic skill. Best for: common mistakes, edge cases.
+- `arrange` — "Put these steps in order." Tests procedural understanding. Best for: build pipelines, request lifecycles, multi-step processes. Uses `fragments` (string array) and `correctOrder` (number array of indices).
+- `compare` — "Compare approaches A and B." Tests analytical reasoning. Best for: architecture decisions, library comparisons, pattern tradeoffs. Uses `approachA` and `approachB` (string fields, typically code blocks).
+- `trace` — "Trace execution step by step." Tests runtime mental model. Best for: reactivity propagation, event handling, async flows. Uses `steps` (array of `{ description, expectedState }`).
+
+All exercise types also support an optional `targetConcepts` field (array of article IDs) for linking exercises to specific concepts.
+
+Every article must have at least 1 `predict` or `do` exercise (enforced by audit). Aim for type diversity: don't make all exercises `explain`.
+
 ## Secrets
 
 Environment variables are in `.env` (gitignored). Required: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `PUBLIC_TELEGRAM_USERNAME`, `HOST`.

@@ -19,7 +19,18 @@ interface KnowledgeEntry {
     // v2 fields
     prerequisites: string[];
     learningObjectives: string[];
-    exercises: Array<{ question: string; hint?: string; answer: string; type: string }>;
+    exercises: Array<{
+      question: string;
+      hint?: string;
+      answer: string;
+      type: string;
+      fragments?: string[];
+      correctOrder?: number[];
+      approachA?: string;
+      approachB?: string;
+      steps?: Array<{ description: string; expectedState: string }>;
+      targetConcepts?: string[];
+    }>;
     estimatedMinutes?: number;
     module?: string;
     moduleOrder?: number;
@@ -122,6 +133,9 @@ const exerciseTypeLabels: Record<string, string> = {
   explain: '💬 Explain',
   do: '🛠️ Do',
   debug: '🐛 Debug',
+  arrange: '🔢 Arrange',
+  compare: '⚖️ Compare',
+  trace: '🔍 Trace',
 };
 
 const html = entry.rendered?.html ?? entry.body ?? '';
@@ -252,10 +266,50 @@ const confidenceMessages: Record<string, string> = {
       {entry.data.exercises.length > 0 && (
         <section class="learn-exercises">
           <h2>🧪 Check Your Understanding</h2>
-          {entry.data.exercises.map((ex: { question: string; hint?: string; answer: string; type: string }) => (
+          {entry.data.exercises.map((ex) => (
             <div class={`exercise exercise--${ex.type}`}>
               <p class="exercise__label">{exerciseTypeLabels[ex.type] ?? ex.type}</p>
               <p class="exercise__question">{ex.question}</p>
+
+              {/* arrange: show fragments as numbered list */}
+              {ex.type === 'arrange' && ex.fragments && (
+                <ol class="exercise__fragments">
+                  {ex.fragments.map((fragment: string) => (
+                    <li>{fragment}</li>
+                  ))}
+                </ol>
+              )}
+
+              {/* compare: show approaches side-by-side */}
+              {ex.type === 'compare' && (ex.approachA || ex.approachB) && (
+                <div class="exercise__approaches">
+                  {ex.approachA && (
+                    <div class="exercise__approach">
+                      <p class="exercise__approach-label">Approach A</p>
+                      <pre>{ex.approachA}</pre>
+                    </div>
+                  )}
+                  {ex.approachB && (
+                    <div class="exercise__approach">
+                      <p class="exercise__approach-label">Approach B</p>
+                      <pre>{ex.approachB}</pre>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* trace: show steps with expected state */}
+              {ex.type === 'trace' && ex.steps && (
+                <ol class="exercise__steps">
+                  {ex.steps.map((step: { description: string; expectedState: string }) => (
+                    <li>
+                      <p class="exercise__step-description">{step.description}</p>
+                      <p class="exercise__step-state">→ {step.expectedState}</p>
+                    </li>
+                  ))}
+                </ol>
+              )}
+
               {ex.hint && (
                 <details class="exercise__hint">
                   <summary>Show hint</summary>

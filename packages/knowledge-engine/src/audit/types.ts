@@ -55,8 +55,19 @@ export interface ExternalReference {
   url?: string;
 }
 
+export interface ExerciseStep {
+  description?: string;
+  expectedState?: string;
+}
+
 export interface Exercise {
   type?: string;
+  fragments?: readonly string[];
+  correctOrder?: readonly number[];
+  approachA?: string;
+  approachB?: string;
+  steps?: readonly ExerciseStep[];
+  targetConcepts?: readonly string[];
 }
 
 export interface KnowledgeArticle {
