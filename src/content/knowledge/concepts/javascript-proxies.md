@@ -21,6 +21,7 @@ technologies:
   - solidjs
 order: 9
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Proxy — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"

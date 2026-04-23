@@ -17,7 +17,7 @@ technologies:
   - astro
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Astro Content Collections"
     url: "https://docs.astro.build/en/guides/content-collections/"

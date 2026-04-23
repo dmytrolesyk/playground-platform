@@ -25,6 +25,7 @@ technologies:
   - solidjs
 order: 8
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Observer Pattern — Refactoring Guru"
     url: "https://refactoring.guru/design-patterns/observer"

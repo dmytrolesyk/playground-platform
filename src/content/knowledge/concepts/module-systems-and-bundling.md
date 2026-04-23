@@ -15,6 +15,7 @@ technologies:
   - solidjs
 order: 12
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "JavaScript modules — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"

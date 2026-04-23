@@ -16,7 +16,7 @@ relatedFiles:
   - src/components/desktop/CrtMonitorFrame.tsx
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Compositor-only CSS animations — web.dev"
     url: "https://web.dev/articles/animations-guide"

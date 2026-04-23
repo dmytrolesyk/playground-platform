@@ -26,7 +26,7 @@ technologies:
 diagramRef: "desktop"
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-21
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Astro Islands Documentation"
     url: "https://docs.astro.build/en/concepts/islands/"

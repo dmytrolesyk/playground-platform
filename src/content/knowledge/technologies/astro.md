@@ -25,7 +25,7 @@ technologies:
   - astro
 order: 2
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Astro Documentation"
     url: "https://docs.astro.build/"

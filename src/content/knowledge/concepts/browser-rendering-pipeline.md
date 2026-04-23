@@ -15,6 +15,7 @@ technologies:
   - solidjs
 order: 11
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Rendering Performance — web.dev"
     url: "https://web.dev/articles/rendering-performance"

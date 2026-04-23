@@ -13,7 +13,7 @@ technologies:
   - solidjs
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "How CRT Monitors Work — Computer History Museum"
     url: "https://www.computerhistory.org/revolution/input-output/14/348"

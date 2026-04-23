@@ -18,7 +18,7 @@ technologies:
   - typescript
 order: 3
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "SolidJS — Getting Started"
     url: "https://docs.solidjs.com/guides/foundations/why-solid"

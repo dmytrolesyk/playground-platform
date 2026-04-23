@@ -18,7 +18,7 @@ technologies:
   - solidjs
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "SolidJS Stores Documentation"
     url: "https://docs.solidjs.com/concepts/stores"

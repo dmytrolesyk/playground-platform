@@ -16,7 +16,7 @@ technologies:
   - typescript
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Seven Concurrency Models in Seven Weeks — Paul Butcher"
     url: "https://pragprog.com/titles/pb7con/seven-concurrency-models-in-seven-weeks/"

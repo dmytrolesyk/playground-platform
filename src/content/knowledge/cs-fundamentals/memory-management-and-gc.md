@@ -16,7 +16,7 @@ technologies:
   - typescript
 order: 3
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "V8 Blog — Trash Talk: The Orinoco Garbage Collector"
     url: "https://v8.dev/blog/trash-talk"

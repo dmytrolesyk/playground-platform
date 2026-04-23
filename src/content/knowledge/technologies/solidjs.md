@@ -24,7 +24,7 @@ technologies:
   - solidjs
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "SolidJS Official Documentation"
     url: "https://www.solidjs.com/"
