@@ -83,7 +83,7 @@ exercises:
 
 ## Why Should I Care?
 
-Every file in this project is TypeScript — `.ts` for scripts, `.tsx` for SolidJS components, `.astro` for pages and layouts. But TypeScript isn't used in a single way. The same codebase has **two completely different TypeScript execution paths**: Astro's Vite-based compilation for the web app, and Node.js native [type stripping](https://nodejs.org/en/learn/typescript/run-natively) for build scripts. Understanding how each path works — and where TypeScript's guarantees end — is essential for avoiding subtle bugs that the compiler can't catch.
+Every file in this project is [TypeScript](https://www.typescriptlang.org/docs/) — `.ts` for scripts, `.tsx` for SolidJS components, `.astro` for pages and layouts. But TypeScript isn't used in a single way. The same codebase has **two completely different TypeScript execution paths**: Astro's Vite-based compilation for the web app, and Node.js native [type stripping](https://nodejs.org/en/learn/typescript/run-natively) for build scripts. Understanding how each path works — and where TypeScript's guarantees end — is essential for avoiding subtle bugs that the compiler can't catch. [Total TypeScript](https://www.totaltypescript.com/) and the [TypeScript repository](https://github.com/microsoft/TypeScript) are valuable learning resources.
 
 ## The Strictest Config
 

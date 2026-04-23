@@ -79,7 +79,7 @@ exercises:
 
 ## Why Should I Care?
 
-Broken links are graph bugs. A prerequisite cycle is a graph bug. An Architecture Explorer edge pointing to a missing node is a graph bug. Once you see documentation as a graph instead of a pile of files, you can use the same algorithms behind package managers, build systems, spreadsheets, and compilers to keep it coherent.
+Broken links are graph bugs. A prerequisite cycle is a graph bug. An Architecture Explorer edge pointing to a missing node is a graph bug. Once you see documentation as a graph instead of a pile of files, you can use the same [algorithms](https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/) behind package managers, build systems, spreadsheets, and compilers to keep it coherent — concepts like [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) and [directed acyclic graphs](https://en.wikipedia.org/wiki/Directed_acyclic_graph) become practical tools, not just textbook abstractions (see also [The Algorithm Design Manual](https://www.algorist.com/)).
 
 This codebase now has two important graphs: the learning graph under `src/content/knowledge/` and the visual architecture graph in `architecture-data.ts`. The knowledge audit validates both.
 
@@ -96,7 +96,7 @@ A graph is a set of nodes connected by edges. In this project:
 | Cycle | Article A requires B, B requires C, C requires A |
 
 ```mermaid
-flowchart TD
+[flowchart](https://mermaid.js.org/syntax/flowchart.html) TD
     OVER["architecture/overview"] --> PE["concepts/progressive-enhancement"]
     DF["architecture/data-flow"] --> QG["concepts/executable-quality-gates"]
     PE --> QG

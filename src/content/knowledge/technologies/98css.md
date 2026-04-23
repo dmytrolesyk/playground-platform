@@ -64,7 +64,7 @@ exercises:
 
 ## Why Should I Care?
 
-Building a convincing retro UI sounds like a pixel-art exercise, but [98.css](https://jdan.github.io/98.css/) reveals something deeper: Windows 98's entire visual language was built from a handful of CSS-level primitives — [`border-style: outset/inset`](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style), one-pixel [box shadows](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow), and two-tone color pairs. Understanding how 98.css recreates this teaches you how visual depth perception works in flat screens and why modern "flat design" was a deliberate reaction to these exact techniques.
+Building a convincing [retro](https://css-tricks.com/98-css-a-design-system-for-building-faithful-recreations-of-old-uis/) UI sounds like a pixel-art exercise, but [98.css](https://jdan.github.io/98.css/) reveals something deeper: [Windows 98](https://github.com/jdan/98.css)'s entire visual language was built from a handful of CSS-level primitives — [`border-style: outset/inset`](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style), one-pixel [box shadows](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow), and two-tone color pairs. Understanding how 98.css recreates this teaches you how visual depth perception works in flat screens and why modern "flat design" was a deliberate reaction to these exact techniques (see [XP.css](https://botoxparty.github.io/XP.css/)).
 
 ## How 98.css Creates Depth
 

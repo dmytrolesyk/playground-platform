@@ -29,7 +29,7 @@ externalReferences:
   - title: "98.css — A Design System for Building Faithful Recreations of Old UIs"
     url: "https://jdan.github.io/98.css/"
     type: docs
-  - title: " — SolidJS"
+  - title: "SolidJS"
     url: "https://www.solidjs.com/"
     type: article
   - title: "Registry — Refactoring Guru"
@@ -51,7 +51,7 @@ moduleOrder: 99
 
 ## Why This Lab Exists
 
-The AGENTS.md says: "If you find yourself editing Desktop, WindowManager, Taskbar, or StartMenu to add a new app, you are doing it wrong." That's a bold claim. This lab proves it by having you build a complete Calculator app using [SolidJS](https://www.solidjs.com/) and the [98.css](https://jdan.github.io/98.css/) design system. You'll touch exactly two files: the new component and the manifest. Everything else — the desktop icon, start menu entry, window management, taskbar button, terminal `open` command — comes for free from the [registry pattern](https://refactoring.guru/design-patterns/registry).
+The AGENTS.md says: "If you find yourself editing Desktop, WindowManager, Taskbar, or StartMenu to add a new app, you are doing it wrong." That's a bold claim. This lab proves it by having you build a complete Calculator app using [SolidJS](https://www.solidjs.com/) and the [98.css](https://jdan.github.io/98.css/) design system. You'll touch exactly two files: the new component and the manifest. Everything else — the desktop icon, start menu entry, window management, taskbar button, terminal `open` command — comes for free from the [registry pattern](https://refactoring.guru/design-patterns/registry) (see [SolidJS getting started guide](https://docs.solidjs.com/guides/foundations/why-solid)) (see [Open/Closed Principle](https://blog.cleancoder.com/uncle-bob/2014/05/12/TheOpenClosedPrinciple.html)).
 
 ## Setup
 

@@ -35,9 +35,6 @@ externalReferences:
   - title: "Tree shaking — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking"
     type: docs
-  - title: "Why — Vite"
-    url: "https://vite.dev/guide/why"
-    type: docs
 module: extensibility
 moduleOrder: 4
 estimatedMinutes: 18
@@ -64,7 +61,7 @@ exercises:
 
 Every `import` statement in the codebase is a decision about what code loads when. The wrong import strategy can ship 300KB of terminal emulator code to users who never open the terminal. The right strategy loads only the code needed for the initial desktop shell (~35KB), then fetches heavy apps on demand.
 
-Understanding module systems explains why `lazy(() => import('./TerminalApp'))` works, why [tree-shaking](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) removes unused code, why [Vite](https://vite.dev/guide/why) serves individual files during development but bundled chunks in production, and why `import.meta.env` behaves differently from `process.env`.
+Understanding module systems explains why `lazy(() => import('./TerminalApp'))` works, why [tree-shaking](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) removes unused code, why [Vite](https://vite.dev/guide/why.html) serves individual files during development but bundled chunks in production, and why `import.meta.env` behaves differently from `process.env`.
 
 ## The Evolution: Three Eras of JavaScript Modules
 
@@ -111,7 +108,7 @@ add(1, 2);
 Key properties of ESM:
 - **Static** — `import` declarations must be at the top level. The import specifier must be a string literal. This lets tools analyze the dependency graph at build time.
 - **Async** — In browsers, modules are fetched over the network. The module graph is resolved before execution.
-- **Live bindings** — Imported values are references, not copies. If the exporting module changes a value, the importing module sees the change.
+- **Live bindings** — Imported values are references, not copies. If the exporting [module](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/) changes a value, the importing module sees the change.
 
 ## How Bundlers Use the Import Graph
 
@@ -145,7 +142,7 @@ graph TD
 
 ### Tree-Shaking
 
-Because ESM imports are static, Rollup can determine at build time which exports are actually used. Unused exports are removed ("tree-shaken"):
+Because ESM imports are static, [Rollup](https://rollupjs.org/introduction/#tree-shaking) can determine at build time which exports are actually used. Unused exports are removed ("tree-shaken"):
 
 ```typescript
 // If app-manifest.ts only imports registerApp and getDesktopApps from registry.ts,
@@ -196,7 +193,7 @@ Vite uses different strategies for each mode:
 
 ### Development: Native ESM
 
-During `pnpm dev`, Vite serves individual ES module files over HTTP. The browser's native ESM loader resolves imports by making HTTP requests:
+During `pnpm dev`, Vite serves individual ES [module](https://v8.dev/features/modules) files over HTTP. The browser's native ESM loader resolves imports by making HTTP requests:
 
 ```
 Browser: GET /src/components/desktop/Desktop.tsx

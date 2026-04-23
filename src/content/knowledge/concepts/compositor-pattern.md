@@ -61,7 +61,7 @@ exercises:
 
 ## Why Should I Care?
 
-The difference between smooth 60fps window dragging and janky, stuttering movement comes down to one CSS property choice: `transform: translate()` vs `left`/`top`. This isn't a micro-optimization — it's the difference between the browser recomputing the layout of every element on the page vs. moving a pre-painted bitmap on the GPU. Understanding the compositor pattern explains why certain CSS properties are "free" to animate, why `will-change` exists, and how to use Chrome DevTools to diagnose rendering performance.
+The difference between smooth 60fps window dragging and janky, stuttering movement comes down to one CSS property choice: `transform: translate()` vs `left`/`top`. This isn't a micro-optimization — it's the difference between the browser recomputing the [layout](https://csstriggers.com/) of every element on the page vs. moving a pre-painted bitmap on the GPU. Understanding the compositor pattern explains why certain CSS properties are "free" to animate, why `will-change` exists, and how to use Chrome DevTools to diagnose rendering performance (see [GPU-accelerated compositing in Chrome](https://www.chromium.org/developers/design-documents/gpu-accelerated-compositing-in-chrome/)).
 
 ## Layout vs Paint vs Composite
 
@@ -112,7 +112,7 @@ style={{
 }}
 ```
 
-During drag, only `transform` changes — the compositor moves the window's pre-painted layer on the GPU. The browser skips Style, Layout, and Paint entirely:
+During drag, only `transform` changes — the compositor moves the window's pre-painted [layer](https://developer.chrome.com/docs/devtools/layers) on the GPU. The browser skips Style, Layout, and Paint entirely:
 
 | Frame budget: 16.6ms | `left`/`top` | `transform` |
 |---|---|---|

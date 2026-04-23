@@ -53,7 +53,7 @@ exercises:
 
 ## Why Should I Care?
 
-Every drag operation on the desktop — window dragging, window resizing — depends on [pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) with capture. Without [pointer capture](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture), moving the mouse quickly causes the cursor to leave the title bar element, and the drag breaks. Without pointer events (using mouse events instead), you'd need separate handlers for touch, mouse, and stylus input. Understanding this API explains why the window manager handles all input types with one set of handlers and why drag never "sticks" or "drops" unexpectedly.
+Every drag operation on the desktop — window dragging, window resizing — depends on [pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) with [capture](https://javascript.info/pointer-events). Without [pointer capture](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture), moving the mouse quickly causes the cursor to leave the title bar element, and the drag breaks. Without pointer events (using mouse events instead), you'd need separate handlers for touch, mouse, and stylus input. Understanding this API explains why the window manager handles all input types with one set of handlers and why drag never "sticks" or "drops" unexpectedly.
 
 ## The Fast-Mouse Problem
 
@@ -246,4 +246,4 @@ Using `mousedown`/`mousemove`/`mouseup` instead of pointer events:
 3. **No implicit multi-touch support** — Mouse events don't distinguish between fingers
 4. **iOS Safari quirks** — Touch events have platform-specific behaviors (300ms delay, scroll interference) that pointer events abstract away
 
-The pointer events API was specifically designed for these use cases — the W3C specification explicitly mentions drag operations and drawing applications as primary motivators.
+The pointer events API was specifically designed for these use cases — the [W3C](https://www.w3.org/TR/pointerevents2/) specification explicitly mentions drag operations and drawing applications as primary motivators.

@@ -70,7 +70,7 @@ exercises:
 
 ## Why Should I Care?
 
-Most web frameworks make you choose: either you build a static site and give up interactivity, or you build a single-page app and ship hundreds of kilobytes of JavaScript for what is mostly static content. Astro rejects the binary. It renders static HTML at build time and lets you **opt in** to JavaScript where you need it — [component by component](https://docs.astro.build/en/concepts/islands/). For a CV/portfolio site that's 95% content and 5% interactive desktop, this is the ideal architecture.
+Most web frameworks make you choose: either you build a static site and give up interactivity, or you build a single-page app and ship hundreds of kilobytes of JavaScript for what is mostly static content. [Astro](https://github.com/withastro/astro) rejects the binary. It renders static HTML at build time and lets you **opt in** to JavaScript where you need it — [component by component](https://docs.astro.build/en/concepts/islands/), following the [Islands Architecture](https://jasonformat.com/islands-architecture/) pattern. For a CV/portfolio site that's 95% content and 5% interactive desktop, this is the ideal architecture.
 
 ## How Astro Works
 

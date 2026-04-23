@@ -72,9 +72,9 @@ exercises:
 
 ## Why Should I Care?
 
-Every interactive UI faces the same fundamental problem: when data changes, the screen needs to update. The [Observer pattern](https://refactoring.guru/design-patterns/observer) is the oldest and most battle-tested solution to this problem — and if you understand it, you'll understand why SolidJS signals feel like a natural evolution rather than magic.
+Every interactive UI faces the same fundamental problem: when data changes, the screen needs to update. The [Observer pattern](https://refactoring.guru/design-patterns/observer), originally described in [Design Patterns (GoF)](https://en.wikipedia.org/wiki/Design_Patterns), is the oldest and most battle-tested solution to this problem — and if you understand it, you'll understand why [SolidJS](https://www.solidjs.com/guides/reactivity) signals feel like a natural evolution rather than magic.
 
-The Observer pattern is the conceptual root of [DOM events](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener), Node.js EventEmitters, [RxJS Observables](https://rxjs.dev/guide/observable), Vue's reactivity, and SolidJS signals. Learning it once gives you a mental model that transfers across every reactive system you'll encounter.
+The Observer pattern is the conceptual root of [DOM events](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener), Node.js EventEmitters, [RxJS Observables](https://rxjs.dev/guide/observable), Vue's reactivity, and SolidJS signals. Learning it once gives you a mental model that transfers across every [reactive](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) system you'll encounter.
 
 ## The Core Idea
 
@@ -102,7 +102,7 @@ Think of it like a newspaper subscription. You don't check the newsstand every m
 
 ## The Gang of Four Origins
 
-The Observer pattern was formalized in the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software* by the "Gang of Four" (Gamma, Helm, Johnson, Vlissides). Their original formulation defined two interfaces:
+The [Observer](https://www.youtube.com/watch?v=PpMFJMEhbRg) pattern was formalized in the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software* by the "Gang of Four" (Gamma, Helm, Johnson, Vlissides). Their original formulation defined two interfaces:
 
 ```
 Subject

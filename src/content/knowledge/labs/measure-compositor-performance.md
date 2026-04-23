@@ -84,7 +84,7 @@ First, measure the current implementation that uses `transform: translate()`.
 
 Record these numbers — you'll compare them in Experiment 3.
 
-**EXPLAIN:** `transform: translate()` is a compositor-only property. The browser doesn't need to recalculate element positions (Layout) or repaint pixels (Paint). It hands the transform to the GPU compositor, which moves the layer as a texture. The rendering pipeline short-circuits: Style → **skip Layout** → **skip Paint** → Composite.
+**EXPLAIN:** `transform: translate()` is a [compositor](https://web.dev/animations-guide/)-only property. The browser doesn't need to recalculate element positions (Layout) or re[paint](https://csstriggers.com/) pixels (Paint). It hands the transform to the GPU compositor, which moves the layer as a texture. The rendering pipeline short-circuits: Style → **skip Layout** → **skip Paint** → Composite.
 
 ## Experiment 2: Switch to Left/Top
 

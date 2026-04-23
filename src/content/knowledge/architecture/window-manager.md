@@ -68,7 +68,7 @@ exercises:
 
 ## Why Should I Care?
 
-A window manager is the most complex interactive system on this desktop — it coordinates drag, resize, focus, z-index stacking, minimize/maximize, cascade positioning, and mobile adaptation, all while rendering at 60fps during drag operations. Understanding how it works teaches you about pointer event handling, GPU-accelerated positioning, reactive state management, and the patterns that real operating system window managers use.
+A window manager is the most complex interactive system on this desktop — it coordinates drag, resize, focus, z-index stacking, minimize/maximize, cascade positioning, and mobile adaptation, all while rendering at 60fps during drag operations. The architecture draws from the same concepts used in the [X Window System](https://en.wikipedia.org/wiki/X_Window_System). Understanding how it works teaches you about [pointer event](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) handling, GPU-accelerated positioning, reactive state management, and the patterns that real operating system window managers use.
 
 ## The Window Lifecycle
 
@@ -124,7 +124,7 @@ sequenceDiagram
     participant Window as Window.tsx
     participant Store as Desktop Store
     participant DOM as Browser DOM
-    participant GPU as Compositor (GPU)
+    participant [GPU](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change) as [Compositor](https://web.dev/articles/animations-guide) (GPU)
 
     User->>TitleBar: Press and hold
     TitleBar->>Window: pointerdown event

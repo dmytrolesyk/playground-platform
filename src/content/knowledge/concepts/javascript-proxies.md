@@ -70,7 +70,7 @@ exercises:
 
 ## Why Should I Care?
 
-JavaScript Proxies are the mechanism that makes SolidJS stores feel like plain objects while secretly tracking every property access. When you write `state.windows['browser-1'].x` in a component, you're not reading from a normal object — you're triggering a Proxy trap that subscribes that specific expression to future changes of that exact property path. Without Proxies, fine-grained reactivity on nested objects would require either manual subscription calls or a completely different API.
+JavaScript Proxies are the mechanism that makes SolidJS [stores](https://github.com/solidjs/solid/blob/main/packages/solid/store/src/store.ts) feel like plain objects while secretly tracking every property access. When you write `state.windows['browser-1'].x` in a component, you're not reading from a normal object — you're triggering a Proxy trap that subscribes that specific expression to future changes of that exact property path. Without Proxies, fine-grained [reactivity](https://vuejs.org/guide/extras/reactivity-in-depth.html) on nested objects would require either manual subscription calls or a completely different API.
 
 Understanding Proxies explains why [SolidJS stores](https://docs.solidjs.com/concepts/stores) track at the property level, why Vue 3 is faster than Vue 2, and why certain JavaScript patterns (like spreading a store into a plain object) silently break reactivity.
 
@@ -130,7 +130,7 @@ For reactivity systems, `get` and `set` are the critical traps.
 
 ## How SolidJS Stores Use Proxies
 
-SolidJS's `createStore` wraps your state object in nested Proxies. Each property access through a Proxy `get` trap registers a **dependency** in the current reactive scope (effect, memo, or JSX expression). Each mutation through a `set` triggers notifications to all dependents of that specific path.
+SolidJS's `createStore` wraps your state object in nested Proxies. Each property access through a Proxy `get` trap registers a **dependency** in the current [reactive](https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p) scope (effect, memo, or JSX expression). Each mutation through a `set` triggers notifications to all dependents of that specific path.
 
 Here's the conceptual model of what happens in this project's desktop store:
 

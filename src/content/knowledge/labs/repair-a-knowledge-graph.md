@@ -56,7 +56,7 @@ moduleOrder: 4
 
 ## Why This Lab Exists
 
-You do not really understand a quality gate until you have broken it on purpose. This lab turns the knowledge audit into a debugging exercise: you will create three controlled graph failures, read the audit output, repair each one, and verify that the repo returns to a clean state.
+You do not really understand a quality gate until you have brok[en](https://en.wikipedia.org/wiki/Topological_sorting) it on purpose. This lab turns the knowledge audit into a debugging exercise: you will create three controlled graph failures, read the audit output, repair each one, and verify that the repo returns to a clean state (see [yaml npm package](https://eemeli.org/yaml/)) (see [Node.js type stripping](https://nodejs.org/api/typescript.html#type-stripping)).
 
 This is safe if you do it on a temporary branch and clean up at the end.
 
@@ -100,7 +100,7 @@ pnpm verify:knowledge
 
 **OBSERVE:** The audit reports `missing-related-concept`. The subject is `architecture/overview`, and the message names `concepts/does-not-exist`.
 
-**EXPLAIN:** Astro's schema can validate that `relatedConcepts` is an array of strings. It cannot validate that every string points to another article. The audit loads all article ids into a set, then checks each relationship against that set.
+**EXPLAIN:** Astro's [schema](https://docs.astro.build/en/guides/content-collections/) can validate that `relatedConcepts` is an array of strings. It cannot validate that every string points to another article. The audit loads all article ids into a set, then checks each relationship against that set.
 
 **REPAIR:** Remove `concepts/does-not-exist`, save the file, and run:
 

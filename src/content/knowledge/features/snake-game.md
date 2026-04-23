@@ -61,7 +61,7 @@ exercises:
 
 ## Why Should I Care?
 
-The Snake game is the cleanest example of **separation of concerns** in the entire project. The game engine is a [pure function](https://en.wikipedia.org/wiki/Pure_function) — `tick(state) → newState` — with zero DOM, zero framework, zero side effects. The SolidJS wrapper handles rendering and input. This separation makes the engine trivially testable (22 unit tests, all pure function calls) and reusable in any framework. Understanding this pattern teaches you how to build game logic that doesn't rot when your UI framework changes.
+The Snake game is the cleanest example of **separation of concerns** in the entire project. The game engine is a [pure function](https://en.wikipedia.org/wiki/Pure_function) — `tick(state) → newState` — with zero DOM, zero framework, zero side effects. The SolidJS wrapper handles rendering using a [game loop](https://gameprogrammingpatterns.com/game-loop.html) and input. This separation makes the engine trivially testable (22 unit tests, all pure function calls) and reusable in any framework. Understanding this pattern teaches you how to build game logic that doesn't rot when your UI framework changes.
 
 ## The Two-Layer Architecture
 
@@ -143,7 +143,7 @@ export function changeDirection(state: GameState, direction: Direction): GameSta
 
 ### The SolidJS Wrapper (`Snake.tsx`)
 
-The wrapper handles everything the engine doesn't: canvas rendering, timing, keyboard input, and the game-over dialog.
+The wrapper handles everything the engine doesn't: [canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) rendering, timing, keyboard input, and the game-over dialog.
 
 ## The Game Loop
 
@@ -169,7 +169,7 @@ function gameLoop(timestamp: number): void {
 
 The `tickInterval` starts at 150ms and decreases by 5ms for every food eaten (minimum 80ms). This means the snake speeds up as your score increases — a classic Snake difficulty curve. The rendering always runs at display refresh rate, so movement looks smooth even at low tick rates.
 
-This is not a fixed timestep (where physics runs at a constant rate regardless of frame time) — it's a simpler model where one tick equals one game step. For a grid-based game like Snake where the snake moves one cell per tick, this works perfectly. A fixed timestep would matter more for physics simulations where accuracy depends on consistent time steps.
+This is not a fixed [timestep](https://gafferongames.com/post/fix_your_timestep/) (where physics runs at a constant rate regardless of frame time) — it's a simpler model where one tick equals one game step. For a grid-based game like Snake where the snake moves one cell per tick, this works perfectly. A fixed timestep would matter more for physics simulations where accuracy depends on consistent time steps.
 
 ## Canvas Rendering
 

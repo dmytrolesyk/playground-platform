@@ -74,7 +74,7 @@ exercises:
 
 ## Why Should I Care?
 
-Node.js appears in two very different roles in this project, and confusing them causes real bugs. It's the **build-time script runner** that processes knowledge articles, generates the knowledge graph, and runs the audit pipeline — all using native TypeScript execution with [no compilation step](https://nodejs.org/en/learn/typescript/run-natively). And it's the **SSR runtime** that handles server-side rendered pages and API endpoints in production. Understanding which role Node.js plays at each point tells you whether to use `process.env` or `import.meta.env`, whether to import from `node:` builtins or browser APIs, and why some TypeScript features work in scripts but not in components.
+[Node.js](https://nodejs.org/en/docs) appears in two very different roles in this project, and confusing them causes real bugs. It's the **build-time script runner** that processes knowledge articles, generates the knowledge graph, and runs the audit pipeline — all using native TypeScript execution with [no compilation step](https://nodejs.org/en/learn/typescript/run-natively). And it's the **SSR [runtime](https://github.com/nodejs/node)** that handles server-side rendered pages and API endpoints in production. Understanding which role Node.js plays at each point tells you whether to use `process.env` or `import.meta.env`, whether to import from `node:` builtins or browser APIs, and why some TypeScript features work in scripts but not in components.
 
 ## Role 1: Script Runner with Type Stripping
 

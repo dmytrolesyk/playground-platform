@@ -70,11 +70,11 @@ exercises:
 
 The desktop store is the single source of truth for every interactive element on screen — which windows are open, where they're positioned, which one is focused, whether the start menu is showing, and whether the viewport is mobile. Every component reads from this store, and every user action writes to it.
 
-Understanding the store teaches you SolidJS's proxy-based reactivity in practice, why a single store beats per-window state management, and how the command pattern (actions as a public API) keeps mutations predictable.
+Understanding the store teaches you [SolidJS](https://www.youtube.com/watch?v=J70HXl1KhWE)'s proxy-based reactivity in practice, why a single store beats per-window state management, and how the command pattern (actions as a public API) keeps mutations predictable.
 
 ## The Store Shape
 
-All desktop state lives in one `createStore` call in `src/components/desktop/store/desktop-store.ts`:
+All desktop state lives in one `create[Store](https://docs.solidjs.com/concepts/stores)` call in `src/components/desktop/store/desktop-store.ts`:
 
 ```typescript
 const [state, setState] = createStore<DesktopState>({

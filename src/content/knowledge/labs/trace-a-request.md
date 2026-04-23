@@ -114,7 +114,7 @@ The `website` field is a **honeypot** — a hidden field that real users never f
 
 **OBSERVE:** The file is about 100 lines and handles the entire server side:
 
-1. `export const prerender = false` — this tells Astro this route needs a server at runtime, not static generation. Without it, Astro would try to pre-render the API route at build time, which makes no sense for a POST endpoint.
+1. `export const prerender = false` — this tells Astro this route needs a server at runtime, not static generation. Without it, Astro would try to pre-render the API route at build time, which makes no sense for a POST [endpoint](https://docs.astro.build/en/guides/endpoints/#server-endpoints-api-routes).
 
 2. The honeypot check is on lines that check `body.website` — if it has any value, the server returns `{ ok: true }` with a 200 status. It **silently succeeds** instead of returning an error, so bots think their submission worked.
 
@@ -122,7 +122,7 @@ The `website` field is a **honeypot** — a hidden field that real users never f
 
 4. The API key comes from `process.env['RESEND_API_KEY']` — **not** `import.meta.env`. This is critical.
 
-**EXPLAIN:** The `process.env` vs `import.meta.env` distinction is a major landmine documented in `AGENTS.md`. Vite (which Astro uses) inlines **all** `import.meta.env` values at build time — including server-only secrets. In Docker builds where secrets aren't available during `pnpm build`, `import.meta.env.RESEND_API_KEY` would become an empty string baked into the JavaScript bundle. Using `process.env['RESEND_API_KEY']` reads the environment variable at **runtime**, when the Node.js server actually handles the request. The bracket notation (`['RESEND_API_KEY']`) is required by TypeScript's `noPropertyAccessFromIndexSignature` rule.
+**EXPLAIN:** The `process.env` vs `import.meta.env` distinction is a major landmine documented in `AGENTS.md`. Vite (which Astro uses) inlines **all** `import.meta.env` values at build time — including server-only secrets. In Docker builds where secrets aren't available during `pnpm build`, `import.meta.env.[RESEND](https://github.com/resend/resend-node)_API_KEY` would become an empty string baked into the JavaScript bundle. Using `process.env['RESEND_API_KEY']` reads the environment variable at **runtime**, when the Node.js server actually handles the request. The bracket notation (`['RESEND_API_KEY']`) is required by TypeScript's `noPropertyAccessFromIndexSignature` rule.
 
 ## Experiment 3: Trace the Resend API Call
 

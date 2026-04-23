@@ -38,9 +38,6 @@ externalReferences:
   - title: "Using middleware.html — expressjs.com"
     url: "https://expressjs.com/en/guide/using-middleware.html"
     type: article
-  - title: "Api — code.visualstudio.com"
-    url: "https://code.visualstudio.com/api"
-    type: article
   - title: "Hollywood principle — Wikipedia"
     url: "https://en.wikipedia.org/wiki/Hollywood_principle"
     type: article
@@ -68,7 +65,7 @@ exercises:
 
 ## Why Should I Care?
 
-Inversion of Control (IoC) is the design principle that makes the app registry work. Without it, adding a new app would require editing 4-5 files across the codebase. With it, you create a component, call `registerApp()`, and everything works. Understanding [IoC](https://martinfowler.com/bliki/InversionOfControl.html) explains not just this project's extensibility, but the architecture of frameworks ([Express middleware](https://expressjs.com/en/guide/using-middleware.html), React hooks), plugin systems ([VS Code extensions](https://code.visualstudio.com/api), webpack plugins), and why "the framework calls you" instead of "you call the framework."
+Inversion of Control (IoC) is the design principle that makes the app registry work. Without it, adding a new app would require editing 4-5 files across the codebase. With it, you create a component, call `registerApp()`, and everything works — following the [SOLID principles](https://en.wikipedia.org/wiki/SOLID). Understanding [IoC](https://martinfowler.com/bliki/InversionOfControl.html) explains not just this project's extensibility, but the architecture of frameworks ([Express middleware](https://expressjs.com/en/guide/using-middleware.html), React hooks), plugin systems ([VS Code extension anatomy](https://code.visualstudio.com/api/get-started/extension-anatomy), webpack plugins), and why "the framework calls you" instead of "you call the framework."
 
 ## The Traditional Way: Direct Control
 
@@ -133,7 +130,7 @@ IoC is the *direction* of dependency. Instead of your code calling library funct
 
 In this project: apps don't call `desktop.addApp(this)`. The desktop calls `APP_REGISTRY[id].component` when it needs to render an app. The registry is the intermediary that inverts the dependency direction.
 
-### Dependency Injection (DI) — One IoC Technique
+### [Dependency Injection](https://martinfowler.com/articles/injection.html) (DI) — One IoC Technique
 
 DI provides dependencies from outside rather than having code create them:
 

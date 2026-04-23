@@ -51,9 +51,6 @@ externalReferences:
   - title: "Intro — Playwright"
     url: "https://playwright.dev/docs/intro"
     type: docs
-  - title: " — Vitest"
-    url: "https://vitest.dev/"
-    type: docs
 diagramRef: "knowledge-audit"
 module: learning-system-reliability
 moduleOrder: 1
@@ -88,9 +85,9 @@ This project now treats learning content like code. Markdown is still pleasant t
 
 ```mermaid
 flowchart LR
-    STANDARD["Written standard<br/>docs/features/knowledge-base.md"] --> RULE["Executable rule<br/>rules.ts"]
+    STANDARD["Written standard<br/>[docs](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)/features/knowledge-base.md"] --> RULE["Executable rule<br/>rules.ts"]
     RULE --> TEST["Rule tests<br/>Vitest"]
-    RULE --> CLI["CLI<br/>verify:knowledge"]
+    RULE --> [CLI](https://biomejs.dev/reference/cli/)["CLI<br/>verify:knowledge"]
     CLI --> VERIFY["pnpm verify"]
     VERIFY --> PR["Protected branch<br/>merge blocked on failure"]
 ```
@@ -165,7 +162,7 @@ The social layer remains, but it has a mechanical floor.
 
 ## Broader Context
 
-This is the same idea behind continuous integration and required status checks. CI is valuable because integration problems appear close to the commit that caused them. Protected branches are valuable because they turn a team rule into a merge rule. Visual regression tests are valuable because a layout mistake becomes a diff instead of a surprise in production.
+This is the same idea behind [continuous integration](https://martinfowler.com/articles/continuousIntegration.html) and required status checks. CI is valuable because integration problems appear close to the commit that caused them. Protected branches are valuable because they turn a team rule into a merge rule. Visual regression tests are valuable because a layout mistake becomes a diff instead of a surprise in production.
 
 The knowledge audit applies that engineering habit to documentation. Documentation is not exempt from entropy. It just needs different tests.
 
@@ -189,6 +186,6 @@ The broader insight: [executable specifications](https://martinfowler.com/bliki/
 
 ## Connection to Testing Philosophy
 
-Quality gates and test suites serve the same purpose: they make promises verifiable. The difference is scope. A unit test verifies one function's behavior. An [E2E test](https://playwright.dev/docs/intro) verifies a user journey. A quality gate verifies a structural invariant across an entire content corpus.
+Quality gates and test suites serve the same purpose: they make promises verifiable. The difference is scope. A unit test verifies one function's behavior. An [E2E test](https://playwright.dev/docs/intro) verifies a user journey. Playwright also supports [visual regression snapshots](https://playwright.dev/docs/test-snapshots). A quality gate verifies a structural invariant across an entire content corpus.
 
-This project uses all three: [Vitest](https://vitest.dev/) for audit rule logic, Playwright for visual and interaction testing, and the knowledge audit for cross-article graph integrity. Each layer catches what the others can't — unit tests don't verify broken prerequisite links, and graph audits don't verify that a window renders correctly.
+This project uses all three: [Vitest](https://vitest.dev/guide/) for audit rule logic, Playwright for visual and interaction testing, and the knowledge audit for cross-article graph integrity. Each layer catches what the others can't — unit tests don't verify broken prerequisite links, and graph audits don't verify that a window renders correctly.

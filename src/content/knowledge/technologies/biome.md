@@ -61,7 +61,7 @@ exercises:
 
 ## Why Should I Care?
 
-Linting and formatting seem like housekeeping, but in a project where every PR runs through CI, a slow lint step compounds. ESLint + Prettier configurations are famously complex — plugin conflicts, parser options, overlapping rules, and a cold start that can take 10+ seconds on medium codebases. [Biome](https://biomejs.dev/) replaces both tools with a single Rust binary that lints and formats in under a second. Understanding the project's Biome configuration tells you what code standards are enforced, what's auto-fixable, and where the sharp edges are.
+Linting and [formatting](https://biomejs.dev/formatter/) seem like housekeeping, but in a project where every PR runs through CI, a slow lint step compounds. ESLint + Prettier configurations are famously complex — plugin conflicts, parser options, overlapping rules, and a cold start that can take 10+ seconds on medium codebases. [Biome](https://biomejs.dev/) replaces both tools with a single Rust binary that lints and formats in under a second. Understanding the project's Biome configuration tells you what code standards are enforced, what's auto-fixable, and where the sharp edges are.
 
 ## One Tool, Two Jobs
 
@@ -75,7 +75,7 @@ Biome combines linting (finding bugs and enforcing patterns) and formatting (con
 }
 ```
 
-`biome check` runs both the linter and formatter in a single pass. There's no separate `format` command needed because `check` validates formatting conformance and `check --write` fixes both formatting and auto-fixable lint issues.
+[`biome check`](https://github.com/biomejs/biome) runs both the linter and formatter in a single pass. There's no separate `format` command needed because `check` validates formatting conformance and `check --write` fixes both formatting and auto-fixable lint issues.
 
 The speed difference matters for developer experience. Biome is written in Rust and [parses, analyzes, and formats files in parallel](https://biomejs.dev/blog/annoucing-biome/) using multiple CPU cores. On this codebase, `biome check .` completes in under 200ms. An equivalent ESLint + Prettier setup would take 5-10 seconds.
 

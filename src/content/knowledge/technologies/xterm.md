@@ -58,7 +58,7 @@ exercises:
 
 ## Why Should I Care?
 
-A terminal emulator in a browser sounds like a novelty, but the engineering inside [xterm.js](https://xtermjs.org/) is serious: it implements the same [VT100/VT220 escape code](https://en.wikipedia.org/wiki/ANSI_escape_code) parser that real terminals like GNOME Terminal and iTerm2 use, renders to a `<canvas>` element using GPU-accelerated techniques borrowed from game engines, and handles the surprising complexity of keyboard input across operating systems and IME methods. Understanding how xterm.js works teaches you about the terminal abstraction itself — a concept that predates the web by decades and still powers every developer's workflow.
+A [terminal](https://lwn.net/Articles/730637/) emulator in a browser sounds like a novelty, but the engineering inside [xterm.js](https://xtermjs.org/) is serious: it implements the same [VT100/VT220 escape code](https://en.wikipedia.org/wiki/ANSI_escape_code) parser that real terminals like GNOME Terminal and iTerm2 use, renders to a `<canvas>` element using GPU-accelerated techniques borrowed from game engines, and handles the surprising complexity of keyboard input across operating systems and IME methods. Understanding how xterm.js works teaches you about the terminal abstraction itself — a concept that predates the web by decades and still powers every developer's workflow.
 
 ## Terminal Emulation Concepts
 
@@ -88,7 +88,7 @@ This project uses the default canvas renderer, which is sufficient for our use c
 
 ## The Addon Architecture
 
-xterm.js follows a plugin model where optional features ship as separate npm packages:
+[xterm](https://github.com/xtermjs/xterm.js/tree/master/addons).js follows a plugin model where optional features ship as separate npm packages:
 
 | Addon | Package | Purpose |
 |---|---|---|

@@ -43,10 +43,10 @@ externalReferences:
   - title: "Railway Deployment Documentation"
     url: "https://docs.railway.com/"
     type: docs
-  - title: " — Astro Docs"
+  - title: "Astro Docs"
     url: "https://docs.astro.build/"
     type: docs
-  - title: " — SolidJS"
+  - title: "SolidJS"
     url: "https://www.solidjs.com/"
     type: article
 module: foundation
@@ -82,7 +82,7 @@ Understanding the big picture gives you a mental map for navigating the codebase
 This platform is built as three distinct layers, each with a clear responsibility:
 
 1. **[Astro](https://docs.astro.build/) (Build Time)** — Static site generator. Renders HTML, processes Markdown content collections, serves static assets, and provides one SSR endpoint (`/api/contact`).
-2. **[SolidJS](https://www.solidjs.com/) (Client Runtime)** — A single hydrated "island" component (`<Desktop />`) that owns all interactive state — windows, taskbar, icons, and the entire desktop experience.
+2. **[SolidJS](https://www.solidjs.com/) (Client Runtime)** — A single hydrated "[island](https://jasonformat.com/islands-architecture/)" component (`<Desktop />`) that owns all interactive state — windows, taskbar, icons, and the entire desktop experience.
 3. **App Registry (Extensibility)** — A central registry where `registerApp()` wires an app into the desktop icons, start menu, terminal, and window manager with a single function call.
 
 ```mermaid
@@ -159,13 +159,13 @@ This does not turn the site into a backend application. The audit runs in Node d
 
 ## The Single-Island Architecture
 
-There is exactly **one** SolidJS island in the entire site: `<Desktop client:load />` in `src/pages/index.astro`. This is a deliberate architectural choice:
+There is exactly **one** SolidJS [island](https://docs.astro.build/en/concepts/islands/) in the entire site: `<Desktop client:load />` in `src/pages/index.astro`. This is a deliberate architectural choice:
 
 - **One store** — `DesktopStore` in `src/components/desktop/store/desktop-store.ts` holds all state (windows, z-index, mobile detection) in a single `createStore`.
 - **One context** — `DesktopProvider` in `src/components/desktop/store/context.tsx` wraps the island, making the store available to every component via `useDesktop()`.
 - **No cross-island communication** — Because there's only one island, all components share reactive state naturally.
 
-Multiple islands would mean separate SolidJS instances that can't share reactive context. By keeping everything in one island, any component can call `actions.openWindow('browser')` and the window manager responds immediately — no message passing, no event buses, no serialization.
+Multiple islands would mean separate [SolidJS](https://www.solidjs.com/guides/getting-started#why-solidjs) instances that can't share reactive context. By keeping everything in one island, any component can call `actions.openWindow('browser')` and the window manager responds immediately — no message passing, no event buses, no serialization.
 
 ### What If We'd Used Multiple Islands?
 
@@ -243,7 +243,7 @@ flowchart LR
     end
 ```
 
-The site deploys to Railway via a multi-stage Dockerfile (node:24-slim). The Astro Node adapter in standalone mode produces a single `entry.mjs` that serves both static files and the SSR contact endpoint. `PUBLIC_*` variables are inlined at build time by Vite; server secrets use `process.env` at runtime.
+The site deploys to [Railway](https://docs.railway.com/) via a multi-stage Dockerfile (node:24-slim). The Astro Node adapter in standalone mode produces a single `entry.mjs` that serves both static files and the SSR contact endpoint. `PUBLIC_*` variables are inlined at build time by Vite; server secrets use `process.env` at runtime.
 
 ## Performance Budget
 

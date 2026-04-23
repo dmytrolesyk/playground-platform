@@ -77,7 +77,7 @@ exercises:
 
 ## Why This Matters
 
-The knowledge base is only useful if it stays trustworthy. A stale article, a broken prerequisite, or a diagram node that links nowhere teaches the wrong lesson at exactly the moment the reader is trying to build a mental model. This feature turns the learning system into a self-checking artifact: the content still lives as Markdown, but the repo now has [executable rules](https://martinfowler.com/bliki/SelfTestingCode.html) that verify the graph around it.
+The knowledge base is only useful if it stays trustworthy. A stale article, a broken prerequisite, or a diagram node that links nowhere teaches the wrong lesson at exactly the moment the reader is trying to build a mental model. This feature turns the learning system into a self-checking artifact: the content still lives as Markdown, but the repo now has [executable rules](https://martinfowler.com/bliki/SelfTestingCode.html) that verify the graph around it. Scripts run via [Node.js type stripping](https://nodejs.org/api/typescript.html#type-stripping), and [Playwright visual snapshots](https://playwright.dev/docs/test-snapshots) catch UI regressions.
 
 It also makes progress more honest. Reading an article is not the same thing as practicing it. The [staged mastery model](https://www.supermemo.com/en/blog/twenty-rules-of-formulating-knowledge) keeps that distinction visible without adding accounts, a database, or a quiz engine.
 
@@ -85,7 +85,7 @@ It also makes progress more honest. Reading an article is not the same thing as 
 
 ```mermaid
 flowchart TD
-    MD["Knowledge Markdown<br/>frontmatter + body"] --> LOAD["load.ts<br/>parse YAML + source graph"]
+    MD["Knowledge Markdown<br/>[frontmatter](https://docs.astro.build/en/guides/content-collections/) + body"] --> LOAD["load.ts<br/>parse YAML + source graph"]
     AD["architecture-data.ts<br/>nodes + edges"] --> LOAD
     MOD["modules.ts<br/>curriculum ids"] --> LOAD
     LOAD --> RULES["rules.ts<br/>pure validation"]

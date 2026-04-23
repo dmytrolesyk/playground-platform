@@ -73,11 +73,11 @@ exercises:
 
 ## Why Should I Care?
 
-The choice between signals and virtual DOM isn't just a framework preference — it determines how much work the browser does on every state change. For a desktop window manager that updates window positions at 60fps during drag, this difference is the gap between smooth interaction and visible jank. Understanding both approaches lets you choose the right tool for the job and predict how your UI will perform under load.
+The choice between [signals](https://www.youtube.com/watch?v=AdNJ3fydeao) and the [virtual DOM](https://svelte.dev/blog/virtual-dom-is-pure-overhead) isn't just a framework preference — it determines how much work the browser does on every state change. For a desktop window manager that updates window positions at 60fps during drag, this difference is the gap between smooth interaction and visible jank. Understanding both approaches lets you choose the right tool for the job and predict how your UI will perform under load.
 
 ## The Virtual DOM Approach (React)
 
-[React](https://react.dev/) re-runs your component function on every state change, producing a new virtual DOM tree. It then **[diffs](https://legacy.reactjs.org/docs/reconciliation.html)** the old and new trees to figure out what actually changed in the real DOM:
+[React](https://react.dev/) re-runs your component function on every state change, producing a new virtual DOM tree. It then **[diffs](https://legacy.reactjs.org/docs/reconciliation.html)** the old and new trees — a process known as [React Fiber reconciliation](https://github.com/acdlite/react-fiber-architecture) — to figure out what actually changed in the real DOM:
 
 ```mermaid
 flowchart LR
@@ -115,7 +115,7 @@ React's reconciler walks the entire subtree, comparing the new VDOM to the old. 
 
 ## The Signals Approach (SolidJS)
 
-[SolidJS](https://www.solidjs.com/guides/reactivity) runs your component function **once** — at mount time. Each reactive expression in JSX becomes a direct DOM subscription. When a signal changes, only the subscribed DOM nodes update:
+[SolidJS](https://www.solidjs.com/guides/reactivity) runs your component function **once** — at mount time. Each [reactive](https://www.solidjs.com/guides/getting-started#why-solidjs) expression in JSX becomes a direct DOM subscription. When a signal changes, only the subscribed DOM nodes update:
 
 ```mermaid
 flowchart LR
@@ -191,7 +191,7 @@ Signals aren't universally better. VDOM approaches have advantages in specific s
 
 4. **Ecosystem size** — React's VDOM model has 10+ years of libraries, patterns, and community knowledge.
 
-## The Third Way: Compiled Reactivity (Svelte)
+## The Third Way: Compiled [Reactivity](https://svelte.dev/blog/svelte-3-rethinking-reactivity) (Svelte)
 
 Svelte takes a different approach: the compiler analyzes your code and generates imperative DOM updates at build time. No runtime VDOM library, no runtime signal tracking:
 

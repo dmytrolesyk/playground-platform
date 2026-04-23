@@ -31,7 +31,7 @@ externalReferences:
   - title: "Astro GitHub Repository"
     url: "https://github.com/withastro/astro"
     type: repo
-  - title: " — SolidJS"
+  - title: "SolidJS"
     url: "https://www.solidjs.com/"
     type: article
   - title: "innerHTML — MDN Web Docs"
@@ -63,7 +63,7 @@ exercises:
 
 ## Why Should I Care?
 
-The CV viewer looks like the simplest component in the project — it just shows some HTML in a scrollable window. But it demonstrates a powerful pattern: **build-time content serialization**. The CV Markdown never touches the client as Markdown. It's rendered to HTML at build time by [Astro's content collections](https://docs.astro.build/en/guides/content-collections/), serialized as JSON into the page, and read by a [SolidJS](https://www.solidjs.com/) component that does nothing but set [`innerHTML`](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML). Zero runtime content processing, zero Markdown parser in the bundle, zero cost to the user.
+The CV viewer looks like the simplest component in the project — it just shows some HTML in a scrollable window. But it demonstrates a powerful pattern: **build-time content serialization**. The CV Markdown never touches the client as Markdown. It's rendered to HTML at build time by [Astro's content collections](https://docs.astro.build/en/guides/content-collections/), serialized as JSON into the page, and read by a [SolidJS](https://www.solidjs.com/) component that does nothing but set [`innerHTML`](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML). Zero runtime content processing, zero Markdown parser in the bundle, zero cost to the user (see [Astro repository](https://github.com/withastro/astro)).
 
 ## The Build-Time Serialization Pipeline
 
@@ -120,7 +120,7 @@ export function loadCvData(): CvSection[] {
 }
 ```
 
-`BrowserApp` calls this in `onMount` and renders each section using `innerHTML`:
+`BrowserApp` calls this in `[onMount](https://docs.solidjs.com/reference/lifecycle/on-mount)` and renders each section using `innerHTML`:
 
 ```typescript
 sections().map((section: CvSection) => (
@@ -130,7 +130,7 @@ sections().map((section: CvSection) => (
 
 ## Why innerHTML Is Safe Here
 
-Using `innerHTML` is normally a security red flag — it's the classic XSS vector. But in this specific case, it's safe because:
+Using `[innerHTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#security_considerations)` is normally a security red flag — it's the classic XSS vector. But in this specific case, it's safe because:
 
 1. **The HTML is generated at build time** from trusted Markdown files in the repository. There's no user input in the pipeline.
 2. **The content comes from a JSON blob** embedded in the page by Astro's build process, not from a network request or user-controlled source.
