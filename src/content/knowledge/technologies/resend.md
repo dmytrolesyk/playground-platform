@@ -53,7 +53,7 @@ exercises:
 
 ## Why Should I Care?
 
-Email looks simple — you fill out a form, hit send, message arrives. But between "send" and "arrives" lies a gauntlet of DNS lookups, authentication protocols, reputation scoring, and spam filtering that kills most messages from unknown servers. Resend abstracts this entire stack into one HTTP call. Understanding what it hides teaches you why "just use `sendmail`" is never the right answer for production web apps.
+Email looks simple — you fill out a form, hit send, message arrives. But between "send" and "arrives" lies a gauntlet of [DNS lookups](https://developer.mozilla.org/en-US/docs/Glossary/DNS), authentication protocols, [reputation scoring](https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/), and spam filtering that kills most messages from unknown servers. [Resend](https://resend.com/docs) abstracts this entire stack into one HTTP call. Understanding what it hides teaches you why "just use `sendmail`" is never the right answer for production web apps.
 
 ## How Email Delivery Actually Works
 

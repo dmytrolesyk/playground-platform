@@ -57,7 +57,7 @@ exercises:
 
 Every `import` statement in the codebase is a decision about what code loads when. The wrong import strategy can ship 300KB of terminal emulator code to users who never open the terminal. The right strategy loads only the code needed for the initial desktop shell (~35KB), then fetches heavy apps on demand.
 
-Understanding module systems explains why `lazy(() => import('./TerminalApp'))` works, why tree-shaking removes unused code, why Vite serves individual files during development but bundled chunks in production, and why `import.meta.env` behaves differently from `process.env`.
+Understanding module systems explains why `lazy(() => import('./TerminalApp'))` works, why [tree-shaking](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) removes unused code, why [Vite](https://vite.dev/guide/why) serves individual files during development but bundled chunks in production, and why `import.meta.env` behaves differently from `process.env`.
 
 ## The Evolution: Three Eras of JavaScript Modules
 
@@ -89,7 +89,7 @@ CommonJS works well for server-side code (files are on disk, `require` is fast).
 
 ### Era 3: ES Modules (2015–present)
 
-ES Modules (ESM) are the language-level module system, designed for static analysis:
+[ES Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) (ESM) are the language-level module system, designed for static analysis:
 
 ```typescript
 // math.ts

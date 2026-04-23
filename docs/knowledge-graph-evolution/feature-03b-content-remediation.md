@@ -25,6 +25,7 @@ Articles are AI-generated. The #1 risk is fluent text that isn't grounded in any
 
 - `verification-before-completion` — run `pnpm verify:knowledge` after each batch and confirm 0 issues before claiming done
 - `systematic-debugging` — if an article still fails after fixes, diagnose why
+- `deep-research` for articles research, if you think is applicable
 
 ## Branch
 
@@ -36,25 +37,25 @@ git checkout -b remediation/03b-content-fixes
 
 ### By rule (what to fix)
 
-| Rule | Count | Articles |
-|------|-------|----------|
-| `inline-citation-density` | 43 | All 43 articles — every single one needs ≥3 external URLs woven into the body text |
-| `minimum-word-count` | 8 | `architecture/app-registry` (1366/1500), `architecture/contact-system` (1216/1500), `architecture/data-flow` (1262/1500), `architecture/state-management` (1350/1500), `concepts/executable-quality-gates` (778/1000), `cs-fundamentals/graph-validation` (874/1000), `features/knowledge-reliability-mastery` (595/600), `labs/repair-a-knowledge-graph` (644/800) |
-| `technology-coverage` | 5 | Missing articles: `technologies/biome`, `technologies/node`, `technologies/playwright`, `technologies/typescript`, `technologies/vitest` |
-| `external-reference-minimum` | 5 | `architecture/data-flow` (1 type), `concepts/pointer-events-and-capture` (1 type), `features/cv-viewer` (1 type), `features/knowledge-reliability-mastery` (1 type), `labs/trace-a-request` (1 type) |
-| `architecture-requires-diagram` | 3 | `architecture/contact-system`, `architecture/data-flow`, `architecture/state-management` |
-| `no-orphan-articles` | 2 | `features/terminal`, `technologies/xterm` |
+| Rule                              | Count | Articles                                                                                                                                                                                                                                                                                                                                                                            |
+| --------------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `inline-citation-density`       | 43    | All 43 articles — every single one needs ≥3 external URLs woven into the body text                                                                                                                                                                                                                                                                                                |
+| `minimum-word-count`            | 8     | `architecture/app-registry` (1366/1500), `architecture/contact-system` (1216/1500), `architecture/data-flow` (1262/1500), `architecture/state-management` (1350/1500), `concepts/executable-quality-gates` (778/1000), `cs-fundamentals/graph-validation` (874/1000), `features/knowledge-reliability-mastery` (595/600), `labs/repair-a-knowledge-graph` (644/800) |
+| `technology-coverage`           | 5     | Missing articles:`technologies/biome`, `technologies/node`, `technologies/playwright`, `technologies/typescript`, `technologies/vitest`                                                                                                                                                                                                                                   |
+| `external-reference-minimum`    | 5     | `architecture/data-flow` (1 type), `concepts/pointer-events-and-capture` (1 type), `features/cv-viewer` (1 type), `features/knowledge-reliability-mastery` (1 type), `labs/trace-a-request` (1 type)                                                                                                                                                                      |
+| `architecture-requires-diagram` | 3     | `architecture/contact-system`, `architecture/data-flow`, `architecture/state-management`                                                                                                                                                                                                                                                                                      |
+| `no-orphan-articles`            | 2     | `features/terminal`, `technologies/xterm`                                                                                                                                                                                                                                                                                                                                       |
 
 ### By article (multi-failure overlap)
 
 These articles have 3-4 failures each — fix them holistically rather than making multiple passes:
 
-| Article | Failures |
-|---------|----------|
-| `architecture/data-flow` | inline-citation-density, minimum-word-count, external-reference-minimum, architecture-requires-diagram |
-| `architecture/contact-system` | inline-citation-density, minimum-word-count, architecture-requires-diagram |
-| `architecture/state-management` | inline-citation-density, minimum-word-count, architecture-requires-diagram |
-| `features/knowledge-reliability-mastery` | inline-citation-density, minimum-word-count, external-reference-minimum |
+| Article                                    | Failures                                                                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `architecture/data-flow`                 | inline-citation-density, minimum-word-count, external-reference-minimum, architecture-requires-diagram |
+| `architecture/contact-system`            | inline-citation-density, minimum-word-count, architecture-requires-diagram                             |
+| `architecture/state-management`          | inline-citation-density, minimum-word-count, architecture-requires-diagram                             |
+| `features/knowledge-reliability-mastery` | inline-citation-density, minimum-word-count, external-reference-minimum                                |
 
 ## Execution Plan
 
@@ -71,6 +72,7 @@ Create these files — they don't exist yet:
 - `src/content/knowledge/technologies/vitest.md`
 
 Each must meet ALL audit rules from day one:
+
 - Category: `technology`
 - ≥800 words
 - ≥2 exercises (at least 1 predict or do)
@@ -98,22 +100,26 @@ Fix the 4 articles with 3-4 failures each. For each article:
 Articles and their specific fixes:
 
 **`architecture/data-flow`** (4 fixes):
+
 - Add ≥3 inline citations
 - Expand from 1262 → ≥1500 words
 - Add a second reference type to `externalReferences` (currently all one type)
 - Add `diagramRef` — use `data-flow` node from architecture-data.ts
 
 **`architecture/contact-system`** (3 fixes):
+
 - Add ≥3 inline citations
 - Expand from 1216 → ≥1500 words
 - Add `diagramRef` — use `api-contact` node from architecture-data.ts
 
 **`architecture/state-management`** (3 fixes):
+
 - Add ≥3 inline citations
 - Expand from 1350 → ≥1500 words
 - Add `diagramRef` — use `desktop-store` node from architecture-data.ts
 
 **`features/knowledge-reliability-mastery`** (3 fixes):
+
 - Add ≥3 inline citations
 - Expand from 595 → ≥600 words (just 5 words short — but add real content, don't pad)
 - Add a second reference type to `externalReferences`
@@ -145,6 +151,7 @@ These two are related — the terminal feature uses xterm. Consider cross-refere
 After batches 1-5, approximately 30 articles will still need inline citations added. These only have the `inline-citation-density` warning — their word count, exercises, etc. are fine.
 
 For each article:
+
 1. Read the article
 2. Identify 3-5 factual claims or technical explanations that should cite a source
 3. Search the web for authoritative sources (official docs, MDN, specs, expert posts)
@@ -172,11 +179,13 @@ The full list (excluding articles already fixed in batches 1-5):
 **Right way:** Find the claim, find the source, link at the point of assertion.
 
 Before:
+
 ```markdown
 SolidJS uses fine-grained reactivity to avoid virtual DOM diffing.
 ```
 
 After:
+
 ```markdown
 SolidJS uses [fine-grained reactivity](https://www.solidjs.com/guides/reactivity) to avoid
 [virtual DOM diffing](https://svelte.dev/blog/virtual-dom-is-pure-overhead), tracking
@@ -189,11 +198,11 @@ The link supports the claim at the exact point it's made. A reader can click to 
 
 The 3 architecture articles missing `diagramRef` need to point to valid node IDs in `src/components/desktop/apps/architecture-explorer/architecture-data.ts`. Likely mappings:
 
-| Article | Suggested diagramRef |
-|---------|---------------------|
-| `architecture/contact-system` | `api-contact` |
-| `architecture/data-flow` | `data-flow` |
-| `architecture/state-management` | `desktop-store` |
+| Article                           | Suggested diagramRef |
+| --------------------------------- | -------------------- |
+| `architecture/contact-system`   | `api-contact`      |
+| `architecture/data-flow`        | `data-flow`        |
+| `architecture/state-management` | `desktop-store`    |
 
 Verify these exist in architecture-data.ts before using them.
 

@@ -74,7 +74,7 @@ Understanding *why* these lines are necessary — and what happens without them 
 
 ## How JavaScript Memory Works
 
-JavaScript manages memory automatically. You allocate by creating objects (`{}`), arrays (`[]`), closures, DOM nodes — and the engine decides when to free them. There's no `malloc`/`free`, no `delete` keyword for memory (JavaScript's `delete` removes object properties, it doesn't free memory).
+[JavaScript manages memory automatically](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_management). You allocate by creating objects (`{}`), arrays (`[]`), closures, DOM nodes — and the engine decides when to free them. There's no `malloc`/`free`, no `delete` keyword for memory (JavaScript's `delete` removes object properties, it doesn't free memory).
 
 The lifecycle is:
 1. **Allocate** — creating a value reserves memory
@@ -255,7 +255,7 @@ const metrics = new WeakMap<HTMLElement, { dragCount: number }>();
 
 ## The onCleanup Pattern
 
-SolidJS's `onCleanup()` is the framework-level solution to memory management in reactive components. It runs when the current reactive scope is disposed — which happens when a component unmounts, an effect re-runs (cleaning up the previous run), or a conditional branch changes.
+SolidJS's [`onCleanup()`](https://docs.solidjs.com/reference/lifecycle/on-cleanup) is the framework-level solution to memory management in reactive components. It runs when the current reactive scope is disposed — which happens when a component unmounts, an effect re-runs (cleaning up the previous run), or a conditional branch changes.
 
 ```typescript
 // TerminalApp.tsx — the critical cleanup
@@ -266,7 +266,7 @@ onCleanup(() => {
 });
 ```
 
-The pattern: every `onMount` that creates external resources needs a corresponding `onCleanup` that destroys them. Every `addEventListener` needs a `removeEventListener`. Every `setInterval` needs a `clearInterval`. This isn't SolidJS-specific — React has `useEffect` cleanup returns, Vue has `onUnmounted`, Svelte has `onDestroy`. The principle is universal: **components must clean up after themselves because the garbage collector can't know about external resource registrations**.
+The pattern: every `onMount` that creates external resources needs a corresponding `onCleanup` that destroys them. Every `addEventListener` needs a `removeEventListener`. Every `setInterval` needs a `clearInterval`. This isn't SolidJS-specific — React has `useEffect` cleanup returns, Vue has `onUnmounted`, [Svelte has `onDestroy`](https://svelte.dev/docs/svelte/legacy-lifecycle-hooks). The principle is universal: **components must clean up after themselves because the garbage collector can't know about external resource registrations**.
 
 ## Deeper Rabbit Holes
 

@@ -26,6 +26,8 @@ externalReferences:
   - title: "SolidJS lazy() and Suspense"
     url: "https://docs.solidjs.com/reference/component-apis/lazy"
     type: docs
+module: extensibility
+moduleOrder: 3
 estimatedMinutes: 12
 prerequisites:
   - concepts/lazy-loading-and-code-splitting
@@ -50,7 +52,7 @@ exercises:
 
 ## Why Should I Care?
 
-The Terminal is the most architecturally interesting feature in the project. It bridges the gap between a real terminal emulator (xterm.js renders a GPU-accelerated canvas, processes ANSI escape codes, handles cursor positioning) and a simple REPL (commands are JavaScript functions, not spawned processes). Understanding how it works teaches you about command dispatch patterns, keyboard event routing, the terminal abstraction model, and why lazy loading is non-negotiable for heavy dependencies.
+The Terminal is the most architecturally interesting feature in the project. It bridges the gap between a real terminal emulator ([xterm.js](https://xtermjs.org/) renders a GPU-accelerated canvas, processes ANSI escape codes, handles cursor positioning) and a simple REPL (commands are JavaScript functions, not spawned processes). Understanding how it works teaches you about [command dispatch patterns](https://refactoring.guru/design-patterns/command), keyboard event routing, the terminal abstraction model, and why [lazy loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading) is non-negotiable for heavy dependencies.
 
 ## Command Handler Architecture
 

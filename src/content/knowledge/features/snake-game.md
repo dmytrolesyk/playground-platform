@@ -55,7 +55,7 @@ exercises:
 
 ## Why Should I Care?
 
-The Snake game is the cleanest example of **separation of concerns** in the entire project. The game engine is a pure function — `tick(state) → newState` — with zero DOM, zero framework, zero side effects. The SolidJS wrapper handles rendering and input. This separation makes the engine trivially testable (22 unit tests, all pure function calls) and reusable in any framework. Understanding this pattern teaches you how to build game logic that doesn't rot when your UI framework changes.
+The Snake game is the cleanest example of **separation of concerns** in the entire project. The game engine is a [pure function](https://en.wikipedia.org/wiki/Pure_function) — `tick(state) → newState` — with zero DOM, zero framework, zero side effects. The SolidJS wrapper handles rendering and input. This separation makes the engine trivially testable (22 unit tests, all pure function calls) and reusable in any framework. Understanding this pattern teaches you how to build game logic that doesn't rot when your UI framework changes.
 
 ## The Two-Layer Architecture
 
@@ -141,7 +141,7 @@ The wrapper handles everything the engine doesn't: canvas rendering, timing, key
 
 ## The Game Loop
 
-The game uses `requestAnimationFrame` with a **variable timestep** — the loop runs at the display's refresh rate (typically 60fps), but game logic only advances when enough time has elapsed:
+The game uses [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) with a **variable timestep** — the loop runs at the display's refresh rate (typically 60fps), but game logic only advances when enough time has elapsed:
 
 ```typescript
 function gameLoop(timestamp: number): void {
@@ -167,7 +167,7 @@ This is not a fixed timestep (where physics runs at a constant rate regardless o
 
 ## Canvas Rendering
 
-The render function is straightforward Canvas 2D API:
+The render function is straightforward [Canvas 2D API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial):
 
 ```typescript
 function renderGame(ctx: CanvasRenderingContext2D, state: GameState): void {

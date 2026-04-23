@@ -66,11 +66,11 @@ Open `src/components/desktop/store/types.ts`. You'll see 66 lines of TypeScript 
 
 Because they catch bugs *before* the code runs. When you write `actions.openWindow(42)` instead of `actions.openWindow('browser')`, TypeScript flags it instantly — `42` isn't a `string`. When you add a new property to `WindowState` but forget to update the `produce()` call in the store, TypeScript shows you exactly where the mismatch is. The type system is a machine-checked specification of how the application's data structures connect.
 
-Understanding type systems — what they can prove, what they can't, and the tradeoffs TypeScript makes — is essential for working in any typed codebase.
+Understanding type systems — what they can prove, what they can't, and the tradeoffs [TypeScript makes](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) — is essential for working in any typed codebase.
 
 ## What Is a Type System?
 
-A type system assigns types to program expressions and enforces rules about how types can interact. Its job: **reject programs that would cause certain errors at runtime, without running the program**.
+A [type system](https://www.typescriptlang.org/docs/handbook/2/types-from-types.html) assigns types to program expressions and enforces rules about how types can interact. Its job: **reject programs that would cause certain errors at runtime, without running the program**.
 
 ```mermaid
 flowchart LR
@@ -99,7 +99,7 @@ The fundamental divide in type system design:
 
 **Nominal typing** (Java, C#, Rust): Two types are compatible only if they have the same *name* (or an explicit inheritance/implementation relationship). Even if `WindowState` and `AppConfig` have identical fields, they're incompatible unless one explicitly extends the other.
 
-**Structural typing** (TypeScript, Go interfaces): Two types are compatible if they have the same *shape* — the same properties with compatible types. If an object has `id: string`, `title: string`, and all other required fields of `AppRegistryEntry`, it IS an `AppRegistryEntry` — no `implements` keyword needed.
+**[Structural typing](https://www.typescriptlang.org/docs/handbook/type-compatibility.html)** (TypeScript, Go interfaces): Two types are compatible if they have the same *shape* — the same properties with compatible types. If an object has `id: string`, `title: string`, and all other required fields of `AppRegistryEntry`, it IS an `AppRegistryEntry` — no `implements` keyword needed.
 
 ```typescript
 // These are structurally compatible in TypeScript

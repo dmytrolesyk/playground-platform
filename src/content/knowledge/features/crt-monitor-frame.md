@@ -57,7 +57,7 @@ The CRT monitor frame is the most visually complex component in the project, yet
 
 ## How Real CRT Displays Worked
 
-A CRT (Cathode Ray Tube) display fires an electron beam at a phosphor-coated glass screen. The beam sweeps left-to-right, top-to-bottom, row by row (hence "scanlines"). Three electron guns (red, green, blue) aim through a shadow mask to hit the correct phosphor dots. The glass front curves outward, and the beam is brighter in the center than at the edges (causing a natural vignette effect).
+A [CRT (Cathode Ray Tube)](https://en.wikipedia.org/wiki/Cathode-ray_tube) display fires an electron beam at a phosphor-coated glass screen. The beam sweeps left-to-right, top-to-bottom, row by row (hence "scanlines"). Three electron guns (red, green, blue) aim through a shadow mask to hit the correct phosphor dots. The glass front curves outward, and the beam is brighter in the center than at the edges (causing a natural vignette effect).
 
 ```mermaid
 flowchart LR
@@ -147,7 +147,7 @@ The offset positions (`40% 15%`, `65% 25%`) create an asymmetric reflection that
 
 ### Vignette — Radial Gradient Darkening
 
-CRT brightness falls off toward the edges because the electron beam travels farther to reach the corners. A radial gradient from transparent to dark creates this:
+CRT brightness falls off toward the edges because the electron beam travels farther to reach the corners. A [`radial-gradient`](https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/radial-gradient) from transparent to dark creates this:
 
 ```css
 .crt-vignette {
@@ -193,7 +193,7 @@ The bezel (dark frame around the screen) uses deep `inset box-shadow` to appear 
 
 ## `pointer-events: none` — The Critical Property
 
-Every overlay (`crt-glass`, `crt-scanlines`, `crt-vignette`) sets `pointer-events: none`. Without this, the overlays would intercept all mouse events — you couldn't click on windows, drag title bars, or interact with any desktop element. The desktop content sits in `crt-screen` with a lower `z-index`, but `pointer-events: none` makes the higher-z overlays transparent to interaction.
+Every overlay (`crt-glass`, `crt-scanlines`, `crt-vignette`) sets [`pointer-events: none`](https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events). Without this, the overlays would intercept all mouse events — you couldn't click on windows, drag title bars, or interact with any desktop element. The desktop content sits in `crt-screen` with a lower `z-index`, but `pointer-events: none` makes the higher-z overlays transparent to interaction.
 
 ## Performance Analysis
 

@@ -60,7 +60,7 @@ exercises:
 
 Adding a new app to this desktop takes exactly two steps: create a component and call `registerApp()`. That's it — the desktop icon appears, the start menu lists it, the terminal's `open` command works, and the window manager renders it. No other files change.
 
-This zero-friction extensibility comes from the **registry pattern** — a classic technique used by VS Code (extensions), webpack (plugins), Express (middleware), and operating systems (device drivers). Understanding it teaches you the Open/Closed Principle in practice: the system is open for extension but closed for modification.
+This zero-friction extensibility comes from the **registry pattern** — a classic technique used by [VS Code extensions](https://code.visualstudio.com/api), webpack (plugins), Express (middleware), and operating systems (device drivers). Understanding it teaches you the [Open/Closed Principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) in practice: the system is open for extension but closed for modification.
 
 ## The Problem: Shotgun Surgery
 
@@ -287,3 +287,13 @@ registerApp({
 | Lazy loading is transparent | The manifest file is the one place that technically violates "no other files change" |
 
 For the current scale (8 apps), the manifest approach works perfectly. If the project grows to 20+ apps, switching to self-registering modules or Vite's `import.meta.glob()` for auto-discovery would be a natural evolution.
+
+## Why Not a Plugin System?
+
+A more sophisticated approach would let apps declare themselves via a plugin interface — each app module exports a manifest, and the system discovers them at build time. This is how [Astro integrations](https://docs.astro.build/en/guides/integrations-guide/) work, and how VS Code extensions register commands and views. The registry pattern is simpler and sufficient for now because:
+
+1. **All apps are first-party** — there are no third-party app developers, so the coordination cost of a plugin protocol isn't justified.
+2. **The manifest is small** — each app registration is ~15 lines. Eight apps means ~120 lines total. This is readable at a glance.
+3. **Type safety is good enough** — the TypeScript interface for `AppManifest` catches structural errors at compile time, even if app ID typos aren't caught until runtime.
+
+If the project ever supports user-contributed apps or loads app definitions from a remote source, the [inversion of control](/learn/concepts/inversion-of-control) foundation is already in place — the registry just needs a different input mechanism.

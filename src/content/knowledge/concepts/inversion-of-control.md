@@ -53,7 +53,7 @@ exercises:
 
 ## Why Should I Care?
 
-Inversion of Control (IoC) is the design principle that makes the app registry work. Without it, adding a new app would require editing 4-5 files across the codebase. With it, you create a component, call `registerApp()`, and everything works. Understanding IoC explains not just this project's extensibility, but the architecture of frameworks (Express middleware, React hooks), plugin systems (VS Code extensions, webpack plugins), and why "the framework calls you" instead of "you call the framework."
+Inversion of Control (IoC) is the design principle that makes the app registry work. Without it, adding a new app would require editing 4-5 files across the codebase. With it, you create a component, call `registerApp()`, and everything works. Understanding [IoC](https://martinfowler.com/bliki/InversionOfControl.html) explains not just this project's extensibility, but the architecture of frameworks ([Express middleware](https://expressjs.com/en/guide/using-middleware.html), React hooks), plugin systems ([VS Code extensions](https://code.visualstudio.com/api), webpack plugins), and why "the framework calls you" instead of "you call the framework."
 
 ## The Traditional Way: Direct Control
 
@@ -114,7 +114,7 @@ These terms are often confused. They're related but distinct:
 
 ### Inversion of Control (IoC) — The Principle
 
-IoC is the *direction* of dependency. Instead of your code calling library functions, the framework calls your code. This is sometimes called the "Hollywood Principle": *Don't call us, we'll call you.*
+IoC is the *direction* of dependency. Instead of your code calling library functions, the framework calls your code. This is sometimes called the ["Hollywood Principle"](https://en.wikipedia.org/wiki/Hollywood_principle): *Don't call us, we'll call you.*
 
 In this project: apps don't call `desktop.addApp(this)`. The desktop calls `APP_REGISTRY[id].component` when it needs to render an app. The registry is the intermediary that inverts the dependency direction.
 

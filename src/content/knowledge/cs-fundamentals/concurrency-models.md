@@ -62,7 +62,7 @@ exercises:
 
 Drag a window across this desktop while the terminal loads xterm.js in the background. The window follows your cursor smoothly at 60fps. How? JavaScript is single-threaded — it can only do one thing at a time. If it's busy loading a module, how can it also track your mouse and update the window position?
 
-The answer involves multiple concurrency mechanisms working together: the event loop scheduling JavaScript work in slices, the compositor thread moving GPU layers independently of JavaScript, and `requestAnimationFrame` synchronizing updates with the display refresh. Understanding these concurrency models explains why some UI interactions stay smooth under load and others freeze — and how to architect code that stays responsive.
+The answer involves multiple concurrency mechanisms working together: the [event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop) scheduling JavaScript work in slices, the [compositor thread](https://developer.chrome.com/blog/inside-browser-part3) moving GPU layers independently of JavaScript, and [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) synchronizing updates with the display refresh. Understanding these concurrency models explains why some UI interactions stay smooth under load and others freeze — and how to architect code that stays responsive.
 
 ## Concurrency vs. Parallelism
 

@@ -39,6 +39,10 @@ externalReferences:
   - title: "innerHTML and XSS Security"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
     type: docs
+  - title: "Islands Architecture — Jason Miller"
+    url: "https://jasonformat.com/islands-architecture/"
+    type: article
+diagramRef: content-collections
 module: foundation
 moduleOrder: 4
 estimatedMinutes: 15
@@ -67,7 +71,7 @@ exercises:
 
 The most common question about this codebase is: "How does the CV content get from Markdown files into the Win95 browser window?" The answer reveals a design pattern that eliminates an entire class of problems — runtime Markdown parsing, client-side bundle bloat, XSS vulnerabilities from dynamic content, and loading-state complexity.
 
-The same pipeline powers both the CV viewer and the knowledge base, so understanding it once explains two features.
+The same pipeline powers both the CV viewer and the knowledge base, so understanding it once explains two features. This is an instance of the [static-first architecture](https://docs.astro.build/en/basics/rendering/) that Astro promotes — do as much work as possible at build time, ship minimal JavaScript to the client.
 
 ## The Complete Pipeline
 
@@ -113,7 +117,7 @@ Each CV section is a separate file with two required frontmatter fields: `title`
 
 ### Stage 2: Validation (Build Time)
 
-Astro's content collections validate every file against a Zod schema defined in `src/content.config.ts`:
+Astro's [content collections](https://docs.astro.build/en/guides/content-collections/) validate every file against a [Zod schema](https://zod.dev/) defined in `src/content.config.ts`:
 
 ```typescript
 const cv = defineCollection({
@@ -178,7 +182,7 @@ This is **zero runtime Markdown processing**. The client receives pre-rendered H
 
 ## innerHTML Security: Why It's Safe Here
 
-Using `innerHTML` is normally a red flag for XSS (Cross-Site Scripting). But in this project, it's safe because:
+Using [`innerHTML`](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) is normally a red flag for [XSS (Cross-Site Scripting)](https://owasp.org/www-community/attacks/xss/). But in this project, it's safe because:
 
 1. **The HTML is generated at build time** — Astro's Markdown renderer produces the HTML. No user input is involved.
 2. **The source is the developer's own Markdown files** — committed to the repository, code-reviewed.
@@ -294,3 +298,9 @@ A headless CMS (Contentful, Sanity, Strapi) would work but adds complexity:
 | **Offline editing** | Always works | Requires internet |
 
 For a personal CV site with one author, Git-tracked Markdown files are simpler, faster, and more reliable than an external CMS. The tradeoff: no web-based editing interface.
+
+## Key Takeaway
+
+The data flow architecture follows a principle that applies far beyond this codebase: **push work to the earliest possible stage**. Validation at build time eliminates runtime errors. Rendering at build time eliminates client-side processing. Serializing as JSON at build time eliminates API calls. Each stage produces artifacts consumed by the next, creating a strict forward pipeline where errors surface as early as possible — when they're cheapest to fix.
+
+This pattern appears in many production systems: static site generators pre-render HTML, CDNs cache at the edge, and compiled languages catch errors before deployment. The common thread is the same insight — every problem caught earlier is a problem the user never encounters. In this codebase, a Zod validation failure at build time means no one ever sees a broken CV section, a missing knowledge article title, or a malformed frontmatter field in production. The [fail-fast principle](https://www.martinfowler.com/ieeeSoftware/failFast.pdf) applies to content pipelines just as much as it applies to code — surfacing errors early reduces the blast radius of every mistake. When a Zod schema rejects a malformed frontmatter field during `pnpm build`, the developer sees the error immediately in their terminal, with the exact file and field that failed. Compare this to the alternative: a runtime error in production that only surfaces when a user navigates to that specific content section, possibly weeks after the bad commit was deployed.

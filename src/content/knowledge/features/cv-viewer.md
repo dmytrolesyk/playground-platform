@@ -28,6 +28,9 @@ externalReferences:
   - title: "SolidJS onMount Lifecycle"
     url: "https://docs.solidjs.com/reference/lifecycle/on-mount"
     type: docs
+  - title: "Astro GitHub Repository"
+    url: "https://github.com/withastro/astro"
+    type: repo
 module: foundation
 moduleOrder: 5
 estimatedMinutes: 10
@@ -54,7 +57,7 @@ exercises:
 
 ## Why Should I Care?
 
-The CV viewer looks like the simplest component in the project — it just shows some HTML in a scrollable window. But it demonstrates a powerful pattern: **build-time content serialization**. The CV Markdown never touches the client as Markdown. It's rendered to HTML at build time, serialized as JSON into the page, and read by a SolidJS component that does nothing but set `innerHTML`. Zero runtime content processing, zero Markdown parser in the bundle, zero cost to the user.
+The CV viewer looks like the simplest component in the project — it just shows some HTML in a scrollable window. But it demonstrates a powerful pattern: **build-time content serialization**. The CV Markdown never touches the client as Markdown. It's rendered to HTML at build time by [Astro's content collections](https://docs.astro.build/en/guides/content-collections/), serialized as JSON into the page, and read by a [SolidJS](https://www.solidjs.com/) component that does nothing but set [`innerHTML`](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML). Zero runtime content processing, zero Markdown parser in the bundle, zero cost to the user.
 
 ## The Build-Time Serialization Pipeline
 

@@ -59,7 +59,7 @@ The choice between signals and virtual DOM isn't just a framework preference —
 
 ## The Virtual DOM Approach (React)
 
-React re-runs your component function on every state change, producing a new virtual DOM tree. It then **diffs** the old and new trees to figure out what actually changed in the real DOM:
+[React](https://react.dev/) re-runs your component function on every state change, producing a new virtual DOM tree. It then **[diffs](https://legacy.reactjs.org/docs/reconciliation.html)** the old and new trees to figure out what actually changed in the real DOM:
 
 ```mermaid
 flowchart LR
@@ -97,7 +97,7 @@ React's reconciler walks the entire subtree, comparing the new VDOM to the old. 
 
 ## The Signals Approach (SolidJS)
 
-SolidJS runs your component function **once** — at mount time. Each reactive expression in JSX becomes a direct DOM subscription. When a signal changes, only the subscribed DOM nodes update:
+[SolidJS](https://www.solidjs.com/guides/reactivity) runs your component function **once** — at mount time. Each reactive expression in JSX becomes a direct DOM subscription. When a signal changes, only the subscribed DOM nodes update:
 
 ```mermaid
 flowchart LR

@@ -66,10 +66,10 @@ This surgical precision isn't manual optimization — it's the default behavior 
 
 ## The Core Mechanism
 
-In fine-grained reactivity, the system tracks **which specific values** each piece of UI depends on, and updates **only those pieces** when the values change. No tree walking, no diffing, no reconciliation.
+In [fine-grained reactivity](https://www.solidjs.com/guides/reactivity), the system tracks **which specific values** each piece of UI depends on, and updates **only those pieces** when the values change. No tree walking, no diffing, no reconciliation.
 
 Compare to coarse-grained approaches:
-- **React**: "This component's state changed → re-run the entire component function → diff the old and new virtual DOM → patch the real DOM"
+- **React**: "This component's state changed → re-run the entire component function → diff the old and new [virtual DOM](https://legacy.reactjs.org/docs/faq-internals.html) → patch the real DOM"
 - **SolidJS**: "This signal changed → run only the specific DOM update expression that reads it"
 
 ```mermaid
@@ -87,7 +87,7 @@ flowchart LR
 
 ## Signals: The Foundation
 
-A signal is a reactive value with automatic dependency tracking:
+A [signal](https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p) is a reactive value with automatic dependency tracking:
 
 ```typescript
 const [count, setCount] = createSignal(0);

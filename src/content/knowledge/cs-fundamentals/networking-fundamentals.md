@@ -123,7 +123,7 @@ For HTTPS (which Railway enforces), a TLS handshake follows the TCP connection:
 3. **Certificate verification**: Browser checks the certificate against its trusted CA (Certificate Authority) list
 4. **Key exchange**: Both sides derive shared encryption keys using Diffie-Hellman or similar
 
-After TLS, all data is encrypted. An attacker sniffing the network sees encrypted bytes, not the JSON body with the sender's email address. This is especially important for the contact form — it transmits names and email addresses.
+After [TLS](https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security), all data is encrypted. An attacker sniffing the network sees encrypted bytes, not the JSON body with the sender's email address. This is especially important for the contact form — it transmits names and email addresses.
 
 ### Step 4: HTTP — The Application Protocol
 

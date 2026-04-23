@@ -162,3 +162,21 @@ The knowledge audit applies that engineering habit to documentation. Documentati
 The dangerous failure mode is confidence without evidence. A feature doc says every new article has prerequisites, exercises, and graph links. The author believes it. The reviewer skims it. The site builds because every field has the right type. But the Architecture Explorer points to an old slug and the learner gets a dead end.
 
 Executable gates do not replace judgment. They make the boring promises enforceable so judgment can focus on teaching quality, architecture fit, and whether the article actually helps someone think better.
+
+## How to Build Your Own Quality Gate
+
+The pattern is transferable to any project that maintains structured content:
+
+1. **Define the contract** — What must be true about every piece of content? In this project: every article has exercises, prerequisites resolve, diagram refs point to real nodes. Write these as code, not comments.
+2. **Make it a pure function** — Each rule takes structured input and returns a list of issues. No file I/O, no side effects in the rule itself. Loading data and reporting results are separate concerns.
+3. **Wire it into CI** — The gate only works if it runs automatically. [GitHub Actions](https://docs.github.com/en/actions) or any CI system can run `pnpm verify:knowledge` as a required check on every PR.
+4. **Distinguish severity** — Some violations are errors (broken references that crash the UI) and some are warnings (style issues that degrade quality). Only errors should block merges; warnings should be tracked and fixed on a cadence.
+5. **Keep the audit fast** — The knowledge audit runs in under a second. If a quality gate takes minutes, developers will skip it. Pure functions over in-memory data are fast; spawning browsers or calling APIs is slow.
+
+The broader insight: [executable specifications](https://martinfowler.com/bliki/SpecificationByExample.html) beat written guidelines because they can't be accidentally ignored. Every team has a document that says "always do X" and nobody does X. Turn X into a test and it gets done.
+
+## Connection to Testing Philosophy
+
+Quality gates and test suites serve the same purpose: they make promises verifiable. The difference is scope. A unit test verifies one function's behavior. An [E2E test](https://playwright.dev/docs/intro) verifies a user journey. A quality gate verifies a structural invariant across an entire content corpus.
+
+This project uses all three: [Vitest](https://vitest.dev/) for audit rule logic, Playwright for visual and interaction testing, and the knowledge audit for cross-article graph integrity. Each layer catches what the others can't — unit tests don't verify broken prerequisite links, and graph audits don't verify that a window renders correctly.

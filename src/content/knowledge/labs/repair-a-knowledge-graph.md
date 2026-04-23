@@ -197,3 +197,15 @@ You repaired four graph failures:
 4. A broken architecture edge endpoint
 
 The pattern is the same every time: read the issue code, identify the graph relation it describes, repair the source of truth, and rerun the audit. That is the daily workflow this reliability layer is designed to teach.
+
+## Reflection Questions
+
+After completing this lab, consider:
+
+1. **How did the audit messages guide your fix?** Each [audit rule](https://martinfowler.com/bliki/SelfTestingCode.html) names the specific relationship that's broken — not just "something is wrong." The `broken-reference` code tells you it's a content link. The `bad-diagram-ref` code tells you it's an architecture node. This specificity makes the fix obvious.
+
+2. **What would happen without the audit?** The broken prerequisite would silently lead to a 404 on `/learn`. The missing diagram node would cause the Architecture Explorer to render an edge to nowhere. The cycle would cause infinite recursion in any tool that traverses prerequisites. These failures are invisible until a user encounters them.
+
+3. **How does this relate to [referential integrity](https://www.postgresql.org/docs/current/tutorial-fk.html) in databases?** A foreign key constraint prevents deleting a row that other rows reference. The knowledge audit does the same thing for Markdown files — you can't rename an article without updating every reference to it. The enforcement mechanism is different (CI pipeline vs database engine), but the principle is identical.
+
+4. **Could these checks run in an editor?** Yes — the audit rules are [pure functions](https://en.wikipedia.org/wiki/Pure_function) that take data in and return issues. A VS Code extension could run them on save and show inline diagnostics. The pipeline design (load → validate → report) makes this straightforward because the rules have no side effects.

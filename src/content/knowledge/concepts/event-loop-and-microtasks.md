@@ -63,7 +63,7 @@ The event loop is the execution model of the browser. Everything — user input,
 
 ## The Mental Model
 
-JavaScript is single-threaded: only one piece of code runs at a time. The event loop is the mechanism that decides *which* piece of code runs next. Think of it as a conveyor belt at an airport — items (tasks) get placed on the belt, and a single worker (the JS engine) processes them one at a time.
+JavaScript is [single-threaded](https://developer.mozilla.org/en-US/docs/Glossary/Thread): only one piece of code runs at a time. The [event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop) is the mechanism that decides *which* piece of code runs next. Think of it as a conveyor belt at an airport — items (tasks) get placed on the belt, and a single worker (the JS engine) processes them one at a time.
 
 ```mermaid
 flowchart TD

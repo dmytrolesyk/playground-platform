@@ -59,11 +59,11 @@ exercises:
 
 JavaScript Proxies are the mechanism that makes SolidJS stores feel like plain objects while secretly tracking every property access. When you write `state.windows['browser-1'].x` in a component, you're not reading from a normal object — you're triggering a Proxy trap that subscribes that specific expression to future changes of that exact property path. Without Proxies, fine-grained reactivity on nested objects would require either manual subscription calls or a completely different API.
 
-Understanding Proxies explains why SolidJS stores track at the property level, why Vue 3 is faster than Vue 2, and why certain JavaScript patterns (like spreading a store into a plain object) silently break reactivity.
+Understanding Proxies explains why [SolidJS stores](https://docs.solidjs.com/concepts/stores) track at the property level, why Vue 3 is faster than Vue 2, and why certain JavaScript patterns (like spreading a store into a plain object) silently break reactivity.
 
 ## The Mental Model
 
-Think of a Proxy as a **transparent wrapper** around an object. You interact with it like a normal object — read properties, set values, delete keys — but every operation passes through customizable *trap handlers* that can intercept, modify, or log the operation before it reaches the real object.
+Think of a [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) as a **transparent wrapper** around an object. You interact with it like a normal object — read properties, set values, delete keys — but every operation passes through customizable *[trap handlers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#terminology)* that can intercept, modify, or log the operation before it reaches the real object.
 
 ```mermaid
 flowchart LR
@@ -97,7 +97,7 @@ proxy.x;       // Logs: "Reading x" → returns 100
 proxy.y = 300; // Logs: "Writing y = 300" → sets data.y to 300
 ```
 
-The `Reflect` API mirrors each Proxy trap, providing the default behavior. This is important: you almost always want to call `Reflect.get` / `Reflect.set` inside your traps to preserve normal object semantics while adding your custom logic.
+The [`Reflect`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect) API mirrors each Proxy trap, providing the default behavior. This is important: you almost always want to call `Reflect.get` / `Reflect.set` inside your traps to preserve normal object semantics while adding your custom logic.
 
 ### Available Traps
 
