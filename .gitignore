@@ -32,6 +32,7 @@ test-results/
 
 # Generated artifacts
 src/data/knowledge-graph.json
+src/data/generated-diagrams/
 
 # Review flags (runtime data, not committed)
 src/data/review-flags/*.json

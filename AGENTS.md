@@ -94,6 +94,18 @@ When `verify:knowledge` fails with these codes, fix the content — do not suppr
 ### Knowledge graph (generated artifact)
 `src/data/knowledge-graph.json` is generated at build time by `scripts/build-knowledge-graph.ts`. It is a derived artifact — never edit it manually. It is regenerated on every build via the `prebuild` script. If you change any knowledge article frontmatter, architecture-data.ts, or modules.ts, the graph JSON updates automatically on next build.
 
+### Generated diagrams (derived artifact)
+`src/data/generated-diagrams/*.mmd` are Mermaid files auto-generated from `knowledge-graph.json` by `scripts/generate-diagrams.ts`. They are derived artifacts — never edit them manually. They are regenerated on every build via the `prebuild` script. Includes: module prerequisite flowchart, per-module article DAGs, technology usage map, category distribution pie chart.
+
+### Diagram tool selection
+
+- **Mermaid** (default): Use for inline diagrams in article bodies. Flowcharts, sequence diagrams, state diagrams, simple class diagrams. Rendered client-side, zero build deps.
+- **D2**: Use for standalone architectural diagrams that need precise layout and nested containers. Files live in `diagrams/src/`, compiled to SVG by `pnpm build:diagrams`. Requires `d2` CLI (`brew install d2`).
+- **Cytoscape.js**: The interactive knowledge graph at /learn/graph. Not used in articles.
+- **Generated diagrams**: Auto-generated from knowledge-graph.json at build time. Found in `src/data/generated-diagrams/`. Never edit manually — they're regenerated on build.
+
+When creating articles: use Mermaid for inline diagrams. Do not create D2 diagrams unless building standalone architectural visualizations.
+
 ### Knowledge engine package
 The reusable knowledge engine lives in `packages/knowledge-engine/`. It contains:
 - Schema types (`@playground/knowledge-engine/schema`)
