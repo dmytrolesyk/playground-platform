@@ -32,6 +32,18 @@ externalReferences:
   - title: "The Pixel Pipeline — Chrome Developers"
     url: "https://developer.chrome.com/docs/devtools/performance"
     type: docs
+  - title: "Rendering — developer.chrome.com"
+    url: "https://developer.chrome.com/docs/devtools/performance/rendering"
+    type: article
+  - title: "CSS Object Model — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model"
+    type: docs
+  - title: "transform — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/transform"
+    type: docs
+  - title: "opacity — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/opacity"
+    type: docs
 module: window-manager
 moduleOrder: 4
 estimatedMinutes: 20

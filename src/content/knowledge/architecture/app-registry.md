@@ -33,6 +33,9 @@ externalReferences:
   - title: "Plugin Architecture — Patterns for Extensibility"
     url: "https://www.youtube.com/watch?v=iCE1bDoit9Q"
     type: talk
+  - title: "Integrations guide — Astro Docs"
+    url: "https://docs.astro.build/en/guides/integrations-guide/"
+    type: docs
 module: extensibility
 moduleOrder: 1
 estimatedMinutes: 15

@@ -30,6 +30,15 @@ externalReferences:
   - title: "XP.css — Windows XP-style CSS (98.css successor)"
     url: "https://botoxparty.github.io/XP.css/"
     type: docs
+  - title: "border-style — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/border-style"
+    type: docs
+  - title: "box-shadow — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow"
+    type: docs
+  - title: "Semantics — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Semantics#semantics_in_html"
+    type: docs
 module: aesthetics-performance
 moduleOrder: 1
 estimatedMinutes: 10

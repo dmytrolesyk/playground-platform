@@ -34,6 +34,9 @@ externalReferences:
   - title: "MDN — Fetch API"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
     type: docs
+  - title: "Transport Layer Security — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security"
+    type: docs
 module: full-stack
 moduleOrder: 3
 estimatedMinutes: 18

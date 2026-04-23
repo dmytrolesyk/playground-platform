@@ -27,6 +27,12 @@ externalReferences:
   - title: "High Performance Animations — Google Web Fundamentals"
     url: "https://web.dev/animations-guide/"
     type: docs
+  - title: "Rendering — developer.chrome.com"
+    url: "https://developer.chrome.com/docs/devtools/performance/rendering"
+    type: article
+  - title: "Layers — developer.chrome.com"
+    url: "https://developer.chrome.com/docs/devtools/layers"
+    type: article
 prerequisites:
   - concepts/compositor-pattern
   - concepts/browser-rendering-pipeline

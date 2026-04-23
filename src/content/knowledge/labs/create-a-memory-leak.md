@@ -27,6 +27,12 @@ externalReferences:
   - title: "V8 Blog — Trash Talk: The Orinoco Garbage Collector"
     url: "https://v8.dev/blog/trash-talk"
     type: article
+  - title: "setInterval — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval"
+    type: docs
+  - title: "Memory management — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_management"
+    type: docs
 prerequisites:
   - cs-fundamentals/memory-management-and-gc
   - concepts/event-loop-and-microtasks

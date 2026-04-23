@@ -32,6 +32,12 @@ externalReferences:
   - title: "Understanding Progressive Enhancement — Aaron Gustafson"
     url: "https://alistapart.com/article/understandingprogressiveenhancement/"
     type: article
+  - title: "ARIA — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA"
+    type: docs
+  - title: "Rendering — Astro Docs"
+    url: "https://docs.astro.build/en/basics/rendering/"
+    type: docs
 module: foundation
 moduleOrder: 2
 estimatedMinutes: 10

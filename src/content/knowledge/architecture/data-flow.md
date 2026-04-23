@@ -42,6 +42,15 @@ externalReferences:
   - title: "Islands Architecture — Jason Miller"
     url: "https://jasonformat.com/islands-architecture/"
     type: article
+  - title: "Rendering — Astro Docs"
+    url: "https://docs.astro.build/en/basics/rendering/"
+    type: docs
+  - title: "Xss — owasp.org"
+    url: "https://owasp.org/www-community/attacks/xss/"
+    type: article
+  - title: "FailFast.pdf — martinfowler.com"
+    url: "https://www.martinfowler.com/ieeeSoftware/failFast.pdf"
+    type: article
 diagramRef: content-collections
 module: foundation
 moduleOrder: 4

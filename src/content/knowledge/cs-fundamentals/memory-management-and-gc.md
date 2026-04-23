@@ -33,6 +33,9 @@ externalReferences:
   - title: "SolidJS — Lifecycle (onCleanup)"
     url: "https://docs.solidjs.com/reference/lifecycle/on-cleanup"
     type: docs
+  - title: "Legacy lifecycle hooks — Svelte"
+    url: "https://svelte.dev/docs/svelte/legacy-lifecycle-hooks"
+    type: article
 module: aesthetics-performance
 moduleOrder: 4
 estimatedMinutes: 20

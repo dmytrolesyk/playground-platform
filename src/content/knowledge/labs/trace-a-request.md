@@ -31,6 +31,9 @@ externalReferences:
   - title: "Resend GitHub Repository"
     url: "https://github.com/resend/resend-node"
     type: repo
+  - title: "Endpoints — Astro Docs"
+    url: "https://docs.astro.build/en/guides/endpoints/"
+    type: docs
 prerequisites:
   - architecture/contact-system
   - technologies/resend

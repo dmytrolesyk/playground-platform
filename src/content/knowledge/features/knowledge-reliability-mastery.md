@@ -44,6 +44,12 @@ externalReferences:
   - title: "Spaced Repetition and Learning Science"
     url: "https://www.supermemo.com/en/blog/twenty-rules-of-formulating-knowledge"
     type: article
+  - title: "SelfTestingCode.html — martinfowler.com"
+    url: "https://martinfowler.com/bliki/SelfTestingCode.html"
+    type: article
+  - title: "Progressive Enhancement — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement"
+    type: docs
 diagramRef: "mastery-progress"
 module: learning-system-reliability
 moduleOrder: 3

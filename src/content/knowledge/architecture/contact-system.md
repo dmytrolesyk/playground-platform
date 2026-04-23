@@ -30,6 +30,12 @@ externalReferences:
   - title: "SPF, DKIM, DMARC — Email Authentication"
     url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
     type: article
+  - title: "On demand rendering — Astro Docs"
+    url: "https://docs.astro.build/en/guides/on-demand-rendering/"
+    type: docs
+  - title: "Node — Resend"
+    url: "https://resend.com/docs/sdks/node"
+    type: docs
 diagramRef: api-contact
 module: full-stack
 moduleOrder: 1

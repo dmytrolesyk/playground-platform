@@ -40,6 +40,9 @@ externalReferences:
   - title: "HTML Living Standard — Event Loops"
     url: "https://html.spec.whatwg.org/multipage/webappapis.html#event-loops"
     type: docs
+  - title: "Thread — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Thread"
+    type: docs
 module: reactivity
 moduleOrder: 6
 estimatedMinutes: 20

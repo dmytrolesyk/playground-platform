@@ -29,6 +29,12 @@ externalReferences:
   - title: "98.css — A Design System for Building Faithful Recreations of Old UIs"
     url: "https://jdan.github.io/98.css/"
     type: docs
+  - title: " — SolidJS"
+    url: "https://www.solidjs.com/"
+    type: article
+  - title: "Registry — Refactoring Guru"
+    url: "https://refactoring.guru/design-patterns/registry"
+    type: article
 prerequisites:
   - architecture/app-registry
   - concepts/inversion-of-control

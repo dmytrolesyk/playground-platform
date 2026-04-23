@@ -34,6 +34,12 @@ externalReferences:
   - title: "Structural vs Nominal Typing — TypeScript Deep Dive"
     url: "https://basarat.gitbook.io/typescript/main-1/nominaltyping"
     type: article
+  - title: "Type compatibility.html — TypeScript"
+    url: "https://www.typescriptlang.org/docs/handbook/type-compatibility.html"
+    type: docs
+  - title: "Types from types.html — TypeScript"
+    url: "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"
+    type: docs
 module: extensibility
 moduleOrder: 5
 estimatedMinutes: 16

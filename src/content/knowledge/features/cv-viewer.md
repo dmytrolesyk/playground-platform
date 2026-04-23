@@ -31,6 +31,12 @@ externalReferences:
   - title: "Astro GitHub Repository"
     url: "https://github.com/withastro/astro"
     type: repo
+  - title: " — SolidJS"
+    url: "https://www.solidjs.com/"
+    type: article
+  - title: "innerHTML — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"
+    type: docs
 module: foundation
 moduleOrder: 5
 estimatedMinutes: 10

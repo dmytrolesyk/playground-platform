@@ -39,6 +39,15 @@ externalReferences:
   - title: "Svelte — Rethinking Reactivity"
     url: "https://svelte.dev/blog/svelte-3-rethinking-reactivity"
     type: article
+  - title: "React.dev — react.dev"
+    url: "https://react.dev/"
+    type: article
+  - title: "Reconciliation.html — legacy.reactjs.org"
+    url: "https://legacy.reactjs.org/docs/reconciliation.html"
+    type: article
+  - title: "Reactivity — SolidJS"
+    url: "https://www.solidjs.com/guides/reactivity"
+    type: article
 module: reactivity
 moduleOrder: 2
 estimatedMinutes: 15

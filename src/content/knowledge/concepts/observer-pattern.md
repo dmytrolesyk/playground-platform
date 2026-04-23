@@ -42,6 +42,12 @@ externalReferences:
   - title: "Reactivity with Signals – Ryan Carniato"
     url: "https://www.youtube.com/watch?v=PpMFJMEhbRg"
     type: talk
+  - title: "addEventListener — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener"
+    type: docs
+  - title: "Observable — rxjs.dev"
+    url: "https://rxjs.dev/guide/observable"
+    type: article
 module: reactivity
 moduleOrder: 4
 estimatedMinutes: 15

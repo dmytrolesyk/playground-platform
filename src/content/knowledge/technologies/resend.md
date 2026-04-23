@@ -27,6 +27,9 @@ externalReferences:
   - title: "Email Authentication Explained: SPF, DKIM, and DMARC"
     url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
     type: article
+  - title: "DNS — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/DNS"
+    type: docs
 module: full-stack
 moduleOrder: 2
 estimatedMinutes: 10

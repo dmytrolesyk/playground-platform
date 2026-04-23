@@ -42,6 +42,18 @@ externalReferences:
   - title: "Playwright Visual Comparisons"
     url: "https://playwright.dev/docs/test-snapshots"
     type: docs
+  - title: "Actions — docs.github.com"
+    url: "https://docs.github.com/en/actions"
+    type: repo
+  - title: "SpecificationByExample.html — martinfowler.com"
+    url: "https://martinfowler.com/bliki/SpecificationByExample.html"
+    type: article
+  - title: "Intro — Playwright"
+    url: "https://playwright.dev/docs/intro"
+    type: docs
+  - title: " — Vitest"
+    url: "https://vitest.dev/"
+    type: docs
 diagramRef: "knowledge-audit"
 module: learning-system-reliability
 moduleOrder: 1

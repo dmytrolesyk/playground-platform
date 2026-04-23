@@ -30,6 +30,12 @@ externalReferences:
   - title: "Why Biome? — from Rome to Biome"
     url: "https://biomejs.dev/blog/annoucing-biome/"
     type: article
+  - title: "Tree shaking — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking"
+    type: docs
+  - title: "Rules — Biome"
+    url: "https://biomejs.dev/linter/rules/#nursery"
+    type: docs
 module: learning-system-reliability
 moduleOrder: 3
 estimatedMinutes: 12

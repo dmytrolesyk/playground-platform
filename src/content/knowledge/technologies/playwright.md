@@ -39,6 +39,12 @@ externalReferences:
   - title: "Playwright Best Practices"
     url: "https://playwright.dev/docs/best-practices"
     type: article
+  - title: "Trace viewer intro — Playwright"
+    url: "https://playwright.dev/docs/trace-viewer-intro"
+    type: docs
+  - title: "Test webserver — Playwright"
+    url: "https://playwright.dev/docs/test-webserver"
+    type: docs
 module: learning-system-reliability
 moduleOrder: 5
 estimatedMinutes: 15

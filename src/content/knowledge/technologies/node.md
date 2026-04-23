@@ -34,6 +34,21 @@ externalReferences:
   - title: "Node.js ES Modules Documentation"
     url: "https://nodejs.org/api/esm.html"
     type: docs
+  - title: "Zod Documentation"
+    url: "https://zod.dev/?id=zod-enums"
+    type: docs
+  - title: "On demand rendering — Astro Docs"
+    url: "https://docs.astro.build/en/guides/on-demand-rendering/"
+    type: docs
+  - title: "Env and mode — Vite"
+    url: "https://vite.dev/guide/env-and-mode"
+    type: docs
+  - title: "Release Notes — Node.js"
+    url: "https://nodejs.org/en/blog/release/v22.6.0"
+    type: article
+  - title: "nvm-sh/nvm — GitHub"
+    url: "https://github.com/nvm-sh/nvm"
+    type: repo
 module: foundation
 moduleOrder: 6
 estimatedMinutes: 12

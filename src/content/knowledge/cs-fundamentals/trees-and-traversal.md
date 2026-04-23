@@ -46,6 +46,9 @@ externalReferences:
   - title: "Tree Traversal — Wikipedia"
     url: "https://en.wikipedia.org/wiki/Tree_traversal"
     type: article
+  - title: "closest — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/closest"
+    type: docs
 module: reactivity
 moduleOrder: 8
 estimatedMinutes: 18

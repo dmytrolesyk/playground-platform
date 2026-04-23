@@ -42,6 +42,9 @@ externalReferences:
   - title: "Islands Architecture — Jason Miller"
     url: "https://jasonformat.com/islands-architecture/"
     type: article
+  - title: "Astro components — Astro Docs"
+    url: "https://docs.astro.build/en/basics/astro-components/"
+    type: docs
 module: foundation
 moduleOrder: 2
 estimatedMinutes: 15

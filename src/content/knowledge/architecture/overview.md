@@ -43,6 +43,12 @@ externalReferences:
   - title: "Railway Deployment Documentation"
     url: "https://docs.railway.com/"
     type: docs
+  - title: " — Astro Docs"
+    url: "https://docs.astro.build/"
+    type: docs
+  - title: " — SolidJS"
+    url: "https://www.solidjs.com/"
+    type: article
 module: foundation
 moduleOrder: 1
 estimatedMinutes: 20

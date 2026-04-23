@@ -35,6 +35,9 @@ externalReferences:
   - title: "Islands of Interactivity — Katie Sylor-Miller (talk)"
     url: "https://www.youtube.com/watch?v=VH64-z1xOEo"
     type: talk
+  - title: "Directives reference — Astro Docs"
+    url: "https://docs.astro.build/en/reference/directives-reference/#client-directives"
+    type: docs
 module: foundation
 moduleOrder: 3
 estimatedMinutes: 12

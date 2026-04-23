@@ -29,6 +29,12 @@ externalReferences:
   - title: "Fix Your Timestep! — Gaffer On Games"
     url: "https://gafferongames.com/post/fix_your_timestep/"
     type: article
+  - title: "Pure function — Wikipedia"
+    url: "https://en.wikipedia.org/wiki/Pure_function"
+    type: article
+  - title: "Tutorial — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial"
+    type: docs
 module: extensibility
 moduleOrder: 5
 estimatedMinutes: 12

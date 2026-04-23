@@ -35,6 +35,12 @@ externalReferences:
   - title: "Ryan Carniato — SolidJS: Reactivity to Rendering"
     url: "https://www.youtube.com/watch?v=J70HXl1KhWE"
     type: talk
+  - title: "Proxy — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"
+    type: docs
+  - title: "Facade — Refactoring Guru"
+    url: "https://refactoring.guru/design-patterns/facade"
+    type: article
 diagramRef: desktop-store
 module: reactivity
 moduleOrder: 3

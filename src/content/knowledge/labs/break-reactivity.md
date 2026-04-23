@@ -29,6 +29,12 @@ externalReferences:
   - title: "SolidJS — createEffect"
     url: "https://docs.solidjs.com/reference/basic-reactivity/create-effect"
     type: docs
+  - title: "Proxy — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"
+    type: docs
+  - title: "Split props — SolidJS"
+    url: "https://docs.solidjs.com/reference/component-apis/split-props"
+    type: docs
 prerequisites:
   - concepts/fine-grained-reactivity
   - technologies/solidjs

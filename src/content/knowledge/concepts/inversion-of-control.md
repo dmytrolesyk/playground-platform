@@ -35,6 +35,15 @@ externalReferences:
   - title: "VS Code Extension Architecture"
     url: "https://code.visualstudio.com/api/get-started/extension-anatomy"
     type: docs
+  - title: "Using middleware.html — expressjs.com"
+    url: "https://expressjs.com/en/guide/using-middleware.html"
+    type: article
+  - title: "Api — code.visualstudio.com"
+    url: "https://code.visualstudio.com/api"
+    type: article
+  - title: "Hollywood principle — Wikipedia"
+    url: "https://en.wikipedia.org/wiki/Hollywood_principle"
+    type: article
 module: extensibility
 moduleOrder: 2
 estimatedMinutes: 12

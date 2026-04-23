@@ -26,6 +26,12 @@ externalReferences:
   - title: "SolidJS lazy() and Suspense"
     url: "https://docs.solidjs.com/reference/component-apis/lazy"
     type: docs
+  - title: "Command — Refactoring Guru"
+    url: "https://refactoring.guru/design-patterns/command"
+    type: article
+  - title: "Lazy loading — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading"
+    type: docs
 module: extensibility
 moduleOrder: 3
 estimatedMinutes: 12

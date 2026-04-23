@@ -44,6 +44,15 @@ externalReferences:
   - title: "Mermaid Flowchart Syntax"
     url: "https://mermaid.js.org/syntax/flowchart.html"
     type: docs
+  - title: "Package json — docs.npmjs.com"
+    url: "https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies"
+    type: article
+  - title: "Tutorial fk.html — postgresql.org"
+    url: "https://www.postgresql.org/docs/current/tutorial-fk.html"
+    type: article
+  - title: "Types from types.html — TypeScript"
+    url: "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"
+    type: docs
 diagramRef: "knowledge-audit"
 module: learning-system-reliability
 moduleOrder: 2

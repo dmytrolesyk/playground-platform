@@ -41,6 +41,15 @@ externalReferences:
   - title: "Ryan Carniato — Thinking Granular: How is SolidJS so Performant?"
     url: "https://dev.to/ryansolid/thinking-granular-how-is-solidjs-so-performant-4g37"
     type: article
+  - title: "Virtual dom is pure overhead — Svelte"
+    url: "https://svelte.dev/blog/virtual-dom-is-pure-overhead"
+    type: article
+  - title: "Introduction basics — SolidJS"
+    url: "https://www.solidjs.com/tutorial/introduction_basics"
+    type: docs
+  - title: "Stores — SolidJS"
+    url: "https://docs.solidjs.com/concepts/stores"
+    type: docs
 module: reactivity
 moduleOrder: 2
 estimatedMinutes: 15

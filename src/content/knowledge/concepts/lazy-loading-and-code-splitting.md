@@ -36,6 +36,9 @@ externalReferences:
   - title: "Reduce JavaScript payloads with code splitting — web.dev"
     url: "https://web.dev/articles/reduce-javascript-payloads-with-code-splitting"
     type: article
+  - title: "Code splitting — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Code_splitting"
+    type: docs
 module: extensibility
 moduleOrder: 3
 estimatedMinutes: 12

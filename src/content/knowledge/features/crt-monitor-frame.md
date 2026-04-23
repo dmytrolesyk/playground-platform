@@ -27,6 +27,15 @@ externalReferences:
   - title: "What Every Developer Should Know About GPU-based CSS Animations"
     url: "https://web.dev/articles/animations-guide"
     type: article
+  - title: "Cathode-ray tube — Wikipedia"
+    url: "https://en.wikipedia.org/wiki/Cathode-ray_tube"
+    type: article
+  - title: "radial-gradient — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/radial-gradient"
+    type: docs
+  - title: "pointer-events — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events"
+    type: docs
 module: aesthetics-performance
 moduleOrder: 2
 estimatedMinutes: 15

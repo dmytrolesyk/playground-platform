@@ -45,6 +45,9 @@ externalReferences:
   - title: "Knockout.js — Observables"
     url: "https://knockoutjs.com/documentation/observables.html"
     type: docs
+  - title: "Faq internals.html — legacy.reactjs.org"
+    url: "https://legacy.reactjs.org/docs/faq-internals.html"
+    type: article
 module: reactivity
 moduleOrder: 1
 estimatedMinutes: 20

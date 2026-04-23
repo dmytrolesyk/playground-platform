@@ -32,6 +32,12 @@ externalReferences:
   - title: "V8 Blog: JavaScript Modules"
     url: "https://v8.dev/features/modules"
     type: article
+  - title: "Tree shaking — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking"
+    type: docs
+  - title: "Why — Vite"
+    url: "https://vite.dev/guide/why"
+    type: docs
 module: extensibility
 moduleOrder: 4
 estimatedMinutes: 18

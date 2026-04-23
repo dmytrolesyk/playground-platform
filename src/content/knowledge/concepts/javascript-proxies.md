@@ -38,6 +38,12 @@ externalReferences:
   - title: "Building a Reactive Library from Scratch — Ryan Carniato"
     url: "https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p"
     type: article
+  - title: "Stores — SolidJS"
+    url: "https://docs.solidjs.com/concepts/stores"
+    type: docs
+  - title: "Proxy — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#terminology"
+    type: docs
 module: reactivity
 moduleOrder: 5
 estimatedMinutes: 18

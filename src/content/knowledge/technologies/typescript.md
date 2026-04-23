@@ -40,6 +40,24 @@ externalReferences:
   - title: "Matt Pocock — Total TypeScript"
     url: "https://www.totaltypescript.com/"
     type: article
+  - title: "Typescript — Astro Docs"
+    url: "https://docs.astro.build/en/guides/typescript/#strict"
+    type: docs
+  - title: "Tsconfig — TypeScript"
+    url: "https://www.typescriptlang.org/tsconfig/#strict"
+    type: docs
+  - title: "Release Notes — Node.js"
+    url: "https://nodejs.org/en/blog/release/v22.6.0"
+    type: article
+  - title: "Zod Documentation"
+    url: "https://zod.dev/?id=zod-enums"
+    type: docs
+  - title: "Zod Documentation"
+    url: "https://zod.dev/"
+    type: docs
+  - title: "Env and mode — Vite"
+    url: "https://vite.dev/guide/env-and-mode"
+    type: docs
 module: foundation
 moduleOrder: 5
 estimatedMinutes: 15

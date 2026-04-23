@@ -37,6 +37,12 @@ externalReferences:
   - title: "Testing Library — Guiding Principles"
     url: "https://testing-library.com/docs/guiding-principles"
     type: article
+  - title: "Guide — Vitest"
+    url: "https://vitest.dev/guide/"
+    type: docs
+  - title: "Cli — Vitest"
+    url: "https://vitest.dev/guide/cli"
+    type: docs
 module: learning-system-reliability
 moduleOrder: 4
 estimatedMinutes: 12

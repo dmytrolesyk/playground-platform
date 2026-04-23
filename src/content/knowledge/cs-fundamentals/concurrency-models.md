@@ -33,6 +33,12 @@ externalReferences:
   - title: "Chromium Compositor Thread Architecture"
     url: "https://chromium.googlesource.com/chromium/src/+/HEAD/docs/how_cc_works.md"
     type: docs
+  - title: "Event loop — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop"
+    type: docs
+  - title: "requestAnimationFrame — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame"
+    type: docs
 module: window-manager
 moduleOrder: 5
 estimatedMinutes: 18

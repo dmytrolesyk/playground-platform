@@ -37,6 +37,12 @@ externalReferences:
   - title: "How CSS transforms work — web.dev"
     url: "https://web.dev/articles/animations-guide"
     type: article
+  - title: "transform — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/transform"
+    type: docs
+  - title: "Rendering — developer.chrome.com"
+    url: "https://developer.chrome.com/docs/devtools/performance/rendering"
+    type: article
 module: window-manager
 moduleOrder: 1
 estimatedMinutes: 25

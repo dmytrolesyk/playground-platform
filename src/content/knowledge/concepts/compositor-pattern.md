@@ -33,6 +33,9 @@ externalReferences:
   - title: "will-change — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/will-change"
     type: docs
+  - title: "Inside browser part3 — developer.chrome.com"
+    url: "https://developer.chrome.com/blog/inside-browser-part3"
+    type: article
 module: window-manager
 moduleOrder: 3
 estimatedMinutes: 18

@@ -32,6 +32,15 @@ externalReferences:
   - title: "Node.js TypeScript Type Stripping"
     url: "https://nodejs.org/api/typescript.html#type-stripping"
     type: docs
+  - title: "SelfTestingCode.html — martinfowler.com"
+    url: "https://martinfowler.com/bliki/SelfTestingCode.html"
+    type: article
+  - title: "Tutorial fk.html — postgresql.org"
+    url: "https://www.postgresql.org/docs/current/tutorial-fk.html"
+    type: article
+  - title: "Pure function — Wikipedia"
+    url: "https://en.wikipedia.org/wiki/Pure_function"
+    type: article
 prerequisites:
   - features/knowledge-reliability-mastery
   - cs-fundamentals/graph-validation
