@@ -35,7 +35,11 @@ export type KnowledgeAuditIssueCode =
   | 'minimum-word-count'
   | 'exercise-type-diversity'
   | 'external-reference-minimum'
-  | 'inline-citation-density';
+  | 'inline-citation-density'
+  | 'missing-last-updated'
+  | 'stale-code-reference'
+  | 'uncited-reference'
+  | 'unlisted-inline-citation';
 
 export interface KnowledgeAuditIssue {
   severity: KnowledgeAuditSeverity;
@@ -46,6 +50,7 @@ export interface KnowledgeAuditIssue {
 
 export interface ExternalReference {
   type?: string;
+  url?: string;
 }
 
 export interface Exercise {
@@ -69,6 +74,7 @@ export interface KnowledgeArticle {
   externalReferences?: readonly ExternalReference[];
   broader?: readonly string[];
   narrower?: readonly string[];
+  lastUpdated?: string;
 }
 
 export interface CurriculumModule {
@@ -87,6 +93,11 @@ export interface ArchitectureEdge {
   type: string;
 }
 
+export interface FileModifiedDate {
+  filePath: string;
+  lastModified: string; // ISO date string YYYY-MM-DD
+}
+
 export interface KnowledgeAuditInput {
   articles: readonly KnowledgeArticle[];
   modules: readonly CurriculumModule[];
@@ -94,4 +105,5 @@ export interface KnowledgeAuditInput {
   architectureEdges: readonly ArchitectureEdge[];
   allowedNodeCategories?: readonly string[];
   allowedEdgeTypes?: readonly string[];
+  fileModifiedDates?: readonly FileModifiedDate[];
 }

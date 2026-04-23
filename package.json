@@ -18,6 +18,7 @@
     "check": "biome check . && astro check",
     "test": "vitest run --passWithNoTests --exclude 'tests/e2e/**'",
     "verify:knowledge": "node --experimental-strip-types scripts/audit-knowledge.ts",
+    "check:links": "node --experimental-strip-types scripts/check-external-links.ts",
     "verify": "pnpm prebuild && biome check . && astro check && vitest run --passWithNoTests --exclude 'tests/e2e/**' && pnpm verify:knowledge",
     "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts",
     "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",

@@ -9,11 +9,16 @@ import {
   auditMinimumExercises,
   auditMinimumRelatedConcepts,
   auditMinimumWordCount,
+  auditMissingLastUpdated,
   auditModuleCompleteness,
   auditNoOrphanArticles,
   auditRequiredLearningObjectives,
+  auditStaleCodeReference,
   auditTechnologyCoverage,
+  auditUncitedReference,
+  auditUnlistedInlineCitation,
   countWords,
+  extractInlineLinkUrls,
 } from '@playground/knowledge-engine/audit';
 import type {
   KnowledgeArticle,
@@ -53,6 +58,7 @@ function cleanArticle(overrides: Partial<KnowledgeArticle> = {}): KnowledgeArtic
     exercises: [{ type: 'predict' }, { type: 'explain' }],
     externalReferences: [{ type: 'docs' }, { type: 'article' }],
     body: makeBody(category),
+    lastUpdated: '2026-04-21',
     ...overrides,
   };
 }
@@ -725,5 +731,262 @@ describe('inline-citation-density', () => {
       baseInput({ articles: [cleanArticle({ body: undefined })] }),
     );
     expect(issues).toEqual([]);
+  });
+});
+
+// --- Feature 5a rules ---
+
+describe('missing-last-updated', () => {
+  it('passes when article has lastUpdated', () => {
+    const issues = auditMissingLastUpdated(
+      baseInput({ articles: [cleanArticle({ lastUpdated: '2026-04-21' })] }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('warns when article has no lastUpdated', () => {
+    const issues = auditMissingLastUpdated(
+      baseInput({ articles: [cleanArticle({ lastUpdated: undefined })] }),
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.code).toBe('missing-last-updated');
+    expect(issues[0]?.severity).toBe('warning');
+  });
+});
+
+describe('stale-code-reference', () => {
+  it('passes when referenced files were not modified after lastUpdated', () => {
+    const issues = auditStaleCodeReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            lastUpdated: '2026-04-21',
+            relatedFiles: ['src/components/Foo.tsx'],
+          }),
+        ],
+        fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-20' }],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('warns when referenced file was modified after lastUpdated', () => {
+    const issues = auditStaleCodeReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            lastUpdated: '2026-04-20',
+            relatedFiles: ['src/components/Foo.tsx'],
+          }),
+        ],
+        fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-21' }],
+      }),
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.code).toBe('stale-code-reference');
+    expect(issues[0]?.severity).toBe('warning');
+    expect(issues[0]?.message).toContain('2026-04-21');
+    expect(issues[0]?.message).toContain('2026-04-20');
+  });
+
+  it('skips articles without lastUpdated', () => {
+    const issues = auditStaleCodeReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            lastUpdated: undefined,
+            relatedFiles: ['src/components/Foo.tsx'],
+          }),
+        ],
+        fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-21' }],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('skips articles without relatedFiles', () => {
+    const issues = auditStaleCodeReference(
+      baseInput({
+        articles: [cleanArticle({ lastUpdated: '2026-04-20', relatedFiles: [] })],
+        fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-21' }],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('skips files not in fileModifiedDates', () => {
+    const issues = auditStaleCodeReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            lastUpdated: '2026-04-20',
+            relatedFiles: ['src/components/Bar.tsx'],
+          }),
+        ],
+        fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-21' }],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('passes when file modified on same day as lastUpdated', () => {
+    const issues = auditStaleCodeReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            lastUpdated: '2026-04-21',
+            relatedFiles: ['src/components/Foo.tsx'],
+          }),
+        ],
+        fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-21' }],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+});
+
+describe('uncited-reference', () => {
+  it('passes when all externalReferences URLs appear inline', () => {
+    const body =
+      'See [Astro docs](https://docs.astro.build/) and [SolidJS](https://solidjs.com/) for details.';
+    const issues = auditUncitedReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            body,
+            externalReferences: [
+              { type: 'docs', url: 'https://docs.astro.build/' },
+              { type: 'docs', url: 'https://solidjs.com/' },
+            ],
+          }),
+        ],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('warns when a reference URL is not linked inline', () => {
+    const body = 'See [Astro docs](https://docs.astro.build/) for details.';
+    const issues = auditUncitedReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            body,
+            externalReferences: [
+              { type: 'docs', url: 'https://docs.astro.build/' },
+              { type: 'docs', url: 'https://solidjs.com/' },
+            ],
+          }),
+        ],
+      }),
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.code).toBe('uncited-reference');
+    expect(issues[0]?.message).toContain('https://solidjs.com/');
+  });
+
+  it('skips references without URL', () => {
+    const body = 'No links here.';
+    const issues = auditUncitedReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            body,
+            externalReferences: [{ type: 'docs' }],
+          }),
+        ],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('skips articles without body', () => {
+    const issues = auditUncitedReference(
+      baseInput({
+        articles: [
+          cleanArticle({
+            body: undefined,
+            externalReferences: [{ type: 'docs', url: 'https://solidjs.com/' }],
+          }),
+        ],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+});
+
+describe('unlisted-inline-citation', () => {
+  it('passes when all inline links are in externalReferences', () => {
+    const body = 'See [Astro docs](https://docs.astro.build/) for details.';
+    const issues = auditUnlistedInlineCitation(
+      baseInput({
+        articles: [
+          cleanArticle({
+            body,
+            externalReferences: [{ type: 'docs', url: 'https://docs.astro.build/' }],
+          }),
+        ],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+
+  it('warns when inline link is not in externalReferences', () => {
+    const body =
+      'See [Astro docs](https://docs.astro.build/) and [SolidJS](https://solidjs.com/) for details.';
+    const issues = auditUnlistedInlineCitation(
+      baseInput({
+        articles: [
+          cleanArticle({
+            body,
+            externalReferences: [{ type: 'docs', url: 'https://docs.astro.build/' }],
+          }),
+        ],
+      }),
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.code).toBe('unlisted-inline-citation');
+    expect(issues[0]?.message).toContain('https://solidjs.com/');
+  });
+
+  it('skips articles without body', () => {
+    const issues = auditUnlistedInlineCitation(
+      baseInput({
+        articles: [cleanArticle({ body: undefined })],
+      }),
+    );
+    expect(issues).toEqual([]);
+  });
+});
+
+describe('extractInlineLinkUrls', () => {
+  it('extracts URLs from markdown inline links', () => {
+    const body = 'See [Astro](https://docs.astro.build/) and [Solid](https://solidjs.com/).';
+    const urls = extractInlineLinkUrls(body);
+    expect(urls).toEqual(new Set(['https://docs.astro.build/', 'https://solidjs.com/']));
+  });
+
+  it('ignores bare URLs not in markdown link syntax', () => {
+    const body = 'Visit https://example.com for more info.';
+    const urls = extractInlineLinkUrls(body);
+    expect(urls.size).toBe(0);
+  });
+
+  it('returns empty set for text without links', () => {
+    const urls = extractInlineLinkUrls('No links here.');
+    expect(urls.size).toBe(0);
+  });
+
+  it('handles multiple links on same line', () => {
+    const body = '[a](https://a.com) and [b](https://b.com)';
+    const urls = extractInlineLinkUrls(body);
+    expect(urls).toEqual(new Set(['https://a.com', 'https://b.com']));
+  });
+
+  it('strips frontmatter before extracting', () => {
+    const body = '---\ntitle: Test\nurl: https://in-frontmatter.com\n---\n[link](https://real.com)';
+    const urls = extractInlineLinkUrls(body);
+    expect(urls).toEqual(new Set(['https://real.com']));
+    expect(urls.has('https://in-frontmatter.com')).toBe(false);
   });
 });

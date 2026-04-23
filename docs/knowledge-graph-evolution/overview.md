@@ -209,6 +209,7 @@ THEN extract into a standalone repo (Phase 3) with confidence that the boundarie
 The following capabilities were identified in the research but intentionally deferred:
 
 - **Standalone learning system repo** — Create a separate repo that imports the `@playground/knowledge-engine` package and has its own UX. This is the extraction Phase 3 from the research. Do this after Phase 2 stress-testing above.
+- **ts-belt FP refactor** — After all 12 features land and the engine API is stable, port the pure data pipelines (audit rules, graph extraction, stats computation) to [ts-belt](https://mobily.github.io/ts-belt/) idioms (`pipe`, `Option`, `Result`, `A.filter/map/flatMap`). Eliminates null-guard noise, improves composability. Low risk, high readability win. Do as a single clean sweep, not mid-stream.
 - **Cross-domain transfer surfacing** — When the system covers multiple projects/codebases, surface cross-domain analogies ("dependency injection in your app is structurally similar to middleware in Express"). The `conceptScheme` and `broader`/`narrower` fields lay the groundwork. Requires multi-project content to be meaningful.
 - **Spaced repetition scheduling** — Track when concepts were last studied/practiced and surface "due for review" prompts. Simple localStorage implementation. Strong learning science evidence supports this.
 - **Hierarchical concept browser** — A sidebar or dedicated UI that lets you browse concepts by `broader`/`narrower` hierarchy (e.g., Architecture Patterns → State Management → Reactivity → Fine-Grained Reactivity).

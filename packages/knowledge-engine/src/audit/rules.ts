@@ -9,6 +9,9 @@ import {
   type KnowledgeAuditIssueCode,
 } from './types.ts';
 
+// Pattern for Markdown inline links: [text](url) where url is external
+const MARKDOWN_INLINE_LINK_PATTERN = /\[(?:[^\]]*)\]\(\s*(https?:\/\/[^\s)]+)\s*\)/gu;
+
 export function auditKnowledgeRules(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return [
     ...auditArticleReferences(input),
@@ -27,6 +30,10 @@ export function auditKnowledgeRules(input: KnowledgeAuditInput): KnowledgeAuditI
     ...auditExerciseTypeDiversity(input),
     ...auditExternalReferenceMinimum(input),
     ...auditInlineCitationDensity(input),
+    ...auditMissingLastUpdated(input),
+    ...auditStaleCodeReference(input),
+    ...auditUncitedReference(input),
+    ...auditUnlistedInlineCitation(input),
   ];
 }
 
@@ -639,4 +646,127 @@ export function auditInlineCitationDensity(input: KnowledgeAuditInput): Knowledg
         `${article.id} has ${urls.length} inline citations (minimum 3 external URLs in body).`,
       );
     });
+}
+
+// --- Rule 14: missing-last-updated ---
+
+export function auditMissingLastUpdated(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  return input.articles
+    .filter((article) => !article.lastUpdated)
+    .map((article) =>
+      warning(
+        'missing-last-updated',
+        article.id,
+        `${article.id} has no lastUpdated date. Required for staleness detection.`,
+      ),
+    );
+}
+
+// --- Rule 15: stale-code-reference ---
+
+export function auditStaleCodeReference(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  const fileModifiedMap = new Map(
+    (input.fileModifiedDates ?? []).map((entry) => [entry.filePath, entry.lastModified]),
+  );
+
+  const issues: KnowledgeAuditIssue[] = [];
+
+  for (const article of input.articles) {
+    const { lastUpdated, relatedFiles } = article;
+    if (!(lastUpdated && relatedFiles) || relatedFiles.length === 0) continue;
+
+    for (const filePath of relatedFiles) {
+      const fileModified = fileModifiedMap.get(filePath);
+      if (!fileModified) continue;
+      if (fileModified > lastUpdated) {
+        issues.push(
+          warning(
+            'stale-code-reference',
+            article.id,
+            `${article.id} references ${filePath} which was modified on ${fileModified}, after the article's lastUpdated (${lastUpdated}).`,
+          ),
+        );
+      }
+    }
+  }
+
+  return issues;
+}
+
+// --- Rule 16: uncited-reference ---
+
+/**
+ * Extract all inline Markdown link URLs from article body.
+ * Matches `[text](https://...)` patterns.
+ */
+export function extractInlineLinkUrls(body: string): Set<string> {
+  const cleaned = body.replace(BODY_FRONTMATTER_PATTERN, '');
+  const urls = new Set<string>();
+  MARKDOWN_INLINE_LINK_PATTERN.lastIndex = 0;
+  for (;;) {
+    const match = MARKDOWN_INLINE_LINK_PATTERN.exec(cleaned);
+    if (!match) break;
+    const url = match[1];
+    if (url) urls.add(url);
+  }
+  return urls;
+}
+
+export function auditUncitedReference(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  const issues: KnowledgeAuditIssue[] = [];
+
+  for (const article of input.articles) {
+    const { body, externalReferences } = article;
+    if (!(body && externalReferences) || externalReferences.length === 0) continue;
+
+    const inlineUrls = extractInlineLinkUrls(body);
+    const referencedUrls = externalReferences
+      .map((ref) => ref.url)
+      .filter((url): url is string => url !== undefined);
+
+    for (const refUrl of referencedUrls) {
+      if (!inlineUrls.has(refUrl)) {
+        issues.push(
+          warning(
+            'uncited-reference',
+            article.id,
+            `${article.id} lists ${refUrl} in externalReferences but never links to it inline.`,
+          ),
+        );
+      }
+    }
+  }
+
+  return issues;
+}
+
+// --- Rule 17: unlisted-inline-citation ---
+
+export function auditUnlistedInlineCitation(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
+  const issues: KnowledgeAuditIssue[] = [];
+
+  for (const article of input.articles) {
+    if (!article.body) continue;
+
+    const inlineUrls = extractInlineLinkUrls(article.body);
+    const referenceUrls = new Set(
+      (article.externalReferences ?? [])
+        .map((ref) => ref.url)
+        .filter((url): url is string => url !== undefined),
+    );
+
+    for (const inlineUrl of inlineUrls) {
+      if (!referenceUrls.has(inlineUrl)) {
+        issues.push(
+          warning(
+            'unlisted-inline-citation',
+            article.id,
+            `${article.id} links to ${inlineUrl} inline but it is not in externalReferences.`,
+          ),
+        );
+      }
+    }
+  }
+
+  return issues;
 }

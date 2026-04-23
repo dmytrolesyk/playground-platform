@@ -232,3 +232,61 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
     initLearnProgress();
   });
 </script>
+
+<script>
+  // Flag for review — sends article flag to server API.
+  // Progressive enhancement: button is always visible, functionality requires JS.
+  function initFlagReview(): void {
+    const container = document.getElementById('flag-for-review');
+    if (!container) return;
+
+    const articleId = container.dataset['articleId'];
+    if (!articleId) return;
+
+    const btn = document.getElementById('flag-review-btn') as HTMLButtonElement | null;
+    const status = document.getElementById('flag-review-status');
+    if (!btn || !status) return;
+
+    // Check localStorage to see if already flagged
+    const flagKey = `review-flag:${articleId}`;
+    if (localStorage.getItem(flagKey)) {
+      btn.disabled = true;
+      btn.textContent = '✅ Flagged';
+      status.textContent = 'This article has been flagged for review.';
+      return;
+    }
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      status.textContent = 'Flagging...';
+
+      try {
+        const reason = prompt('Optional: describe the issue (or leave blank)');
+        const response = await fetch('/api/flag-article', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            articleId,
+            reason: reason || undefined,
+          }),
+        });
+
+        if (response.ok) {
+          localStorage.setItem(flagKey, new Date().toISOString());
+          btn.textContent = '✅ Flagged';
+          status.textContent = 'Thanks! This article has been flagged for review.';
+        } else {
+          btn.disabled = false;
+          status.textContent = 'Failed to flag. Try again later.';
+        }
+      } catch {
+        btn.disabled = false;
+        status.textContent = 'Network error. Try again later.';
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    initFlagReview();
+  });
+</script>
