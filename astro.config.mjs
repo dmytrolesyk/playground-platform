@@ -8,4 +8,11 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   adapter: node({ mode: 'standalone' }),
   integrations: [solidJs()],
+  vite: {
+    build: {
+      // The single-island desktop app intentionally ships a larger client bundle.
+      // Raise the warning threshold so build output stays signal-heavy.
+      chunkSizeWarningLimit: 1000,
+    },
+  },
 });

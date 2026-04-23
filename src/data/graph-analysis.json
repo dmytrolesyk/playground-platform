@@ -143,6 +143,7 @@
         "labs/trace-a-request",
         "technologies/astro",
         "technologies/biome",
+        "technologies/node",
         "technologies/playwright",
         "technologies/resend",
         "technologies/vitest"
@@ -152,20 +153,20 @@
     {
       "id": 1,
       "members": [
-        "architecture/window-manager",
-        "concepts/browser-rendering-pipeline",
-        "concepts/compositor-pattern",
+        "architecture/state-management",
         "concepts/event-loop-and-microtasks",
-        "concepts/pointer-events-and-capture",
-        "cs-fundamentals/concurrency-models",
+        "concepts/fine-grained-reactivity",
+        "concepts/javascript-proxies",
+        "concepts/observer-pattern",
+        "concepts/signals-vs-vdom",
+        "cs-fundamentals/hash-maps-and-lookup",
         "cs-fundamentals/memory-management-and-gc",
-        "features/crt-monitor-frame",
+        "cs-fundamentals/trees-and-traversal",
+        "labs/break-reactivity",
         "labs/create-a-memory-leak",
-        "labs/measure-compositor-performance",
-        "technologies/98css",
-        "technologies/node"
+        "technologies/solidjs"
       ],
-      "suggestedLabel": "The Window Manager"
+      "suggestedLabel": "Why SolidJS?"
     },
     {
       "id": 2,
@@ -185,17 +186,16 @@
     {
       "id": 3,
       "members": [
-        "architecture/state-management",
-        "concepts/fine-grained-reactivity",
-        "concepts/javascript-proxies",
-        "concepts/observer-pattern",
-        "concepts/signals-vs-vdom",
-        "cs-fundamentals/hash-maps-and-lookup",
-        "cs-fundamentals/trees-and-traversal",
-        "labs/break-reactivity",
-        "technologies/solidjs"
+        "architecture/window-manager",
+        "concepts/browser-rendering-pipeline",
+        "concepts/compositor-pattern",
+        "concepts/pointer-events-and-capture",
+        "cs-fundamentals/concurrency-models",
+        "features/crt-monitor-frame",
+        "labs/measure-compositor-performance",
+        "technologies/98css"
       ],
-      "suggestedLabel": "Why SolidJS?"
+      "suggestedLabel": "The Window Manager"
     }
   ],
   "coverageGaps": {
