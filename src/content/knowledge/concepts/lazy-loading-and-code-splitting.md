@@ -36,6 +36,9 @@ externalReferences:
   - title: "Reduce JavaScript payloads with code splitting — web.dev"
     url: "https://web.dev/articles/reduce-javascript-payloads-with-code-splitting"
     type: article
+  - title: "Code splitting — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Code_splitting"
+    type: docs
 module: extensibility
 moduleOrder: 3
 estimatedMinutes: 12
@@ -61,7 +64,7 @@ exercises:
 
 ## Why Should I Care?
 
-xterm.js is ~300KB. If it loaded on page startup, the desktop would take seconds to become interactive — even for users who never open the terminal. Code splitting solves this: heavy code is extracted into separate chunks that load on demand, keeping the initial bundle at ~35KB. Understanding this pattern explains why the window shell renders instantly (its code is already loaded) while the app content shows a loading indicator (its chunk is downloading).
+xterm.js is ~300KB. If it loaded on page startup, the desktop would take seconds to become interactive — even for users who never open the terminal. [Code splitting](https://web.dev/articles/reduce-javascript-payloads-with-code-splitting) solves this: heavy code is extracted into separate chunks that load on demand, keeping the initial bundle at ~35KB. Understanding this pattern explains why the window shell renders instantly (its code is already loaded) while the app content shows a loading indicator (its chunk is downloading).
 
 ## The Problem: Bundle Bloat
 
@@ -78,7 +81,7 @@ import { ArchitectureExplorer } from './architecture-explorer/ArchitectureExplor
 
 Time to interactive would increase from <1.5s to potentially 3-4s on mobile connections.
 
-## The Solution: Dynamic import() + lazy()
+## The Solution: Dynamic [import()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) + lazy()
 
 Heavy apps are wrapped in [`lazy()`](https://docs.solidjs.com/reference/component-apis/lazy) in `src/components/desktop/apps/app-manifest.ts`:
 

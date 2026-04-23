@@ -39,6 +39,12 @@ externalReferences:
   - title: "Playwright Best Practices"
     url: "https://playwright.dev/docs/best-practices"
     type: article
+  - title: "Trace viewer intro — Playwright"
+    url: "https://playwright.dev/docs/trace-viewer-intro"
+    type: docs
+  - title: "Test webserver — Playwright"
+    url: "https://playwright.dev/docs/test-webserver"
+    type: docs
 module: learning-system-reliability
 moduleOrder: 5
 estimatedMinutes: 15
@@ -64,7 +70,7 @@ exercises:
 
 ## Why Should I Care?
 
-Unit tests verify that functions return correct values. But can a user actually drag a window? Does the desktop render correctly on a phone? Does the SolidJS island hydrate without errors after a production build? These questions can only be answered by a real browser running against real built output. [Playwright](https://playwright.dev/docs/intro) provides this by automating Chromium (and optionally Firefox/WebKit) to interact with the application exactly as a user would — clicking, dragging, typing, and visually comparing screenshots.
+Unit tests verify that functions return correct values (see the [Playwright repository](https://github.com/microsoft/playwright) for how the tool is developed). But can a user actually drag a window? Does the desktop render correctly on a phone? Does the SolidJS island hydrate without errors after a production build? These questions can only be answered by a real browser running against real built output. [Playwright](https://playwright.dev/docs/intro) provides this by automating Chromium (and optionally Firefox/WebKit) to interact with the application exactly as a user would — clicking, dragging, typing, and visually comparing screenshots.
 
 ## Two-Viewport Strategy
 

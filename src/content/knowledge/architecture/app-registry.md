@@ -33,6 +33,9 @@ externalReferences:
   - title: "Plugin Architecture — Patterns for Extensibility"
     url: "https://www.youtube.com/watch?v=iCE1bDoit9Q"
     type: talk
+  - title: "Integrations guide — Astro Docs"
+    url: "https://docs.astro.build/en/guides/integrations-guide/"
+    type: docs
 module: extensibility
 moduleOrder: 1
 estimatedMinutes: 15
@@ -60,7 +63,7 @@ exercises:
 
 Adding a new app to this desktop takes exactly two steps: create a component and call `registerApp()`. That's it — the desktop icon appears, the start menu lists it, the terminal's `open` command works, and the window manager renders it. No other files change.
 
-This zero-friction extensibility comes from the **registry pattern** — a classic technique used by [VS Code extensions](https://code.visualstudio.com/api), webpack (plugins), Express (middleware), and operating systems (device drivers). Understanding it teaches you the [Open/Closed Principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) in practice: the system is open for extension but closed for modification.
+This zero-friction extensibility comes from the **[registry pattern](https://www.youtube.com/watch?v=iCE1bDoit9Q)** — a classic technique used by [VS Code extensions](https://code.visualstudio.com/api), webpack (plugins), Express (middleware), and operating systems (device drivers). Understanding it teaches you the [Open/Closed Principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle) in practice: the system is open for extension but closed for modification.
 
 ## The Problem: Shotgun Surgery
 
@@ -296,4 +299,4 @@ A more sophisticated approach would let apps declare themselves via a plugin int
 2. **The manifest is small** — each app registration is ~15 lines. Eight apps means ~120 lines total. This is readable at a glance.
 3. **Type safety is good enough** — the TypeScript interface for `AppManifest` catches structural errors at compile time, even if app ID typos aren't caught until runtime.
 
-If the project ever supports user-contributed apps or loads app definitions from a remote source, the [inversion of control](/learn/concepts/inversion-of-control) foundation is already in place — the registry just needs a different input mechanism.
+If the project ever supports user-contributed apps or loads app definitions from a remote source, the [inversion of control](/learn/concepts/inversion-of-control) foundation is already in place — the registry just needs a different input mechanism (see [Inversion of Control](https://martinfowler.com/bliki/InversionOfControl.html)).

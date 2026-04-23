@@ -16,7 +16,7 @@ technologies:
   - typescript
 order: 3
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "V8 Blog — Trash Talk: The Orinoco Garbage Collector"
     url: "https://v8.dev/blog/trash-talk"
@@ -33,6 +33,9 @@ externalReferences:
   - title: "SolidJS — Lifecycle (onCleanup)"
     url: "https://docs.solidjs.com/reference/lifecycle/on-cleanup"
     type: docs
+  - title: "Legacy lifecycle hooks — Svelte"
+    url: "https://svelte.dev/docs/svelte/legacy-lifecycle-hooks"
+    type: article
 module: aesthetics-performance
 moduleOrder: 4
 estimatedMinutes: 20
@@ -70,7 +73,7 @@ onCleanup(() => {
 });
 ```
 
-Understanding *why* these lines are necessary — and what happens without them — requires understanding how JavaScript manages memory. This isn't just theory: memory leaks are one of the most common production bugs in long-running single-page applications, and they're invisible until they crash the browser tab.
+Understanding *why* these lines are necessary — and what happens without them — requires understanding how JavaScript manages [memory](https://developer.chrome.com/docs/devtools/memory-problems). This isn't just theory: memory leaks are one of the most common production bugs in long-running single-page applications, and they're invisible until they crash the browser tab.
 
 ## How JavaScript Memory Works
 
@@ -79,7 +82,7 @@ Understanding *why* these lines are necessary — and what happens without them 
 The lifecycle is:
 1. **Allocate** — creating a value reserves memory
 2. **Use** — reading/writing the value
-3. **Free** — the garbage collector reclaims memory when the value is no longer reachable
+3. **Free** — the [garbage collector](https://gchandbook.org/) reclaims memory when the value is no longer reachable
 
 ### The Heap and the Stack
 
@@ -272,5 +275,5 @@ The pattern: every `onMount` that creates external resources needs a correspondi
 
 - **Concurrent marking in V8**: V8 marks objects on a background thread while your JavaScript runs on the main thread. This reduces GC pauses from tens of milliseconds to under a millisecond — critical for 60fps animations like window dragging.
 - **Incremental GC**: Instead of one big pause, V8 breaks marking into small increments interleaved with your code. Each increment does a few milliseconds of work, then yields.
-- **Orinoco**: V8's garbage collector, named after the Orinoco River. It combines generational, incremental, concurrent, and parallel techniques. Understanding it helps interpret Chrome DevTools' Performance panel "Minor GC" and "Major GC" events.
+- **Orinoco**: V8's [garbage collector](https://v8.dev/blog/trash-talk), named after the Orinoco River. It combines generational, incremental, concurrent, and parallel techniques. Understanding it helps interpret Chrome DevTools' Performance panel "Minor GC" and "Major GC" events.
 - **ArrayBuffer and WebAssembly memory**: Large typed arrays and WASM linear memory are allocated outside the normal JS heap. The GC tracks them for accounting but doesn't move them. If the desktop ever adds WASM games, this becomes relevant for memory budgeting.

@@ -16,7 +16,7 @@ technologies:
   - solidjs
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Introduction to Algorithms (CLRS) — Chapter 11: Hash Tables"
     url: "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
@@ -58,7 +58,7 @@ exercises:
 
 ## Why Should I Care?
 
-You click a window in the taskbar. The desktop store needs to find that window's state — its position, size, z-index, whether it's minimized. There might be 3 windows open, or 15. The lookup needs to be instant, every time, because it happens on every click, every drag frame, every keyboard shortcut.
+You click a window in the taskbar. The desktop store needs to find that window's state — its position, size, z-index, whether it's minimized. There might be 3 windows open, or 15. The lookup needs to be instant, every time, because it happens on every click, every drag frame, every keyboard shortcut. TypeScript's [index signatures](https://www.typescriptlang.org/docs/handbook/2/objects.html#index-signatures) are how this pattern is typed.
 
 In `src/components/desktop/store/types.ts`, the answer is one line:
 
@@ -192,7 +192,7 @@ Hash maps aren't always the answer:
 - **Small collections (< ~10 items)**: Linear scan through an array can beat hash lookup due to CPU cache locality. The array elements sit in contiguous memory; the hash table has pointer indirection.
 - **Ordered iteration**: Hash maps don't guarantee order. The `windowOrder` array exists precisely because `Object.keys(state.windows)` doesn't reflect z-order.
 - **Memory overhead**: Each hash table entry carries overhead (hash values, pointers, load factor headroom). For simple indexed data, an array is more memory-efficient.
-- **Pathological hash collisions**: If all keys hash to the same bucket, every operation degrades to O(n). JavaScript engines use strong hash functions to prevent this, but algorithmic denial-of-service attacks have exploited weak hash functions in web servers.
+- **Pathological hash collisions**: If all keys hash to the same bucket, every operation degrades to O(n). JavaScript engines use strong hash functions to prevent this, but [algorithmic](https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/) denial-of-service attacks have exploited weak hash functions in web servers.
 
 ## Deeper Rabbit Holes
 

@@ -24,7 +24,7 @@ technologies:
   - solidjs
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "SolidJS Official Documentation"
     url: "https://www.solidjs.com/"
@@ -41,6 +41,15 @@ externalReferences:
   - title: "Ryan Carniato — Thinking Granular: How is SolidJS so Performant?"
     url: "https://dev.to/ryansolid/thinking-granular-how-is-solidjs-so-performant-4g37"
     type: article
+  - title: "Virtual dom is pure overhead — Svelte"
+    url: "https://svelte.dev/blog/virtual-dom-is-pure-overhead"
+    type: article
+  - title: "Introduction basics — SolidJS"
+    url: "https://www.solidjs.com/tutorial/introduction_basics"
+    type: docs
+  - title: "Stores — SolidJS"
+    url: "https://docs.solidjs.com/concepts/stores"
+    type: docs
 module: reactivity
 moduleOrder: 2
 estimatedMinutes: 15
@@ -66,7 +75,7 @@ exercises:
 
 ## Why Should I Care?
 
-If you've ever dragged a window across a screen and felt the 30ms lag between your pointer and the title bar catching up, you know that UI framework overhead matters. [SolidJS](https://www.solidjs.com/) is the reason this desktop feels instant — every pixel of a dragged window updates through a direct DOM mutation, not a [virtual DOM diff](https://svelte.dev/blog/virtual-dom-is-pure-overhead) of the entire component tree. Understanding how SolidJS works unlocks the "why" behind every performance decision in this codebase.
+If you've ever dragged a window across a screen and felt the 30ms lag between your pointer and the title bar catching up, you know that UI framework overhead matters. [SolidJS](https://www.solidjs.com/) is the reason this desktop feels instant — every pixel of a dragged window updates through a direct DOM mutation, not a [virtual DOM diff](https://svelte.dev/blog/virtual-dom-is-pure-overhead) of the entire component tree. Understanding how SolidJS works unlocks the "why" behind every [performance decision](https://dev.to/ryansolid/thinking-granular-how-is-solidjs-so-performant-4g37) in this codebase (see the [SolidJS repository](https://github.com/solidjs/solid) and [official tutorial](https://www.solidjs.com/tutorial)).
 
 ## The Mental Model: Components Run Once
 
@@ -219,7 +228,7 @@ For this project, the critical factor is **drag performance**. During a window d
 
 ## Gotchas
 
-**Destructuring kills reactivity.** If you write `const { x, y } = props`, you've captured the values at that instant. The reactive connection is severed. Always access `props.x` and `props.y` inside JSX or effects to maintain tracking.
+**Destructuring kills [reactivity](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf).** If you write `const { x, y } = props`, you've captured the values at that instant. The reactive connection is severed. Always access `props.x` and `props.y` inside JSX or effects to maintain tracking.
 
 **Early return breaks tracking.** If you read a signal after an early `return`, that dependency won't be tracked. SolidJS can only track signals that are actually called during execution.
 

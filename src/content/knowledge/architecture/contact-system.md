@@ -30,6 +30,12 @@ externalReferences:
   - title: "SPF, DKIM, DMARC — Email Authentication"
     url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
     type: article
+  - title: "On demand rendering — Astro Docs"
+    url: "https://docs.astro.build/en/guides/on-demand-rendering/"
+    type: docs
+  - title: "Node — Resend"
+    url: "https://resend.com/docs/sdks/node"
+    type: docs
 diagramRef: api-contact
 module: full-stack
 moduleOrder: 1
@@ -56,7 +62,7 @@ exercises:
 
 ## Why Should I Care?
 
-The contact system is the only server-side runtime code in the entire application. Everything else is static. Understanding why this one endpoint needs SSR — and the `import.meta.env` landmine that nearly broke it — teaches you about the boundary between build-time and runtime in [Astro's hybrid rendering model](https://docs.astro.build/en/guides/on-demand-rendering/), and a [Vite environment variable behavior](https://vite.dev/guide/env-and-mode) that bites every project that deploys with runtime secrets.
+The contact system is the only server-side runtime code in the entire application. Everything else is static. Understanding why this one [endpoint](https://docs.astro.build/en/guides/endpoints/) needs SSR — and the `import.meta.env` landmine that nearly broke it — teaches you about the boundary between build-time and runtime in [Astro's hybrid rendering model](https://docs.astro.build/en/guides/on-demand-rendering/), and a [Vite environment variable behavior](https://vite.dev/guide/env-and-mode) that bites every project that deploys with runtime secrets.
 
 ## The Complete Request Flow
 
@@ -231,7 +237,7 @@ if (error) {
 
 ### Domain Matching
 
-The `from` address domain must exactly match the verified Resend domain. If your domain is `lesyk.dev`, the from address must be `something@lesyk.dev`. Using a different domain (like `@gmail.com`) will cause a silent delivery failure.
+The `from` address domain must exactly match the verified Resend domain, enforced by [SPF authentication](https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/). If your domain is `lesyk.dev`, the from address must be `something@lesyk.dev`. Using a different domain (like `@gmail.com`) will cause a silent delivery failure.
 
 ## SSR vs Static: Why Only This Route
 
@@ -274,6 +280,6 @@ The contact system embodies several architectural choices that apply broadly:
 
 **Minimal SSR surface.** Only one endpoint needs server-side rendering. Everything else stays static. This keeps the deployment simple — most of the site works even if the Node.js process crashes, because the static pages are served from disk.
 
-**Fail silently for spam, loudly for errors.** The honeypot returns 200 to fool bots, but Resend errors return 500 with a user-visible message. The distinction matters: spam handling should be invisible (so bots can't adapt), but real errors should surface immediately so the user knows to retry or use Telegram instead.
+**Fail silently for spam, loudly for errors.** The honeypot returns 200 to fool bots, but [Resend](https://resend.com/docs) errors return 500 with a user-visible message. The distinction matters: spam handling should be invisible (so bots can't adapt), but real errors should surface immediately so the user knows to retry or use Telegram instead.
 
 **Secrets at the boundary.** Environment variables are read once at the top of the handler, validated, and passed to the SDK. This concentrates the `process.env` access in one place rather than scattering it throughout the function, making the landmine visible and auditable. If the project ever moves to a different deployment platform that handles secrets differently, only the top-of-handler code needs to change.

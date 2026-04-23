@@ -35,6 +35,9 @@ externalReferences:
   - title: "Islands of Interactivity — Katie Sylor-Miller (talk)"
     url: "https://www.youtube.com/watch?v=VH64-z1xOEo"
     type: talk
+  - title: "Directives reference — Astro Docs"
+    url: "https://docs.astro.build/en/reference/directives-reference/#client-directives"
+    type: docs
 module: foundation
 moduleOrder: 3
 estimatedMinutes: 12
@@ -60,7 +63,7 @@ exercises:
 
 ## Why Should I Care?
 
-Most web frameworks force a choice: either your entire page is a JavaScript application (SPA), or it's entirely static HTML. Islands architecture breaks this dichotomy — the page is mostly static HTML with isolated "islands" of interactivity that hydrate independently. This means the browser renders content immediately (static HTML is fast), and JavaScript only loads for the parts that actually need it.
+Most web frameworks force a choice: either your entire page is a JavaScript application (SPA), or it's entirely static HTML. [Islands architecture](https://www.patterns.dev/posts/islands-architecture) breaks this dichotomy — the page is mostly static HTML with isolated "islands" of interactivity that hydrate independently. This means the browser renders content immediately (static HTML is fast), and JavaScript only loads for the parts that actually need it.
 
 In this project, understanding islands explains why the desktop is a single SolidJS component, why the `/learn/*` pages ship zero framework JavaScript, and why the site loads fast despite having a full window manager.
 
@@ -95,7 +98,7 @@ Each island:
 
 ## Why One Island?
 
-This site has exactly **one** island: `<Desktop client:load />` in `src/pages/index.astro`. Why not split it into multiple? [Astro's island model](https://docs.astro.build/en/concepts/islands/) is designed for pages with isolated interactive widgets, but this page IS one giant interactive widget.
+This site has exactly **one** [island](https://www.youtube.com/watch?v=VH64-z1xOEo): `<Desktop client:load />` in `src/pages/index.astro`. Why not split it into multiple? [Astro's island model](https://docs.astro.build/en/concepts/islands/) is designed for pages with isolated interactive widgets, but this page IS one giant interactive widget.
 
 ### The Shared State Problem
 

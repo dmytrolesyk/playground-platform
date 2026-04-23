@@ -23,6 +23,7 @@ technologies:
   - solidjs
 order: 10
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Jake Archibald: In The Loop — JSConf.Asia"
     url: "https://www.youtube.com/watch?v=cCOL7MC4Pl0"
@@ -38,6 +39,9 @@ externalReferences:
     type: article
   - title: "HTML Living Standard — Event Loops"
     url: "https://html.spec.whatwg.org/multipage/webappapis.html#event-loops"
+    type: docs
+  - title: "Thread — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/Thread"
     type: docs
 module: reactivity
 moduleOrder: 6
@@ -76,7 +80,7 @@ JavaScript is [single-threaded](https://developer.mozilla.org/en-US/docs/Glossar
 flowchart TD
     A[Call Stack<br/>Currently executing JS] --> B{Stack empty?}
     B -->|No| A
-    B -->|Yes| C{Microtask queue<br/>has tasks?}
+    B -->|Yes| C{[Microtask](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/) queue<br/>has tasks?}
     C -->|Yes| D[Run ALL microtasks<br/>Promises, queueMicrotask]
     D --> C
     C -->|No| E{Time to render?<br/>~16.6ms since last}
@@ -115,7 +119,7 @@ Tasks queued by the browser for later execution. Each event loop iteration proce
 
 ### 3. The Microtask Queue
 
-Microtasks are processed **exhaustively** after each task and before rendering. All pending microtasks run before the browser can paint:
+[Microtasks](https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide) are processed **exhaustively** after each task and before rendering. All pending microtasks run before the browser can paint:
 
 - Promise `.then()` / `.catch()` / `.finally()` callbacks
 - `queueMicrotask()` calls
@@ -272,7 +276,7 @@ This pattern appears in `TerminalApp.tsx` — the fit addon needs the container'
 
 ## Broader Context
 
-The event loop is specified in the [HTML Living Standard](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops), not the ECMAScript spec. JavaScript-the-language defines the microtask queue (for Promises), but the task queue, rendering steps, and rAF are browser APIs.
+The [event loop](https://www.youtube.com/watch?v=cCOL7MC4Pl0) is specified in the [HTML Living Standard](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops), not the ECMAScript spec. JavaScript-the-language defines the microtask queue (for Promises), but the task queue, rendering steps, and rAF are browser APIs.
 
 Node.js has its own event loop (based on libuv) with different phases: timers → I/O callbacks → idle → poll → check → close callbacks. The concepts are similar, but the ordering differs. Web workers also have event loops but no rendering step.
 

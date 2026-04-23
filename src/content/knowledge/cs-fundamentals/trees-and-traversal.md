@@ -29,7 +29,7 @@ technologies:
   - typescript
 order: 2
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Introduction to Algorithms (CLRS) — Chapter 12: Binary Search Trees"
     url: "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
@@ -46,6 +46,9 @@ externalReferences:
   - title: "Tree Traversal — Wikipedia"
     url: "https://en.wikipedia.org/wiki/Tree_traversal"
     type: article
+  - title: "closest — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/closest"
+    type: docs
 module: reactivity
 moduleOrder: 8
 estimatedMinutes: 18
@@ -72,9 +75,9 @@ exercises:
 
 ## Why Should I Care?
 
-When you right-click inside a window on this desktop, the browser needs to figure out *which* window you clicked. It doesn't search every element on the page — it walks up the DOM tree from the click target using `closest('.win-container')`. When SolidJS renders the window list, it traverses the component tree from `Desktop` down through `WindowManager` to each `Window`. When the browser paints the screen, it traverses the render tree to calculate layout.
+When you right-click inside a window on this desktop, the browser needs to figure out *which* window you clicked. It doesn't search every element on the page — it walks up the DOM tree from the click target using `closest('.win-container')`. When SolidJS renders the window list, it traverses the [component](https://docs.solidjs.com/concepts/components/basics) tree from `Desktop` down through `WindowManager` to each `Window`. When the browser paints the screen, it traverses the render tree to calculate layout.
 
-Trees are everywhere in frontend development. The [DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) is a tree. The component hierarchy is a tree. The CSS selector engine traverses trees. Understanding tree structures and [traversal algorithms](https://en.wikipedia.org/wiki/Tree_traversal) isn't abstract computer science — it's the mental model you need to reason about how every click, render, and layout calculation actually works.
+Trees are everywhere in frontend development. The [DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) is a tree. The component hierarchy is a tree. The CSS selector engine traverses trees. Understanding tree structures and [traversal algorithms](https://en.wikipedia.org/wiki/Tree_traversal) isn't abstract computer science — it's the mental model you need to reason about how every click, render, and layout calculation actually works (see [Introduction to Algorithms (CLRS)](https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/)).
 
 ## Trees: The Core Abstraction
 
@@ -166,7 +169,7 @@ const handleDragStart = (e: PointerEvent): void => {
 
 [`Element.closest(selector)`](https://developer.mozilla.org/en-US/docs/Web/API/Element/closest) walks the **ancestor chain** — from the clicked element up through parents toward the document root. It's a linear walk up one branch of the tree, not a full traversal. The DOM spec defines it as: "return the first ancestor (or self) that matches the selector."
 
-This is the browser's built-in tree navigation. Every DOM node has a `parentElement` reference, making upward traversal O(d) where d is the depth. The desktop's DOM is shallow — typically 5-8 levels from a button inside a window to the root — so `closest()` is effectively instant.
+This is the browser's built-in tree navigation. Every [DOM](https://dom.spec.whatwg.org/#traversal) node has a `parentElement` reference, making upward traversal O(d) where d is the depth. The desktop's DOM is shallow — typically 5-8 levels from a button inside a window to the root — so `closest()` is effectively instant.
 
 ### The Component Tree
 

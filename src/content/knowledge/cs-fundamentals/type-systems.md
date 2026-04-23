@@ -17,7 +17,7 @@ technologies:
   - astro
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Types and Programming Languages — Benjamin C. Pierce"
     url: "https://mitpress.mit.edu/9780262162098/types-and-programming-languages/"
@@ -34,6 +34,12 @@ externalReferences:
   - title: "Structural vs Nominal Typing — TypeScript Deep Dive"
     url: "https://basarat.gitbook.io/typescript/main-1/nominaltyping"
     type: article
+  - title: "Type compatibility.html — TypeScript"
+    url: "https://www.typescriptlang.org/docs/handbook/type-compatibility.html"
+    type: docs
+  - title: "Types from types.html — TypeScript"
+    url: "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"
+    type: docs
 module: extensibility
 moduleOrder: 5
 estimatedMinutes: 16
@@ -64,9 +70,9 @@ exercises:
 
 Open `src/components/desktop/store/types.ts`. You'll see 66 lines of TypeScript interfaces and type definitions that describe every window, every app registration, every action the desktop can perform. Zero lines of runtime code — just types. Delete them all, and the application still runs identically. So why do they exist?
 
-Because they catch bugs *before* the code runs. When you write `actions.openWindow(42)` instead of `actions.openWindow('browser')`, TypeScript flags it instantly — `42` isn't a `string`. When you add a new property to `WindowState` but forget to update the `produce()` call in the store, TypeScript shows you exactly where the mismatch is. The type system is a machine-checked specification of how the application's data structures connect.
+Because they catch bugs *before* the code runs. When you write `actions.openWindow(42)` instead of `actions.openWindow('browser')`, TypeScript flags it instantly — `42` isn't a `string`. When you add a new property to `WindowState` but forget to update the `produce()` call in the store, TypeScript shows you exactly where the mismatch is. The [type system](https://mitpress.mit.edu/9780262162098/types-and-programming-languages/) is a machine-checked specification of how the application's data structures connect.
 
-Understanding type systems — what they can prove, what they can't, and the tradeoffs [TypeScript makes](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) — is essential for working in any typed codebase.
+Understanding type systems — what they can prove, what they can't, and the tradeoffs [TypeScript makes](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) — is essential for working in any typed codebase. TypeScript's [type narrowing](https://www.typescriptlang.org/docs/handbook/2/narrowing.html) and [generics](https://www.typescriptlang.org/docs/handbook/2/generics.html) are particularly relevant.
 
 ## What Is a Type System?
 
@@ -161,7 +167,7 @@ function createStore<T extends object>(initialState: T): [Store<T>, SetStoreFunc
 
 ### Zod: Runtime Types from Schema
 
-The content configuration in `src/content.config.ts` uses Zod schemas that serve double duty — runtime validation AND compile-time types:
+The content configuration in `src/content.config.ts` uses [Zod](https://zod.dev/) schemas that serve double duty — runtime validation AND compile-time types:
 
 ```typescript
 const knowledge = defineCollection({
@@ -240,7 +246,7 @@ This is a design choice. A fully sound type system (like Rust's) rejects more va
 
 ## Deeper Rabbit Holes
 
-- **Branded types**: Simulating nominal typing in TypeScript. Create a `type WindowId = string & { __brand: 'WindowId' }` to prevent accidentally passing a regular string as a window ID. Used when structural compatibility is too loose.
+- **Branded types**: Simulating [nominal](https://basarat.gitbook.io/typescript/main-1/nominaltyping) typing in TypeScript. Create a `type WindowId = string & { __brand: 'WindowId' }` to prevent accidentally passing a regular string as a window ID. Used when structural compatibility is too loose.
 - **Conditional types**: `T extends U ? X : Y` — types that branch on a condition. Powers utility types like `Exclude<T, U>`, `Extract<T, U>`, and `ReturnType<T>`. Essential for library authors.
 - **Template literal types**: `type EventName = \`on${Capitalize<string>}\`` — types that match string patterns. TypeScript can check that your event name strings follow a naming convention.
 - **The Curry-Howard correspondence**: A deep connection between type systems and mathematical logic. Every type is a proposition, every program is a proof. `WindowState` isn't just a data shape — it's a statement that "windows with these properties exist." TypeScript's type checker is essentially a theorem prover.

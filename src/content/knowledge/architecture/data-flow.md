@@ -25,7 +25,7 @@ technologies:
   - astro
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-21
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Astro Content Collections"
     url: "https://docs.astro.build/en/guides/content-collections/"
@@ -41,6 +41,15 @@ externalReferences:
     type: docs
   - title: "Islands Architecture — Jason Miller"
     url: "https://jasonformat.com/islands-architecture/"
+    type: article
+  - title: "Rendering — Astro Docs"
+    url: "https://docs.astro.build/en/basics/rendering/"
+    type: docs
+  - title: "Xss — owasp.org"
+    url: "https://owasp.org/www-community/attacks/xss/"
+    type: article
+  - title: "FailFast.pdf — martinfowler.com"
+    url: "https://www.martinfowler.com/ieeeSoftware/failFast.pdf"
     type: article
 diagramRef: content-collections
 module: foundation
@@ -69,7 +78,7 @@ exercises:
 
 ## Why Should I Care?
 
-The most common question about this codebase is: "How does the CV content get from Markdown files into the Win95 browser window?" The answer reveals a design pattern that eliminates an entire class of problems — runtime Markdown parsing, client-side bundle bloat, XSS vulnerabilities from dynamic content, and loading-state complexity.
+The most common question about this codebase is: "How does the CV content get from Markdown files into the Win95 browser window?" The answer reveals a design pattern that eliminates an entire class of problems — runtime Markdown parsing, client-side bundle bloat, XSS vulnerabilities from dynamic content, and loading-state complexity (see [Astro data fetching](https://docs.astro.build/en/guides/data-fetching/)).
 
 The same pipeline powers both the CV viewer and the knowledge base, so understanding it once explains two features. This is an instance of the [static-first architecture](https://docs.astro.build/en/basics/rendering/) that Astro promotes — do as much work as possible at build time, ship minimal JavaScript to the client.
 
@@ -215,7 +224,7 @@ Astro's file-based routing renders each knowledge entry as a static HTML page:
 /learn/concepts/signals-vs-vdom → src/content/knowledge/concepts/signals-vs-vdom.md
 ```
 
-The `/learn/*` pages are fully static — no SolidJS island, no client-side hydration. They are pre-rendered HTML that works without JavaScript, then `LearnLayout.astro` adds two progressive enhancements: Mermaid diagram rendering and local mastery progress.
+The `/learn/*` pages are fully static — no SolidJS [island](https://jasonformat.com/islands-architecture/), no client-side hydration. They are pre-rendered HTML that works without JavaScript, then `LearnLayout.astro` adds two progressive enhancements: Mermaid diagram rendering and local mastery progress.
 
 Additionally, `index.astro` serializes a knowledge index into the page for the Library app's tree view:
 

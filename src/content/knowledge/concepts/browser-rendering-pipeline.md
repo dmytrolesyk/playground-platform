@@ -15,6 +15,7 @@ technologies:
   - solidjs
 order: 11
 dateAdded: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Rendering Performance — web.dev"
     url: "https://web.dev/articles/rendering-performance"
@@ -30,6 +31,18 @@ externalReferences:
     type: article
   - title: "The Pixel Pipeline — Chrome Developers"
     url: "https://developer.chrome.com/docs/devtools/performance"
+    type: docs
+  - title: "Rendering — developer.chrome.com"
+    url: "https://developer.chrome.com/docs/devtools/performance/rendering"
+    type: article
+  - title: "CSS Object Model — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model"
+    type: docs
+  - title: "transform — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/transform"
+    type: docs
+  - title: "opacity — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/opacity"
     type: docs
 module: window-manager
 moduleOrder: 4
@@ -80,13 +93,13 @@ flowchart LR
 
 ### Stage 1: Parse
 
-The browser parses HTML into the **DOM tree** and CSS into the **[CSSOM](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model)** (CSS Object Model). These are combined into the **render tree** — a tree of only visible elements with their computed styles.
+The [browser](https://web.dev/articles/howbrowserswork) parses HTML into the **DOM tree** and CSS into the **[CSSOM](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model)** (CSS Object Model). These are combined into the **render tree** — a tree of only visible elements with their computed styles.
 
 ### Stage 2: Style Calculation
 
 For each element in the render tree, the browser resolves which CSS rules apply (selector matching), cascades conflicting rules, and computes final values. This is where `inherit`, `em`, `%`, and `var()` resolve to concrete pixel values.
 
-### Stage 3: Layout (Reflow)
+### Stage 3: [Layout](https://web.dev/articles/rendering-performance) (Reflow)
 
 The browser calculates the **exact position and size** of every element. This is the most expensive stage for interactive changes because modifying one element's geometry can cascade to its siblings, children, and even unrelated elements.
 
@@ -106,7 +119,7 @@ Properties that only trigger composite: **[`transform`](https://developer.mozill
 
 ## Why Transform Is "Free"
 
-When you change `transform: translate(x, y)`, the browser skips stages 2–4 entirely. The element is already painted as a layer bitmap on the GPU. The compositor just moves that bitmap to a new position — no style calculation, no layout, no repaint.
+When you change `transform: translate(x, y)`, the browser skips stages 2–4 entirely. The element is already painted as a layer bitmap on the GPU. The [compositor](https://web.dev/articles/animations-guide) just moves that bitmap to a new position — no style calculation, no layout, no repaint.
 
 This is exactly why windows in this project use `transform: translate()` for position:
 
@@ -118,7 +131,7 @@ style={{
 }}
 ```
 
-With `left`/`top`, every frame during drag would trigger layout → paint → composite. With `transform`, it's composite only — roughly 100× less work per frame.
+With `left`/`top`, every frame during drag would trigger [layout](https://csstriggers.com/) → paint → composite. With `transform`, it's composite only — roughly 100× less work per frame.
 
 ```mermaid
 flowchart LR
@@ -207,7 +220,7 @@ In the window manager, every window creates a stacking context via `transform: t
 
 ## DevTools: Seeing the Pipeline
 
-Chrome DevTools' Performance panel shows exactly which pipeline stages run for each frame:
+Chrome DevTools' [Performance panel](https://developer.chrome.com/docs/devtools/performance) shows exactly which pipeline stages run for each frame:
 
 1. **Performance tab → Record** → interact with the page → **Stop**
 2. Look at the **Main** thread flame chart for: Recalculate Style, Layout, Paint, Composite

@@ -18,7 +18,7 @@ technologies:
   - astro
 order: 13
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-21
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Progressive Enhancement — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement"
@@ -32,6 +32,12 @@ externalReferences:
   - title: "Understanding Progressive Enhancement — Aaron Gustafson"
     url: "https://alistapart.com/article/understandingprogressiveenhancement/"
     type: article
+  - title: "ARIA — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA"
+    type: docs
+  - title: "Rendering — Astro Docs"
+    url: "https://docs.astro.build/en/basics/rendering/"
+    type: docs
 module: foundation
 moduleOrder: 2
 estimatedMinutes: 10
@@ -57,7 +63,7 @@ exercises:
 
 ## Why Should I Care?
 
-[Progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement) is the principle that the core content of a website should be accessible to everyone, regardless of their browser capabilities, network conditions, or whether JavaScript is enabled. It's the reason search engines can index your content, [screen readers](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) can read it, and users on slow connections see *something* before the full experience loads.
+[Progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement) is the principle that the core content of a website should be accessible to everyone, regardless of their browser capabilities, network conditions, or whether JavaScript is enabled (see [Understanding Progressive Enhancement](https://alistapart.com/article/understandingprogressiveenhancement/) for a thorough introduction). It's the reason search engines can index your content, [screen readers](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) can read it, and users on slow connections see *something* before the full experience loads.
 
 In this project, progressive enhancement isn't bolted on as an afterthought — [Astro's static-first architecture](https://docs.astro.build/en/basics/rendering/) makes it the default. The CV content, knowledge articles, and download links all work without a single byte of JavaScript. The interactive desktop is an enhancement layer on top.
 
@@ -183,7 +189,7 @@ This project makes a deliberate tradeoff: the interactive desktop experience *re
 
 The principle isn't "everything must work without JS." It's "the *core content* must be accessible without JS, and everything else is an enhancement." For a CV site, the core content is the CV itself — and that's available as a direct PDF download.
 
-## Progressive Enhancement vs. Graceful Degradation
+## [Progressive Enhancement](https://www.youtube.com/watch?v=xIxDJof7xxQ) vs. Graceful Degradation
 
 These terms are often confused:
 
@@ -202,5 +208,5 @@ Progressive enhancement connects to several deeper web principles:
 
 - **Semantic HTML** — Using the right elements (`<a>`, `<button>`, `<form>`) means built-in behavior without JavaScript
 - **The Rule of Least Power** — Use the least powerful language that gets the job done (HTML > CSS > JS)
-- **Resilient Web Design** — Jeremy Keith's book argues that the web's core strength is its resilience to failure, and progressive enhancement embraces this
+- **[Resilient](https://resilientwebdesign.com/) Web Design** — Jeremy Keith's book argues that the web's core strength is its resilience to failure, and progressive enhancement embraces this
 - **Core Web Vitals** — Google's performance metrics (LCP, FID, CLS) all reward pages that render meaningful content quickly — exactly what progressive enhancement delivers

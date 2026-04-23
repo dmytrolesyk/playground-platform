@@ -28,7 +28,7 @@ technologies:
   - solidjs
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "SolidJS Reactivity Guide"
     url: "https://www.solidjs.com/guides/reactivity"
@@ -45,6 +45,9 @@ externalReferences:
   - title: "Knockout.js — Observables"
     url: "https://knockoutjs.com/documentation/observables.html"
     type: docs
+  - title: "Faq internals.html — legacy.reactjs.org"
+    url: "https://legacy.reactjs.org/docs/faq-internals.html"
+    type: article
 module: reactivity
 moduleOrder: 1
 estimatedMinutes: 20
@@ -69,9 +72,9 @@ exercises:
 
 ## Why Should I Care?
 
-When you drag a window across this desktop, the browser updates the screen at 60 frames per second. Each frame, only one thing changes: the CSS `transform` of the dragged window. The taskbar doesn't re-render. Other windows don't re-render. The start menu doesn't re-render. Only the specific DOM property that reads the window's `x` and `y` coordinates updates.
+When you drag a window across this desktop, the browser updates the screen at 60 frames per second. Each frame, only one thing changes: the CSS `transform` of the dragged window. The taskbar doesn't re-render. Other windows don't re-render. The start menu doesn't re-render. Only the specific DOM property that reads the window's `x` and `y` coordinates updates (see [KnockoutJS observables](https://knockoutjs.com/documentation/observables.html)).
 
-This surgical precision isn't manual optimization — it's the default behavior of SolidJS's fine-grained reactivity system. Understanding it explains why the window manager feels responsive, why there's no `React.memo` or `useMemo` anywhere in the codebase, and why SolidJS was chosen over React for this project.
+This surgical precision isn't manual optimization — it's the default behavior of SolidJS's [fine-grained](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf) reactivity system. Understanding it explains why the window manager feels responsive, why there's no `React.memo` or `useMemo` anywhere in the codebase, and why SolidJS was chosen over React for this project.
 
 ## The Core Mechanism
 
@@ -96,7 +99,7 @@ flowchart LR
 
 ## Signals: The Foundation
 
-A [signal](https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p) is a reactive value with automatic dependency tracking:
+A [signal](https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p) is a reactive value with automatic dependency tracking (see also this [SolidJS reactivity walkthrough](https://www.youtube.com/watch?v=OqcHoLWyyIw)):
 
 ```typescript
 const [count, setCount] = createSignal(0);

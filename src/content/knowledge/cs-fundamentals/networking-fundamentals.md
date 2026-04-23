@@ -34,6 +34,9 @@ externalReferences:
   - title: "MDN — Fetch API"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
     type: docs
+  - title: "Transport Layer Security — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security"
+    type: docs
 module: full-stack
 moduleOrder: 3
 estimatedMinutes: 18
@@ -60,9 +63,9 @@ exercises:
 
 ## Why Should I Care?
 
-Click "Send" on the contact form of this CV website. In the next 2-3 seconds, your message travels from the browser through at least six protocol layers, crosses the internet to a Railway server, bounces to the Resend API, gets converted to an email, passes through SMTP servers, and arrives in an inbox. If any link in this chain breaks — a DNS failure, a TLS certificate issue, a misconfigured environment variable — the message is lost.
+Click "Send" on the contact form of this CV website. In the next 2-3 seconds, your message travels from the browser through at least six [protocol](https://gaia.cs.umass.edu/kurose_ross/index.php) layers, crosses the internet to a Railway server, bounces to the Resend [API](https://resend.com/docs/api-reference/emails/send-email), gets converted to an email, passes through SMTP servers, and arrives in an inbox. If any link in this chain breaks — a DNS failure, a TLS certificate issue, a misconfigured environment variable — the message is lost.
 
-The contact form endpoint in `src/pages/api/contact.ts` is 95 lines of code. But those 95 lines sit on top of decades of networking protocols. Understanding the full request lifecycle — not just "fetch sends a request" — explains why the code handles errors the way it does, why environment variables matter, and what the Network tab in DevTools actually shows you.
+The contact form endpoint in `src/pages/api/contact.ts` is 95 lines of code. But those 95 lines sit on top of decades of networking protocols. Understanding the full request lifecycle — not just "[fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) sends a request" — explains why the code handles errors the way it does, why environment variables matter, and what the Network tab in DevTools actually shows you.
 
 ## The HTTP Request Lifecycle
 
@@ -77,7 +80,7 @@ sequenceDiagram
     participant MX as Recipient MX Server
     participant IN as Inbox
 
-    B->>DNS: Resolve domain → IP
+    B->>[DNS](https://howdns.works/): Resolve domain → IP
     DNS-->>B: IP address
     B->>S: TCP handshake (SYN/SYN-ACK/ACK)
     B->>S: TLS handshake (certificates, keys)
@@ -112,7 +115,7 @@ TCP (Transmission Control Protocol) establishes a reliable, ordered connection b
 
 This costs one round trip. On a 50ms latency connection, that's 50ms before any data flows. HTTP/2 and HTTP/3 improve this — HTTP/3 uses QUIC (over UDP) which combines the connection and encryption handshakes into a single round trip.
 
-TCP also handles **reliability**: if a packet is lost, it retransmits. If packets arrive out of order, TCP reassembles them. This is why HTTP works reliably even on lossy networks — TCP abstracts away the chaos of the internet.
+TCP also handles **reliability**: if a packet is lost, it retransmits. If packets arrive out of order, TCP reassembles them. This is why HTTP works reliably even on lossy [networks](https://hpbn.co/) — TCP abstracts away the chaos of the internet.
 
 ### Step 3: TLS — Encryption
 
@@ -172,7 +175,7 @@ const { error } = await resend.emails.send({
 });
 ```
 
-This is server-to-server HTTP. The Resend SDK makes a `POST https://api.resend.com/emails` request with the API key in the `Authorization` header. The full path: Railway server → DNS → Resend's load balancer → Resend's API server → response back to Railway.
+This is server-to-server [HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview). The Resend SDK makes a `POST https://api.resend.com/emails` request with the API key in the `Authorization` header. The full path: Railway server → DNS → Resend's load balancer → Resend's API server → response back to Railway.
 
 **Critical detail**: The API key comes from `process.env['RESEND_API_KEY']`, not `import.meta.env`. Vite inlines `import.meta.env` at build time. In the Docker build (CI), secrets aren't available, so `import.meta.env.RESEND_API_KEY` would become an empty string in the built JavaScript. `process.env` reads from the actual runtime environment — the one Railway configures when the container starts.
 

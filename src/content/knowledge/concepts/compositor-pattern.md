@@ -16,7 +16,7 @@ relatedFiles:
   - src/components/desktop/CrtMonitorFrame.tsx
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Compositor-only CSS animations — web.dev"
     url: "https://web.dev/articles/animations-guide"
@@ -33,6 +33,9 @@ externalReferences:
   - title: "will-change — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/will-change"
     type: docs
+  - title: "Inside browser part3 — developer.chrome.com"
+    url: "https://developer.chrome.com/blog/inside-browser-part3"
+    type: article
 module: window-manager
 moduleOrder: 3
 estimatedMinutes: 18
@@ -58,7 +61,7 @@ exercises:
 
 ## Why Should I Care?
 
-The difference between smooth 60fps window dragging and janky, stuttering movement comes down to one CSS property choice: `transform: translate()` vs `left`/`top`. This isn't a micro-optimization — it's the difference between the browser recomputing the layout of every element on the page vs. moving a pre-painted bitmap on the GPU. Understanding the compositor pattern explains why certain CSS properties are "free" to animate, why `will-change` exists, and how to use Chrome DevTools to diagnose rendering performance.
+The difference between smooth 60fps window dragging and janky, stuttering movement comes down to one CSS property choice: `transform: translate()` vs `left`/`top`. This isn't a micro-optimization — it's the difference between the browser recomputing the [layout](https://csstriggers.com/) of every element on the page vs. moving a pre-painted bitmap on the GPU. Understanding the compositor pattern explains why certain CSS properties are "free" to animate, why `will-change` exists, and how to use Chrome DevTools to diagnose rendering performance (see [GPU-accelerated compositing in Chrome](https://www.chromium.org/developers/design-documents/gpu-accelerated-compositing-in-chrome/)).
 
 ## Layout vs Paint vs Composite
 
@@ -109,7 +112,7 @@ style={{
 }}
 ```
 
-During drag, only `transform` changes — the compositor moves the window's pre-painted layer on the GPU. The browser skips Style, Layout, and Paint entirely:
+During drag, only `transform` changes — the compositor moves the window's pre-painted [layer](https://developer.chrome.com/docs/devtools/layers) on the GPU. The browser skips Style, Layout, and Paint entirely:
 
 | Frame budget: 16.6ms | `left`/`top` | `transform` |
 |---|---|---|

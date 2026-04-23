@@ -26,6 +26,12 @@ externalReferences:
   - title: "SolidJS lazy() and Suspense"
     url: "https://docs.solidjs.com/reference/component-apis/lazy"
     type: docs
+  - title: "Command — Refactoring Guru"
+    url: "https://refactoring.guru/design-patterns/command"
+    type: article
+  - title: "Lazy loading — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading"
+    type: docs
 module: extensibility
 moduleOrder: 3
 estimatedMinutes: 12
@@ -52,7 +58,7 @@ exercises:
 
 ## Why Should I Care?
 
-The Terminal is the most architecturally interesting feature in the project. It bridges the gap between a real terminal emulator ([xterm.js](https://xtermjs.org/) renders a GPU-accelerated canvas, processes ANSI escape codes, handles cursor positioning) and a simple REPL (commands are JavaScript functions, not spawned processes). Understanding how it works teaches you about [command dispatch patterns](https://refactoring.guru/design-patterns/command), keyboard event routing, the terminal abstraction model, and why [lazy loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading) is non-negotiable for heavy dependencies.
+The Terminal is the most architecturally interesting feature in the project. It bridges the gap betwe[en](https://en.wikipedia.org/wiki/ANSI_escape_code) a real terminal emulator ([xterm.js](https://xtermjs.org/) renders a GPU-accelerated canvas, processes ANSI escape codes, handles cursor positioning) and a simple REPL (commands are JavaScript functions, not spawned processes). Understanding how it works teaches you about [command dispatch patterns](https://refactoring.guru/design-patterns/command), keyboard event routing, the terminal abstraction model, and why [lazy loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading) is non-negotiable for heavy dependencies.
 
 ## Command Handler Architecture
 
@@ -157,7 +163,7 @@ const handleKeyDown = (e: KeyboardEvent): void => {
 
 This is a clean separation: the desktop doesn't know about xterm.js internals, and xterm.js doesn't know about desktop shortcuts. The `captureKeyboard` flag in the registry is the contract between them.
 
-## Lazy Loading: 300KB Behind a Dynamic Import
+## [Lazy](https://docs.solidjs.com/reference/component-apis/lazy) Loading: 300KB Behind a Dynamic Import
 
 xterm.js and its addons are approximately 300KB parsed JavaScript. The desktop's critical path is under 35KB. Loading xterm.js eagerly would nearly 10× the initial bundle for a feature many users might never open.
 

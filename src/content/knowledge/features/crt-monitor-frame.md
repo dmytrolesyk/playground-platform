@@ -13,7 +13,7 @@ technologies:
   - solidjs
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "How CRT Monitors Work — Computer History Museum"
     url: "https://www.computerhistory.org/revolution/input-output/14/348"
@@ -27,6 +27,15 @@ externalReferences:
   - title: "What Every Developer Should Know About GPU-based CSS Animations"
     url: "https://web.dev/articles/animations-guide"
     type: article
+  - title: "Cathode-ray tube — Wikipedia"
+    url: "https://en.wikipedia.org/wiki/Cathode-ray_tube"
+    type: article
+  - title: "radial-gradient — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/radial-gradient"
+    type: docs
+  - title: "pointer-events — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events"
+    type: docs
 module: aesthetics-performance
 moduleOrder: 2
 estimatedMinutes: 15
@@ -53,7 +62,7 @@ exercises:
 
 ## Why Should I Care?
 
-The CRT monitor frame is the most visually complex component in the project, yet it's built entirely with CSS — no images, no canvas, no WebGL. It recreates a physical CRT monitor around the desktop using gradients, box-shadows, pseudo-elements, and careful layering. Understanding how it works teaches you advanced CSS techniques that go far beyond layout: how to simulate physical depth, how layered overlays interact with `pointer-events`, and which CSS properties are "free" (handled by the GPU compositor) versus expensive (triggering layout recalculation).
+The [CRT](https://www.computerhistory.org/revolution/input-output/14/348) monitor frame is the most visually complex component in the project, yet it's built entirely with CSS — no images, no canvas, no WebGL. It recreates a physical CRT monitor around the desktop using gradients, box-shadows, pseudo-elements, and careful layering. Understanding how it works teaches you advanced CSS techniques that go far beyond layout: how to simulate physical depth, how layered overlays interact with `pointer-events`, and which CSS properties are "free" (handled by the [GPU](https://web.dev/articles/animations-guide) compositor) versus expensive (triggering layout recalculation) (see [W3C Compositing and Blending specification](https://www.w3.org/TR/compositing/)).
 
 ## How Real CRT Displays Worked
 
@@ -104,7 +113,7 @@ The overlay elements (`crt-glass`, `crt-scanlines`, `crt-vignette`) are **layere
 
 ## CSS Techniques Deep Dive
 
-### Scanlines — `repeating-linear-gradient`
+### Scanlines — [`repeating-linear-gradient`](https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/repeating-linear-gradient)
 
 Real CRTs display visible horizontal lines where the electron beam doesn't illuminate. The CSS emulates this with a 4px repeating gradient: 2px transparent, 2px semi-transparent dark:
 

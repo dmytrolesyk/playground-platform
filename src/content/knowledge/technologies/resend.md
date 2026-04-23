@@ -27,6 +27,9 @@ externalReferences:
   - title: "Email Authentication Explained: SPF, DKIM, and DMARC"
     url: "https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/"
     type: article
+  - title: "DNS — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Glossary/DNS"
+    type: docs
 module: full-stack
 moduleOrder: 2
 estimatedMinutes: 10
@@ -53,7 +56,7 @@ exercises:
 
 ## Why Should I Care?
 
-Email looks simple — you fill out a form, hit send, message arrives. But between "send" and "arrives" lies a gauntlet of [DNS lookups](https://developer.mozilla.org/en-US/docs/Glossary/DNS), authentication protocols, [reputation scoring](https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/), and spam filtering that kills most messages from unknown servers. [Resend](https://resend.com/docs) abstracts this entire stack into one HTTP call. Understanding what it hides teaches you why "just use `sendmail`" is never the right answer for production web apps.
+Email looks simple — you fill out a form, hit send, message arrives. But between "send" and "arrives" lies a gauntlet of [DNS lookups](https://developer.mozilla.org/en-US/docs/Glossary/DNS), authentication protocols like [SPF](https://resend.com/docs/knowledge-base/what-is-spf) (see the [SPF record specification](https://www.cloudflare.com/learning/dns/dns-records/dns-spf-record/)), reputation scoring, and spam filtering that kills most messages from unknown servers. [Resend](https://resend.com/docs) abstracts this entire stack into one HTTP call. Understanding what it hides teaches you why "just use `sendmail`" is never the right answer for production web apps.
 
 ## How Email Delivery Actually Works
 
@@ -157,7 +160,7 @@ The bracket notation (`process.env['RESEND_API_KEY']`) is required by the projec
 
 ## Error Handling: No Exceptions
 
-The Resend SDK returns a `{ data, error }` tuple — it does **not** throw exceptions:
+The [Resend](https://github.com/resend/resend-node) SDK returns a `{ data, error }` tuple — it does **not** throw exceptions:
 
 ```typescript
 const { data, error } = await resend.emails.send({ ... });

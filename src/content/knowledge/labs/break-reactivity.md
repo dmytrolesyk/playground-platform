@@ -18,7 +18,7 @@ technologies:
   - typescript
 order: 1
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "SolidJS Reactivity Guide"
     url: "https://www.solidjs.com/guides/reactivity"
@@ -28,6 +28,12 @@ externalReferences:
     type: article
   - title: "SolidJS — createEffect"
     url: "https://docs.solidjs.com/reference/basic-reactivity/create-effect"
+    type: docs
+  - title: "Proxy — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"
+    type: docs
+  - title: "Split props — SolidJS"
+    url: "https://docs.solidjs.com/reference/component-apis/split-props"
     type: docs
 prerequisites:
   - concepts/fine-grained-reactivity
@@ -46,7 +52,7 @@ moduleOrder: 99
 
 ## Why This Lab Exists
 
-[SolidJS reactivity](https://www.solidjs.com/guides/reactivity) feels magical — until it silently stops working. Unlike React, which re-runs entire components on every state change, SolidJS builds a dependency graph at **first execution time**. If a signal isn't read during that first synchronous pass, SolidJS never knows about it. The result: your UI freezes while your data changes underneath. This lab creates five of these breaks so you can recognize them instantly in real code.
+[SolidJS reactivity](https://www.solidjs.com/guides/reactivity) feels magical — until it silently stops working. Unlike React, which re-runs entire components on every state change, SolidJS builds a dependency graph at **first execution time**. If a signal isn't read during that first synchronous pass, SolidJS never knows about it. The result: your UI freezes while your data changes underneath. This lab creates five of these breaks so you can recognize them instantly in real code (see [introduction to fine-grained reactivity](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf)).
 
 ## Setup
 
@@ -60,7 +66,7 @@ Create a test file at `src/lab-reactivity.tsx`. You won't wire it into the app �
 
 ```tsx
 // src/lab-reactivity.tsx
-import { createSignal, createEffect } from "solid-js";
+import { createSignal, [createEffect](https://docs.solidjs.com/reference/basic-reactivity/create-effect) } from "solid-js";
 
 // We'll add experiments here
 ```

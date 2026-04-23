@@ -16,7 +16,7 @@ technologies:
   - typescript
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Seven Concurrency Models in Seven Weeks — Paul Butcher"
     url: "https://pragprog.com/titles/pb7con/seven-concurrency-models-in-seven-weeks/"
@@ -32,6 +32,12 @@ externalReferences:
     type: talk
   - title: "Chromium Compositor Thread Architecture"
     url: "https://chromium.googlesource.com/chromium/src/+/HEAD/docs/how_cc_works.md"
+    type: docs
+  - title: "Event loop — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop"
+    type: docs
+  - title: "requestAnimationFrame — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame"
     type: docs
 module: window-manager
 moduleOrder: 5
@@ -62,14 +68,14 @@ exercises:
 
 Drag a window across this desktop while the terminal loads xterm.js in the background. The window follows your cursor smoothly at 60fps. How? JavaScript is single-threaded — it can only do one thing at a time. If it's busy loading a module, how can it also track your mouse and update the window position?
 
-The answer involves multiple concurrency mechanisms working together: the [event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop) scheduling JavaScript work in slices, the [compositor thread](https://developer.chrome.com/blog/inside-browser-part3) moving GPU layers independently of JavaScript, and [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) synchronizing updates with the display refresh. Understanding these concurrency models explains why some UI interactions stay smooth under load and others freeze — and how to architect code that stays responsive.
+The answer involves multiple [concurrency](https://pragprog.com/titles/pb7con/seven-concurrency-models-in-seven-weeks/) mechanisms working together: the [event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop) scheduling JavaScript work in slices, the [compositor thread](https://developer.chrome.com/blog/inside-browser-part3) moving [GPU](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/how_cc_works.md) layers independently of JavaScript, and [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) synchronizing updates with the display refresh. Understanding these concurrency models explains why some UI interactions stay smooth under load and others freeze — and how to architect code that stays responsive.
 
 ## Concurrency vs. Parallelism
 
 These terms are often confused:
 
 - **Concurrency**: Dealing with multiple tasks by interleaving them. One worker, many tasks, switching between them. The event loop is concurrent — it handles click events, network responses, and timers by processing them in order.
-- **Parallelism**: Doing multiple tasks simultaneously. Multiple workers, each doing a task at the same time. Web Workers are parallel — they run JavaScript on actual separate OS threads.
+- **Parallelism**: Doing multiple tasks simultaneously. Multiple workers, each doing a task at the same time. [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) are parallel — they run JavaScript on actual separate OS threads.
 
 JavaScript's main thread is **concurrent but not parallel**. It handles many things (events, timers, promises, rendering) but only one at a time. The browser as a whole uses parallelism: the compositor thread, network threads, GPU process, and Web Workers all run in parallel with the main thread.
 
@@ -99,7 +105,7 @@ flowchart LR
 JavaScript's concurrency model is the **event loop** — a single thread that pulls tasks from queues and executes them one at a time:
 
 1. Execute the current task (a click handler, a timer callback, a promise continuation)
-2. When the call stack is empty, drain the microtask queue (Promises, queueMicrotask)
+2. When the [call stack](https://www.youtube.com/watch?v=cCOL7MC4Pl0) is empty, drain the microtask queue (Promises, queueMicrotask)
 3. If it's time for a frame (~16.6ms at 60Hz), run rAF callbacks, then style/layout/paint
 4. Pull the next task from the task queue
 

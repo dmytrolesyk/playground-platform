@@ -16,7 +16,7 @@ technologies:
   - typescript
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-23
 externalReferences:
   - title: "Chrome DevTools — Fix Memory Problems"
     url: "https://developer.chrome.com/docs/devtools/memory-problems"
@@ -27,6 +27,12 @@ externalReferences:
   - title: "V8 Blog — Trash Talk: The Orinoco Garbage Collector"
     url: "https://v8.dev/blog/trash-talk"
     type: article
+  - title: "setInterval — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval"
+    type: docs
+  - title: "Memory management — MDN Web Docs"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_management"
+    type: docs
 prerequisites:
   - cs-fundamentals/memory-management-and-gc
   - concepts/event-loop-and-microtasks
@@ -187,7 +193,7 @@ export function LeakyApp(): JSX.Element {
 
 The only change: capture the timer ID and call `clearInterval(timer)` inside `onCleanup`.
 
-**OBSERVE:** Open and close the app 5 times. The counter stops immediately when you close the window — no more background ticks. The `onCleanup` callback fires when SolidJS disposes the component's reactive scope.
+**OBSERVE:** Open and close the app 5 times. The counter stops immediately when you close the window — no more background ticks. The `[onCleanup](https://docs.solidjs.com/reference/lifecycle/on-cleanup)` callback fires when SolidJS disposes the component's reactive scope.
 
 **EXPLAIN:** `onCleanup` registers a disposal callback on the current reactive owner (the component's setup scope). When the parent (the window manager) removes the component, SolidJS runs all `onCleanup` callbacks registered during that component's lifecycle. The `clearInterval` call removes the timer from the browser's timer queue, which releases the closure reference, which allows the GC to collect `data`, `count`, `setCount`, and the detached DOM nodes.
 
@@ -219,7 +225,7 @@ onCleanup(() => {
 });
 ```
 
-This cleans up three resources: the `ResizeObserver` (a browser API like `setInterval`), the xterm.js FitAddon, and the Terminal instance itself. Without this cleanup, every open/close cycle of the terminal would leak a `ResizeObserver`, a `Terminal` with its internal DOM nodes and buffers, and a `FitAddon`. The `cs-fundamentals/memory-management-and-gc` article explains the V8 GC mechanics that make this possible.
+This cleans up three resources: the `ResizeObserver` (a browser API like `setInterval`), the xterm.js FitAddon, and the Terminal instance itself. Without this cleanup, every open/close cycle of the terminal would leak a `ResizeObserver`, a `Terminal` with its internal DOM nodes and buffers, and a `FitAddon`. The `cs-fundamentals/memory-management-and-[gc](https://v8.dev/blog/trash-talk)` article explains the V8 GC mechanics that make this possible.
 
 ## Wrap-Up
 

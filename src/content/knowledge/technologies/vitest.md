@@ -37,6 +37,12 @@ externalReferences:
   - title: "Testing Library — Guiding Principles"
     url: "https://testing-library.com/docs/guiding-principles"
     type: article
+  - title: "Guide — Vitest"
+    url: "https://vitest.dev/guide/"
+    type: docs
+  - title: "Cli — Vitest"
+    url: "https://vitest.dev/guide/cli"
+    type: docs
 module: learning-system-reliability
 moduleOrder: 4
 estimatedMinutes: 12
@@ -62,7 +68,7 @@ exercises:
 
 ## Why Should I Care?
 
-Every audit rule, every graph extraction function, every pure utility in this project needs tests that run in milliseconds, not seconds. [Vitest](https://vitest.dev/) provides this by sharing Vite's transform pipeline — the same tool that builds the web app also runs the tests, with no configuration duplication. If you've used Jest, Vitest's API is nearly identical, but the speed difference is dramatic: Vitest's [HMR-based watch mode](https://vitest.dev/guide/why) re-runs only affected tests when a file changes, typically under 100ms.
+Every audit rule, every graph extraction function, every pure utility in this project needs tests that run in milliseconds, not seconds. [Vitest](https://vitest.dev/) (see the [Vitest repository](https://github.com/vitest-dev/vitest)) provides this by sharing Vite's transform pipeline — the same tool that builds the web app also runs the tests, with no [configuration](https://vitest.dev/config/) duplication. If you've used Jest, Vitest's API is nearly identical, but the speed difference is dramatic: Vitest's [HMR-based watch mode](https://vitest.dev/guide/why) re-runs only affected tests when a file changes, typically under 100ms.
 
 ## How Vitest Fits the Testing Strategy
 
@@ -73,7 +79,7 @@ This project has a **two-tier testing strategy**, and understanding which tier h
 | Unit/Logic | **Vitest** | Pure functions, audit rules, graph extraction, utilities | Fast (ms) | `pnpm test` |
 | Integration/UI | **Playwright** | Browser rendering, interactions, hydration, responsive layout | Slow (s) | `pnpm test:e2e` |
 
-Vitest tests answer: "Does this function produce the correct output for a given input?" Playwright tests answer: "Does the user see and experience the right thing in a browser?" The line is clear: if your test needs a DOM, a browser, or visual verification, use Playwright. If it tests logic that takes data in and produces data out, use Vitest.
+Vitest tests answer: "Does this function produce the correct output for a given input?" Playwright tests answer: "Does the user see and experience the right thing in a browser?" following the [Testing Library guiding principles](https://testing-library.com/docs/guiding-principles). The line is clear: if your test needs a DOM, a browser, or visual verification, use Playwright. If it tests logic that takes data in and produces data out, use Vitest.
 
 ```mermaid
 flowchart TB

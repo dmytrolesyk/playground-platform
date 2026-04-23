@@ -40,6 +40,24 @@ externalReferences:
   - title: "Matt Pocock — Total TypeScript"
     url: "https://www.totaltypescript.com/"
     type: article
+  - title: "Typescript — Astro Docs"
+    url: "https://docs.astro.build/en/guides/typescript/#strict"
+    type: docs
+  - title: "Tsconfig — TypeScript"
+    url: "https://www.typescriptlang.org/tsconfig/#strict"
+    type: docs
+  - title: "Release Notes — Node.js"
+    url: "https://nodejs.org/en/blog/release/v22.6.0"
+    type: article
+  - title: "Zod Documentation"
+    url: "https://zod.dev/?id=zod-enums"
+    type: docs
+  - title: "Zod Documentation"
+    url: "https://zod.dev/"
+    type: docs
+  - title: "Env and mode — Vite"
+    url: "https://vite.dev/guide/env-and-mode"
+    type: docs
 module: foundation
 moduleOrder: 5
 estimatedMinutes: 15
@@ -65,7 +83,7 @@ exercises:
 
 ## Why Should I Care?
 
-Every file in this project is TypeScript — `.ts` for scripts, `.tsx` for SolidJS components, `.astro` for pages and layouts. But TypeScript isn't used in a single way. The same codebase has **two completely different TypeScript execution paths**: Astro's Vite-based compilation for the web app, and Node.js native [type stripping](https://nodejs.org/en/learn/typescript/run-natively) for build scripts. Understanding how each path works — and where TypeScript's guarantees end — is essential for avoiding subtle bugs that the compiler can't catch.
+Every file in this project is [TypeScript](https://www.typescriptlang.org/docs/) — `.ts` for scripts, `.tsx` for SolidJS components, `.astro` for pages and layouts. But TypeScript isn't used in a single way. The same codebase has **two completely different TypeScript execution paths**: Astro's Vite-based compilation for the web app, and Node.js native [type stripping](https://nodejs.org/en/learn/typescript/run-natively) for build scripts. Understanding how each path works — and where TypeScript's guarantees end — is essential for avoiding subtle bugs that the compiler can't catch. [Total TypeScript](https://www.totaltypescript.com/) and the [TypeScript repository](https://github.com/microsoft/TypeScript) are valuable learning resources.
 
 ## The Strictest Config
 
