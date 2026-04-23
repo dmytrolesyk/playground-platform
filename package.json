@@ -22,7 +22,8 @@
     "verify": "pnpm prebuild && biome check . && astro check && vitest run --passWithNoTests --exclude 'tests/e2e/**' && pnpm verify:knowledge",
     "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts",
     "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
-    "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots all"
+    "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots all",
+    "review:article": "node --experimental-strip-types scripts/review-article.ts"
   },
   "dependencies": {
     "98.css": "^0.1.21",

@@ -14,12 +14,14 @@ Feature 5a (Tier A checks + human feedback infrastructure)
 
 - `node` — CLI script design, LLM API integration, structured JSON output parsing, error handling
 - `test-driven-development` — at least a smoke test that the script runs without crashing
+- `deep-research` - for conducting research for articles (should be used sparingly, whenever is necessary)
 
 ## CLI Tool
 
 **Script:** `scripts/review-article.ts`
 
 **Usage:**
+
 ```bash
 # Review a single article
 node --experimental-strip-types scripts/review-article.ts concepts/fine-grained-reactivity
@@ -40,6 +42,7 @@ The tool sends the article content + relevant source files to an LLM with struct
 ### 1. Factual Grounding (does the explanation match the code AND the cited sources?)
 
 **Prompt pattern:**
+
 ```
 You are reviewing a technical article for accuracy. Here is the article:
 {article body}
@@ -71,6 +74,7 @@ Respond as JSON: { "score": N, "issues": [...], "rationale": "..." }
 ### 2. Depth (does it explain WHY, not just WHAT?)
 
 **Prompt pattern:**
+
 ```
 You are evaluating the depth of a technical explanation. Here is the article:
 {article body}
@@ -94,6 +98,7 @@ Respond as JSON: { "score": N, "rationale": "...", "suggestedImprovements": [...
 ### 3. Coverage (does it cover the important aspects?)
 
 **Prompt pattern:**
+
 ```
 You are evaluating the completeness of a technical article.
 
@@ -121,6 +126,7 @@ Respond as JSON: { "score": N, "missingTopics": [...], "rationale": "..." }
 ### 4. Exercise Quality (do the exercises test real understanding?)
 
 **Prompt pattern:**
+
 ```
 You are evaluating the quality of learning exercises. Here are the exercises for an article about "{title}":
 
@@ -148,6 +154,7 @@ Respond as JSON: { "score": N, "rationale": "...", "suggestedExercises": [...] }
 ### 5. External Reference Quality (are references authoritative and diverse?)
 
 **Prompt pattern:**
+
 ```
 Here are the external references for an article about "{title}":
 
