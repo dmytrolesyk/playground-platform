@@ -214,6 +214,7 @@ Seven exercise types are available. Choose based on what you're testing:
 - `arrange` — "Put these steps in order." Tests procedural understanding. Best for: build pipelines, request lifecycles, multi-step processes. Uses `fragments` (string array) and `correctOrder` (number array of indices).
 - `compare` — "Compare approaches A and B." Tests analytical reasoning. Best for: architecture decisions, library comparisons, pattern tradeoffs. Uses `approachA` and `approachB` (string fields, typically code blocks).
 - `trace` — "Trace execution step by step." Tests runtime mental model. Best for: reactivity propagation, event handling, async flows. Uses `steps` (array of `{ description, expectedState }`).
+- `code` — "Write a function that..." or "Fix this bug." Tests implementation ability. In-page CodeMirror editor with starter code and validation. Best for: algorithm implementation, utility functions, small focused coding challenges (5-50 lines). Always provide starterCode, solution, testCases, language, and answer.
 
 All exercise types also support an optional `targetConcepts` field (array of article IDs) for linking exercises to specific concepts.
 

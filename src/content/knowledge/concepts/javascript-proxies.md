@@ -66,6 +66,66 @@ exercises:
     type: predict
     hint: "Think about whether the Proxy is preserved when passed as a prop."
     answer: "It works correctly — the Proxy is preserved through props. When the child reads props.window.x inside a JSX expression, the Proxy get trap fires within the child's reactive scope, creating a subscription. The child will update when x changes. This is why SolidJS components should NOT destructure props: const { window } = props would break reactivity, but reading props.window.x preserves it."
+  - question: "Write a reactive proxy that tracks which properties are read and logs changes when properties are set."
+    type: code
+    language: javascript
+    starterCode: |
+      function createReactiveProxy(target) {
+        const deps = {};  // property -> Set of listener functions
+
+        const proxy = new Proxy(target, {
+          get(obj, prop) {
+            // Track the property read
+            // your implementation here
+          },
+          set(obj, prop, value) {
+            // Notify listeners of this property
+            // your implementation here
+          },
+        });
+
+        // Subscribe to changes on a property
+        function watch(prop, fn) {
+          // your implementation here
+        }
+
+        return { proxy, watch };
+      }
+    solution: |
+      function createReactiveProxy(target) {
+        const deps = {};
+
+        const proxy = new Proxy(target, {
+          get(obj, prop) {
+            if (!deps[prop]) deps[prop] = new Set();
+            return Reflect.get(obj, prop);
+          },
+          set(obj, prop, value) {
+            Reflect.set(obj, prop, value);
+            if (deps[prop]) {
+              for (const fn of deps[prop]) fn(value);
+            }
+            return true;
+          },
+        });
+
+        function watch(prop, fn) {
+          if (!deps[prop]) deps[prop] = new Set();
+          deps[prop].add(fn);
+        }
+
+        return { proxy, watch };
+      }
+    testCases:
+      - input: "const { proxy, watch } = createReactiveProxy({ x: 0 }); proxy.x;"
+        expected: "returns 0"
+      - input: "const { proxy, watch } = createReactiveProxy({ x: 0 }); proxy.x = 5; proxy.x;"
+        expected: "returns 5"
+    hint: "The get trap should ensure a Set exists in deps for the property. The set trap should call Reflect.set, then iterate the Set and call each listener."
+    answer: "This is a simplified version of what SolidJS stores do internally. The get trap lazily creates a dependency set for each property. The set trap updates the value via Reflect.set, then notifies all watchers. In SolidJS, the 'tracking' is automatic — the currently running effect is recorded as a dependency during the get trap, so you never call watch() manually. The key insight: Proxies make reactivity invisible to the consumer. You read and write like normal objects, and the system tracks everything."
+    targetConcepts:
+      - concepts/javascript-proxies
+      - concepts/observer-pattern
 ---
 
 ## Why Should I Care?

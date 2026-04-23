@@ -177,4 +177,91 @@ describe('knowledgeSchema exercise types', () => {
       expect(result.data.exercises).toEqual([]);
     }
   });
+
+  it('accepts code exercise type', () => {
+    const result = knowledgeSchema.safeParse({
+      ...baseArticle,
+      exercises: [{ question: 'Write a function', answer: 'Explanation', type: 'code' }],
+    });
+    expect(result.success, 'code type should be valid').toBe(true);
+  });
+
+  it('accepts code exercise with all code-specific fields', () => {
+    const result = knowledgeSchema.safeParse({
+      ...baseArticle,
+      exercises: [
+        {
+          question: 'Write a memoize function',
+          answer: 'Memoization caches results',
+          type: 'code',
+          starterCode: 'function memoize(fn) {\n  // your code here\n}',
+          solution:
+            'function memoize(fn) {\n  const cache = new Map();\n  return (...args) => {\n    const key = JSON.stringify(args);\n    if (cache.has(key)) return cache.get(key);\n    const result = fn(...args);\n    cache.set(key, result);\n    return result;\n  };\n}',
+          testCases: [
+            { input: 'const add = memoize((a, b) => a + b); add(1, 2);', expected: '3' },
+            {
+              input: 'const add = memoize((a, b) => a + b); add(1, 2); add(1, 2);',
+              expected: 'fn called once',
+            },
+          ],
+          language: 'javascript',
+        },
+      ],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const exercise = result.data.exercises[0];
+      expect(exercise?.type).toBe('code');
+      expect(exercise?.starterCode).toContain('memoize');
+      expect(exercise?.solution).toContain('Map');
+      expect(exercise?.testCases).toHaveLength(2);
+      expect(exercise?.language).toBe('javascript');
+    }
+  });
+
+  it('accepts all language options for code exercises', () => {
+    for (const language of ['typescript', 'javascript', 'python', 'html', 'css'] as const) {
+      const result = knowledgeSchema.safeParse({
+        ...baseArticle,
+        exercises: [
+          {
+            question: 'Q?',
+            answer: 'A',
+            type: 'code',
+            language,
+          },
+        ],
+      });
+      expect(result.success, `language '${language}' should be valid`).toBe(true);
+    }
+  });
+
+  it('rejects invalid language for code exercises', () => {
+    const result = knowledgeSchema.safeParse({
+      ...baseArticle,
+      exercises: [
+        {
+          question: 'Q?',
+          answer: 'A',
+          type: 'code',
+          language: 'rust',
+        },
+      ],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('code-specific fields are optional', () => {
+    const result = knowledgeSchema.safeParse({
+      ...baseArticle,
+      exercises: [{ question: 'Q?', answer: 'A', type: 'code' }],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.exercises[0]?.starterCode).toBeUndefined();
+      expect(result.data.exercises[0]?.solution).toBeUndefined();
+      expect(result.data.exercises[0]?.testCases).toBeUndefined();
+      expect(result.data.exercises[0]?.language).toBeUndefined();
+    }
+  });
 });

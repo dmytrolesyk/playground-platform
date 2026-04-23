@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import InteractiveExercise from '../../components/learn/InteractiveExercise.tsx';
 import LearnLayout from '../../layouts/LearnLayout.astro';
 
 export const prerender = true;
@@ -29,6 +30,10 @@ interface KnowledgeEntry {
       approachA?: string;
       approachB?: string;
       steps?: Array<{ description: string; expectedState: string }>;
+      starterCode?: string;
+      solution?: string;
+      testCases?: Array<{ input: string; expected: string }>;
+      language?: 'typescript' | 'javascript' | 'python' | 'html' | 'css';
       targetConcepts?: string[];
     }>;
     estimatedMinutes?: number;
@@ -136,6 +141,7 @@ const exerciseTypeLabels: Record<string, string> = {
   arrange: '🔢 Arrange',
   compare: '⚖️ Compare',
   trace: '🔍 Trace',
+  code: '💻 Code',
 };
 
 const html = entry.rendered?.html ?? entry.body ?? '';
@@ -310,16 +316,32 @@ const confidenceMessages: Record<string, string> = {
                 </ol>
               )}
 
-              {ex.hint && (
+              {/* code: interactive CodeMirror editor */}
+              {ex.type === 'code' && ex.starterCode && ex.solution && (
+                <InteractiveExercise
+                  client:visible
+                  starterCode={ex.starterCode}
+                  solution={ex.solution}
+                  testCases={ex.testCases ?? []}
+                  language={ex.language ?? 'javascript'}
+                  question={ex.question}
+                  hint={ex.hint}
+                  answer={ex.answer}
+                />
+              )}
+
+              {ex.type !== 'code' && ex.hint && (
                 <details class="exercise__hint">
                   <summary>Show hint</summary>
                   <p>{ex.hint}</p>
                 </details>
               )}
-              <details class="exercise__answer">
-                <summary>Show answer</summary>
-                <p>{ex.answer}</p>
-              </details>
+              {ex.type !== 'code' && (
+                <details class="exercise__answer">
+                  <summary>Show answer</summary>
+                  <p>{ex.answer}</p>
+                </details>
+              )}
             </div>
           ))}
         </section>

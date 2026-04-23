@@ -71,6 +71,33 @@ exercises:
   - question: "Why does the component tree (Desktop → WindowManager → Window → AppComponent) not map 1:1 to the DOM tree?"
     type: explain
     answer: "SolidJS components are functions that run once and return DOM nodes — they don't create 'component instances' in the DOM like React's fiber tree. The component tree is a compile-time/authoring concept: Desktop calls WindowManager which calls Window which calls Dynamic. But the DOM tree is what the browser actually renders: div.desktop → div.window-layer → div.win-container → div.window-body → [app content]. Context providers like DesktopProvider add no DOM nodes at all — they exist only in the SolidJS ownership tree for reactive scope tracking. The For component in WindowManager also adds no wrapper DOM node. So the DOM tree is often flatter than the component tree, with fewer intermediate nodes."
+  - question: "Write a depth-first traversal function that collects all text content from a DOM-like tree."
+    type: code
+    language: javascript
+    starterCode: |
+      function collectText(node) {
+        // node has: .text (string or null), .children (array of nodes)
+        // Return an array of all text values in DFS pre-order
+        // your implementation here
+      }
+    solution: |
+      function collectText(node) {
+        const result = [];
+        if (node.text) result.push(node.text);
+        for (const child of node.children) {
+          result.push(...collectText(child));
+        }
+        return result;
+      }
+    testCases:
+      - input: "collectText({ text: 'a', children: [{ text: 'b', children: [] }, { text: 'c', children: [] }] });"
+        expected: "['a', 'b', 'c']"
+      - input: "collectText({ text: null, children: [{ text: 'x', children: [{ text: 'y', children: [] }] }] });"
+        expected: "['x', 'y']"
+    hint: "Pre-order means visit the node first, then recurse into children left-to-right. This is the same order as document order in the DOM."
+    answer: "This is DFS pre-order traversal — the same traversal order the DOM uses for 'document order'. The function visits the current node first (collecting its text), then recurses into each child. This matches how querySelector traverses the DOM and how the browser walks the tree during rendering. The recursive version is clean but has O(d) call stack depth where d is tree depth. For very deep trees, an iterative version with an explicit stack avoids stack overflow."
+    targetConcepts:
+      - cs-fundamentals/trees-and-traversal
 ---
 
 ## Why Should I Care?

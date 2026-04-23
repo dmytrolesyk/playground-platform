@@ -54,6 +54,78 @@ exercises:
   - question: "Why does APP_REGISTRY use `Record<string, AppRegistryEntry>` with string IDs like 'browser', 'terminal', 'snake' instead of a Map object?"
     type: explain
     answer: "Plain objects with string keys work well here because: (1) the keys are static string literals known at registration time, making them natural property names; (2) TypeScript's Record type provides good type inference for property access; (3) V8 optimizes objects with string keys that are added in initialization and rarely deleted — they stay in 'fast mode' with inline caches; (4) objects serialize to JSON naturally, while Maps don't; (5) SolidJS stores track plain object properties reactively via Proxies, but would need special handling for Map. A Map would be preferable if keys were non-string types, if entries were frequently added/deleted at runtime, or if key ordering mattered (Map preserves insertion order reliably across all operations)."
+  - question: "Write a simple hash map class with get, set, and has methods using an array of buckets with chaining."
+    type: code
+    language: javascript
+    starterCode: |
+      class SimpleHashMap {
+        constructor(size = 16) {
+          this.buckets = new Array(size).fill(null).map(() => []);
+        }
+
+        _hash(key) {
+          // your implementation here
+        }
+
+        set(key, value) {
+          // your implementation here
+        }
+
+        get(key) {
+          // your implementation here
+        }
+
+        has(key) {
+          // your implementation here
+        }
+      }
+    solution: |
+      class SimpleHashMap {
+        constructor(size = 16) {
+          this.buckets = new Array(size).fill(null).map(() => []);
+        }
+
+        _hash(key) {
+          let hash = 0;
+          for (let i = 0; i < key.length; i++) {
+            hash = (hash + key.charCodeAt(i) * (i + 1)) % this.buckets.length;
+          }
+          return hash;
+        }
+
+        set(key, value) {
+          const index = this._hash(key);
+          const bucket = this.buckets[index];
+          const existing = bucket.find(([k]) => k === key);
+          if (existing) {
+            existing[1] = value;
+          } else {
+            bucket.push([key, value]);
+          }
+        }
+
+        get(key) {
+          const index = this._hash(key);
+          const bucket = this.buckets[index];
+          const entry = bucket.find(([k]) => k === key);
+          return entry ? entry[1] : undefined;
+        }
+
+        has(key) {
+          const index = this._hash(key);
+          const bucket = this.buckets[index];
+          return bucket.some(([k]) => k === key);
+        }
+      }
+    testCases:
+      - input: "const m = new SimpleHashMap(); m.set('a', 1); m.get('a');"
+        expected: "returns 1"
+      - input: "const m = new SimpleHashMap(); m.set('a', 1); m.has('a');"
+        expected: "returns true"
+    hint: "The _hash method should sum char codes modulo the bucket count. Each bucket is an array of [key, value] pairs."
+    answer: "The hash function converts a string key into an integer index by summing character codes weighted by position, then taking the modulo of the bucket count. The set method hashes the key, finds the bucket, and either updates an existing entry or pushes a new [key, value] pair (chaining). The get method hashes and scans the bucket's chain. This demonstrates the core idea: O(1) average lookup via hashing, with chaining to handle collisions."
+    targetConcepts:
+      - cs-fundamentals/hash-maps-and-lookup
 ---
 
 ## Why Should I Care?
