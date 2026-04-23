@@ -32,6 +32,8 @@
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^6.0.0",
     "astro": "^6.1.8",
+    "cytoscape": "^3.33.2",
+    "cytoscape-fcose": "^2.2.0",
     "mermaid": "^11.14.0",
     "resend": "^6.12.0",
     "solid-js": "^1.9.12"
@@ -43,9 +45,9 @@
     ]
   },
   "devDependencies": {
-    "@playground/knowledge-engine": "workspace:*",
     "@astrojs/check": "^0.9.8",
     "@biomejs/biome": "^2.4.12",
+    "@playground/knowledge-engine": "workspace:*",
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
     "vitest": "^4.1.4",
