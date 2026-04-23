@@ -1,0 +1,155 @@
+---
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import LearnLayout from '../../layouts/LearnLayout.astro';
+
+export const prerender = true;
+
+const diagramsDir = join(process.cwd(), 'src/data/generated-diagrams');
+
+const MMD_EXTENSION_PATTERN = /\.mmd$/;
+const SVG_EXTENSION_PATTERN = /\.svg$/;
+const DASH_PATTERN = /-/g;
+const WORD_START_PATTERN = /\b\w/g;
+
+// Load all generated .mmd files
+interface DiagramFile {
+  name: string;
+  label: string;
+  content: string;
+}
+
+function labelFromFilename(filename: string): string {
+  return filename
+    .replace(MMD_EXTENSION_PATTERN, '')
+    .replace(DASH_PATTERN, ' ')
+    .replace(WORD_START_PATTERN, (c) => c.toUpperCase());
+}
+
+let diagrams: DiagramFile[] = [];
+try {
+  const files = readdirSync(diagramsDir)
+    .filter((f) => f.endsWith('.mmd'))
+    .sort();
+  diagrams = files.map((f) => ({
+    name: f.replace(MMD_EXTENSION_PATTERN, ''),
+    label: labelFromFilename(f),
+    content: readFileSync(join(diagramsDir, f), 'utf8'),
+  }));
+} catch {
+  // No generated diagrams yet — prebuild not run
+}
+
+// Check for D2-compiled SVGs in public/diagrams/
+interface SvgDiagram {
+  name: string;
+  label: string;
+  path: string;
+}
+
+let svgDiagrams: SvgDiagram[] = [];
+try {
+  const publicDiagramsDir = join(process.cwd(), 'public/diagrams');
+  const svgFiles = readdirSync(publicDiagramsDir)
+    .filter((f) => f.endsWith('.svg'))
+    .sort();
+  svgDiagrams = svgFiles.map((f) => ({
+    name: f.replace(SVG_EXTENSION_PATTERN, ''),
+    label: labelFromFilename(f),
+    path: `/diagrams/${f}`,
+  }));
+} catch {
+  // No D2 diagrams compiled yet
+}
+---
+
+<LearnLayout title="Diagrams">
+  <div class="learn-page">
+    <aside class="learn-sidebar">
+      <h3>Diagrams</h3>
+      <ul>
+        {svgDiagrams.length > 0 && (
+          <li><strong>Architectural (D2)</strong>
+            <ul>
+              {svgDiagrams.map((d) => (
+                <li><a href={`#d2-${d.name}`}>{d.label}</a></li>
+              ))}
+            </ul>
+          </li>
+        )}
+        {diagrams.length > 0 && (
+          <li><strong>Generated (Mermaid)</strong>
+            <ul>
+              {diagrams.map((d) => (
+                <li><a href={`#mmd-${d.name}`}>{d.label}</a></li>
+              ))}
+            </ul>
+          </li>
+        )}
+      </ul>
+    </aside>
+
+    <main class="learn-content">
+      <h1>📊 Diagrams</h1>
+      <p class="learn-content__summary">
+        Architectural and auto-generated diagrams from the knowledge graph.
+        D2 diagrams are hand-authored for precise layout. Mermaid diagrams
+        are auto-generated from <code>knowledge-graph.json</code> at build time.
+      </p>
+
+      {svgDiagrams.length > 0 && (
+        <>
+          <h2>Architectural Diagrams (D2)</h2>
+          <p>Standalone architectural diagrams compiled from D2 source files.</p>
+          {svgDiagrams.map((d) => (
+            <section id={`d2-${d.name}`} class="diagram-section">
+              <h3>{d.label}</h3>
+              <div class="diagram-container diagram-container--svg">
+                <img src={d.path} alt={d.label} loading="lazy" />
+              </div>
+            </section>
+          ))}
+        </>
+      )}
+
+      {diagrams.length > 0 && (
+        <>
+          <h2>Generated Diagrams (Mermaid)</h2>
+          <p>
+            Auto-generated from the knowledge graph. These update automatically
+            when articles, modules, or technologies change.
+          </p>
+          {diagrams.map((d) => (
+            <section id={`mmd-${d.name}`} class="diagram-section">
+              <h3>{d.label}</h3>
+              <pre class="mermaid">{d.content}</pre>
+            </section>
+          ))}
+        </>
+      )}
+
+      {svgDiagrams.length === 0 && diagrams.length === 0 && (
+        <p>No diagrams available. Run <code>pnpm prebuild</code> and <code>pnpm build:diagrams</code> to generate them.</p>
+      )}
+    </main>
+  </div>
+</LearnLayout>
+
+<style>
+  .diagram-section {
+    margin-bottom: 2rem;
+  }
+
+  .diagram-container--svg {
+    overflow-x: auto;
+    padding: 1rem;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+  .diagram-container--svg img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>

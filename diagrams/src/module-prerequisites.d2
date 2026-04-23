@@ -1,0 +1,62 @@
+# Curriculum Module Prerequisites
+# Shows which modules must be completed before others
+
+direction: right
+
+foundation: "1. The Foundation" {
+  style.fill: "#e8f4fd"
+  style.stroke: "#3498db"
+  tooltip: "3-layer architecture, data flow from Markdown to screen"
+}
+
+reactivity: "2. Why SolidJS?" {
+  style.fill: "#eaf7ea"
+  style.stroke: "#2ecc71"
+  tooltip: "Fine-grained reactivity, signals vs vDOM"
+}
+
+window-manager: "3. The Window Manager" {
+  style.fill: "#fef9e7"
+  style.stroke: "#f39c12"
+  tooltip: "Drag mechanics, compositor, pointer capture"
+}
+
+extensibility: "4. Extensibility" {
+  style.fill: "#fdf2e9"
+  style.stroke: "#e67e22"
+  tooltip: "Registry pattern, IoC, build a new app"
+}
+
+full-stack: "5. The Full Stack" {
+  style.fill: "#f5eef8"
+  style.stroke: "#8e44ad"
+  tooltip: "Contact form → fetch → Astro endpoint → Resend → email"
+}
+
+aesthetics: "6. Aesthetics & Performance" {
+  style.fill: "#fdedec"
+  style.stroke: "#e74c3c"
+  tooltip: "CSS strategy, CRT frame, event loop, memory leaks"
+}
+
+learning: "7. Learning System Reliability" {
+  style.fill: "#eafaf1"
+  style.stroke: "#1abc9c"
+  tooltip: "Knowledge graph, audit pipeline, staged mastery"
+}
+
+# Prerequisites
+foundation -> reactivity: "required"
+foundation -> extensibility: "required"
+foundation -> full-stack: "required"
+foundation -> reactivity
+foundation -> extensibility
+
+reactivity -> window-manager: "required"
+foundation -> window-manager
+
+reactivity -> aesthetics: "required"
+foundation -> aesthetics
+
+foundation -> learning
+extensibility -> learning: "required"

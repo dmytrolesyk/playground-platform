@@ -1,0 +1,100 @@
+# Architecture Overview — Three-Layer Platform
+# D2 chosen over Mermaid for nested container support
+
+direction: down
+
+astro: Astro (Build-Time Layer) {
+  style.fill: "#e8f4fd"
+  style.stroke: "#3498db"
+
+  collections: Content Collections {
+    tooltip: "Markdown CV + knowledge files validated by Zod"
+  }
+  index: index.astro {
+    tooltip: "Main page — renders CV HTML, hydrates Desktop island"
+  }
+  cv-json: "<script#cv-data>" {
+    tooltip: "Pre-rendered HTML serialized as JSON"
+  }
+  api: /api/contact {
+    tooltip: "Server-side endpoint → Resend email API"
+  }
+  learn: /learn/* {
+    tooltip: "Knowledge base pages — static pre-rendered"
+  }
+
+  collections -> index: "feeds HTML"
+  index -> cv-json: "serializes"
+}
+
+solidjs: SolidJS (Reactive Runtime) {
+  style.fill: "#eaf7ea"
+  style.stroke: "#2ecc71"
+
+  store: Desktop Store {
+    tooltip: "Single createStore — windows, focus, layout"
+  }
+  wm: Window Manager {
+    tooltip: "GPU-accelerated drag via transform: translate()"
+  }
+  taskbar: Taskbar {
+    tooltip: "Clock, start menu, active window buttons"
+  }
+  icons: Desktop Icon Grid {
+    tooltip: "App launcher — reads from registry"
+  }
+
+  store -> wm: "state"
+  store -> taskbar: "state"
+  store -> icons: "state"
+}
+
+registry: App Registry {
+  style.fill: "#fef9e7"
+  style.stroke: "#f39c12"
+
+  register: registerApp() {
+    tooltip: "Single registration point — no other files need changes"
+  }
+  apps: Registered Apps {
+    tooltip: "Explorer, Minesweeper, Terminal, Contact, Library…"
+  }
+
+  register -> apps
+}
+
+apps: Apps (Lazy-Loaded) {
+  style.fill: "#fdf2e9"
+  style.stroke: "#e67e22"
+
+  explorer: Explorer
+  minesweeper: Minesweeper
+  terminal: Terminal
+  contact: Contact
+  library: Library
+  arch: Architecture Explorer
+}
+
+css: Presentation {
+  style.fill: "#f5eef8"
+  style.stroke: "#8e44ad"
+
+  ninety-eight: "98.css" {
+    tooltip: "Win98 aesthetics — buttons, windows, inputs"
+  }
+  crt: CRT Frame {
+    tooltip: "Scan lines, glow, screen curvature"
+  }
+  layout: "Custom CSS (layout only)" {
+    tooltip: "Grid, position, transform — never component styling"
+  }
+}
+
+# Cross-layer connections
+astro.cv-json -> solidjs.store: "hydrates"
+solidjs.icons -> registry.register: "reads"
+solidjs.wm -> apps.explorer: "renders"
+registry.apps -> apps.explorer: "lazy import()"
+registry.apps -> apps.minesweeper: "lazy import()"
+css.ninety-eight -> solidjs.wm: "styles"
+css.crt -> astro.index: "wraps"

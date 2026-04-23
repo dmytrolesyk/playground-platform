@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node --experimental-strip-types scripts/build-knowledge-graph.ts",
+    "prebuild": "node --experimental-strip-types scripts/build-knowledge-graph.ts && node --experimental-strip-types scripts/generate-diagrams.ts",
     "build": "astro build",
     "preview": "astro preview",
     "lint": "biome check .",
@@ -23,7 +23,9 @@
     "generate-cv": "node --experimental-strip-types scripts/generate-cv.ts",
     "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
     "test:e2e:update": "playwright test --config tests/e2e/playwright.config.ts --update-snapshots all",
-    "review:article": "node --experimental-strip-types scripts/review-article.ts"
+    "review:article": "node --experimental-strip-types scripts/review-article.ts",
+    "build:diagrams": "bash diagrams/build.sh",
+    "generate:diagrams": "node --experimental-strip-types scripts/generate-diagrams.ts"
   },
   "dependencies": {
     "98.css": "^0.1.21",
