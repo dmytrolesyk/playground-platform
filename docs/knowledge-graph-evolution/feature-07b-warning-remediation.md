@@ -1,14 +1,12 @@
-# Feature 07b: Content Warning Remediation (Mechanical)
+# Feature 07b: Content Warning Remediation
 
 ## Goal
 
-Eliminate all mechanical audit warnings — `missing-last-updated`, `stale-code-reference`, and `unlisted-inline-citation` — so the audit pipeline output is actionable. The remaining `uncited-reference` warnings (editorial work) are deferred to a separate content remediation effort.
+Eliminate **all** audit warnings — `missing-last-updated`, `stale-code-reference`, `unlisted-inline-citation`, and `uncited-reference` — so `pnpm verify:knowledge` produces a clean 0-warning output. Features 8–12 can then treat any new warning as a real signal.
 
 ## Context
 
-After Features 1–7, `pnpm verify:knowledge` reports 304 warnings. Most are mechanical fixes that don't require editorial judgment. Clearing them reduces noise from 304 → ~145, making it possible to spot new issues introduced by Features 8–12.
-
-The overview planned a content remediation phase between Features 3 and 4. This is the mechanical portion of that deferred work.
+After Features 1–7, `pnpm verify:knowledge` reports 304 warnings across 4 codes. The overview planned a content remediation phase between Features 3 and 4. This is that deferred work, done now before Feature 8.
 
 ## Scope
 
@@ -46,25 +44,38 @@ These fire when an article body contains an inline `[text](https://...)` link th
 - `youtube.com` → `video`
 - Blog posts, tutorials → `article`
 
-### Out of scope: `uncited-reference` (145 warnings) — editorial
+### Tier 4: `uncited-reference` (145 warnings) — editorial
 
-These fire when an `externalReferences` URL is never linked inline in the article body. Fixing them requires reading the article and weaving the reference into the text at the right point — that's editorial judgment, not mechanical work. Defer to a dedicated content quality session.
+These fire when an `externalReferences` URL is never linked inline in the article body. Fixing them requires reading the article, finding the paragraph where the source's topic is discussed, and adding an inline `[relevant text](url)` link.
+
+**Fix:** For each warning, read the article body and find the right place to weave in the reference URL as a Markdown inline link. The link text should be natural — describe what the source covers, don't just dump the URL.
+
+**Guidelines:**
+- Place the link where the source's specific topic is discussed, not in a random paragraph
+- Use descriptive link text: `[SolidJS reactivity guide](url)` not `[link](url)` or `[here](url)`
+- If the externalReference genuinely doesn't fit anywhere in the article body (rare), remove it from `externalReferences` instead — a reference that can't be cited inline probably shouldn't be listed
+- Don't add filler sentences just to host a link — the text must read naturally
 
 ## Approach
 
 Process articles in batches by category to keep changes organized:
-1. First pass: add `lastUpdated` to the 5 missing articles
-2. Second pass: bump `lastUpdated` on all stale-code-reference articles
-3. Third pass: add `externalReferences` entries for unlisted inline citations, one category at a time (architecture → concepts → cs-fundamentals → features → labs → technologies)
+1. **First pass:** Tier 1 + Tier 2 — add/bump `lastUpdated` dates (fast, all articles)
+2. **Second pass:** Tier 3 — add `externalReferences` entries for unlisted inline citations, one category at a time (architecture → concepts → cs-fundamentals → features → labs → technologies)
+3. **Third pass:** Tier 4 — weave uncited references into article bodies, one category at a time (same order)
 
-After each batch, run `pnpm verify:knowledge` to confirm warning count decreases.
+After each pass, run `pnpm verify:knowledge` to confirm warning count decreases.
+
+## Applicable Skills
+
+- `subagent-driven-development` — Tier 3 and Tier 4 can be parallelized across categories since articles are independent files
+- `verification-before-completion` — must see 0 warnings in final output
 
 ## Branch & Completion Workflow
 
 1. Create branch: `git checkout -b feat/07b-warning-remediation`
-2. Fix all three tiers
+2. Fix all four tiers
 3. Verify: `pnpm verify` + `pnpm verify:knowledge` + `pnpm build`
-4. Confirm: only `uncited-reference` warnings remain
+4. Confirm: **zero warnings** in knowledge audit output
 5. Commit and stop
 
 ## Acceptance Criteria
@@ -72,8 +83,8 @@ After each batch, run `pnpm verify:knowledge` to confirm warning count decreases
 - [ ] Zero `missing-last-updated` warnings
 - [ ] Zero `stale-code-reference` warnings
 - [ ] Zero `unlisted-inline-citation` warnings
-- [ ] Remaining warnings are only `uncited-reference` (expected ~145)
+- [ ] Zero `uncited-reference` warnings
+- [ ] `pnpm verify:knowledge` reports **0 issues**
 - [ ] `pnpm verify` passes (exit 0)
-- [ ] `pnpm verify:knowledge` passes (exit 0, warnings only)
 - [ ] `pnpm build` succeeds
-- [ ] No article content was changed — only frontmatter dates and externalReferences arrays
+- [ ] All inline link additions read naturally in context — no filler sentences
