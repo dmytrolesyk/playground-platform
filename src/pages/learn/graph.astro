@@ -1,0 +1,48 @@
+---
+import type { KnowledgeGraph as KnowledgeGraphData } from '@playground/knowledge-engine/graph/types';
+import KnowledgeGraph from '../../components/learn/KnowledgeGraph.tsx';
+import graphData from '../../data/knowledge-graph.json';
+import LearnLayout from '../../layouts/LearnLayout.astro';
+
+export const prerender = true;
+
+// JSON import has `type: string` not the literal union — cast to the typed shape
+const typedGraphData = graphData as unknown as KnowledgeGraphData;
+---
+
+<LearnLayout title="Knowledge Graph">
+  <div class="graph-page">
+    <header class="graph-page__header">
+      <h1>Knowledge Graph</h1>
+      <p>
+        Interactive visualization of all articles, technologies, modules, and their relationships.
+        Click any article node to navigate to it. Use the filters to focus on specific categories or edge types.
+      </p>
+    </header>
+    <KnowledgeGraph client:load graphData={typedGraphData} />
+  </div>
+</LearnLayout>
+
+<style>
+  .graph-page {
+    padding: 0 24px 24px;
+    max-width: 100%;
+  }
+
+  .graph-page__header {
+    max-width: 780px;
+    margin: 0 auto 16px;
+  }
+
+  .graph-page__header h1 {
+    color: var(--learn-heading);
+    margin: 24px 0 8px;
+  }
+
+  .graph-page__header p {
+    color: #555;
+    margin: 0 0 16px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+</style>

@@ -22,7 +22,10 @@ const { title, description = 'Knowledge Base — Retro CV Platform' } = Astro.pr
   <body>
     <nav class="learn-nav">
       <a href="/learn" class="learn-nav__title">📚 Knowledge Base</a>
-      <a href="/">← Back to Desktop</a>
+      <div class="learn-nav__links">
+        <a href="/learn/graph">🕸️ Graph</a>
+        <a href="/">← Back to Desktop</a>
+      </div>
     </nav>
     <slot />
   </body>

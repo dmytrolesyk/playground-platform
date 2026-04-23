@@ -26,6 +26,12 @@ importers:
       astro:
         specifier: ^6.1.8
         version: 6.1.8(@types/node@25.6.0)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3)
+      cytoscape:
+        specifier: ^3.33.2
+        version: 3.33.2
+      cytoscape-fcose:
+        specifier: ^2.2.0
+        version: 2.2.0(cytoscape@3.33.2)
       mermaid:
         specifier: ^11.14.0
         version: 11.14.0
