@@ -338,6 +338,15 @@ function issue(
   return { severity, code, subject, message };
 }
 
+/** Filter articles matching a predicate and map each to an issue. */
+function auditArticlesRule(
+  articles: readonly KnowledgeArticle[],
+  predicate: (article: KnowledgeArticle) => boolean,
+  toIssue: (article: KnowledgeArticle) => KnowledgeAuditIssue,
+): KnowledgeAuditIssue[] {
+  return articles.filter(predicate).map(toIssue);
+}
+
 function error(
   code: KnowledgeAuditIssueCode,
   subject: string,
@@ -357,15 +366,16 @@ function warning(
 // --- Rule 1: minimum-related-concepts ---
 
 export function auditMinimumRelatedConcepts(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
-  return input.articles
-    .filter((article) => article.relatedConcepts.length === 0)
-    .map((article) =>
+  return auditArticlesRule(
+    input.articles,
+    (article) => article.relatedConcepts.length === 0,
+    (article) =>
       warning(
         'minimum-related-concepts',
         article.id,
         `${article.id} has no relatedConcepts (minimum 1).`,
       ),
-    );
+  );
 }
 
 // --- Rule 2: minimum-exercises ---
@@ -386,15 +396,16 @@ export function auditMinimumExercises(input: KnowledgeAuditInput): KnowledgeAudi
 // --- Rule 3: required-learning-objectives ---
 
 export function auditRequiredLearningObjectives(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
-  return input.articles
-    .filter((article) => article.learningObjectives.length === 0)
-    .map((article) =>
+  return auditArticlesRule(
+    input.articles,
+    (article) => article.learningObjectives.length === 0,
+    (article) =>
       error(
         'required-learning-objectives',
         article.id,
         `${article.id} has no learningObjectives (minimum 1).`,
       ),
-    );
+  );
 }
 
 // --- Rule 4: architecture-requires-diagram ---
@@ -402,31 +413,31 @@ export function auditRequiredLearningObjectives(input: KnowledgeAuditInput): Kno
 export function auditArchitectureRequiresDiagram(
   input: KnowledgeAuditInput,
 ): KnowledgeAuditIssue[] {
-  return input.articles
-    .filter((article) => article.category === 'architecture')
-    .filter((article) => !article.diagramRef)
-    .map((article) =>
+  return auditArticlesRule(
+    input.articles,
+    (article) => article.category === 'architecture' && !article.diagramRef,
+    (article) =>
       warning(
         'architecture-requires-diagram',
         article.id,
         `${article.id} is an architecture article but has no diagramRef.`,
       ),
-    );
+  );
 }
 
 // --- Rule 5: lab-requires-prerequisites ---
 
 export function auditLabRequiresPrerequisites(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
-  return input.articles
-    .filter((article) => article.category === 'lab')
-    .filter((article) => article.prerequisites.length === 0)
-    .map((article) =>
+  return auditArticlesRule(
+    input.articles,
+    (article) => article.category === 'lab' && article.prerequisites.length === 0,
+    (article) =>
       warning(
         'lab-requires-prerequisites',
         article.id,
         `${article.id} is a lab but has no prerequisites (minimum 1).`,
       ),
-    );
+  );
 }
 
 // --- Rule 6: no-orphan-articles ---
@@ -683,15 +694,16 @@ export function auditInlineCitationDensity(input: KnowledgeAuditInput): Knowledg
 // --- Rule 14: missing-last-updated ---
 
 export function auditMissingLastUpdated(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
-  return input.articles
-    .filter((article) => !article.lastUpdated)
-    .map((article) =>
+  return auditArticlesRule(
+    input.articles,
+    (article) => !article.lastUpdated,
+    (article) =>
       warning(
         'missing-last-updated',
         article.id,
         `${article.id} has no lastUpdated date. Required for staleness detection.`,
       ),
-    );
+  );
 }
 
 // --- Rule 15: stale-code-reference ---
