@@ -17,6 +17,9 @@
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "types": "all"
+    },
     "rules": {
       "recommended": true,
       "style": {
@@ -54,7 +57,10 @@
         "useTopLevelRegex": "error"
       },
       "nursery": {
-        "useExplicitType": "error"
+        "useExplicitType": "error",
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error",
+        "useAwaitThenable": "error"
       }
     }
   },

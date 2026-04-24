@@ -79,7 +79,8 @@ const InteractiveExercise: Component<Props> = (props: Props): JSX.Element => {
 
   // ── CodeMirror initialization ───────────────────────────────────
 
-  onMount(async () => {
+  onMount(() => {
+    (async () => {
     if (!editorContainer) return;
 
     try {
@@ -136,6 +137,7 @@ const InteractiveExercise: Component<Props> = (props: Props): JSX.Element => {
     } catch {
       setCmFailed(true);
     }
+    })().catch(() => { /* CodeMirror load failure handled by setCmFailed */ });
   });
 
   onCleanup(() => {

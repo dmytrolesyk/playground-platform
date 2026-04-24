@@ -153,7 +153,8 @@ export function TerminalApp(): JSX.Element {
     }
   }
 
-  onMount(async () => {
+  onMount(() => {
+    (async () => {
     const [{ Terminal }, { FitAddon }] = await Promise.all([
       import('@xterm/xterm'),
       import('@xterm/addon-fit'),
@@ -206,6 +207,7 @@ export function TerminalApp(): JSX.Element {
     });
 
     setIsLoaded(true);
+    })().catch(() => { /* async init failure is handled by the terminal UI */ });
   });
 
   function handleTerminalInput(data: string, terminal: import('@xterm/xterm').Terminal): void {

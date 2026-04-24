@@ -343,7 +343,8 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
   // ── Initialize Cytoscape ──────────────────────────────────────────
 
-  onMount(async () => {
+  onMount(() => {
+    (async () => {
     if (!containerRef) return;
 
     // Dynamic import to keep bundle small (lazy loading boundary)
@@ -436,6 +437,7 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
     // Expose for E2E testing
     window.__cyGraph = cy;
+    })().catch(() => { /* cytoscape init failure */ });
   });
 
   onCleanup(() => {
