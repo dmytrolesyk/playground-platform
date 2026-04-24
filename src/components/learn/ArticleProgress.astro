@@ -1,0 +1,40 @@
+---
+interface Props {
+  slug: string;
+  hasPracticeCheckpoint: boolean;
+}
+
+const { slug, hasPracticeCheckpoint } = Astro.props;
+
+const actions = [
+  { stage: 'checked', label: 'Checked' },
+  { stage: 'practiced', label: 'Practiced' },
+  { stage: 'mastered', label: 'Mastered' },
+] as const;
+---
+
+<div
+  id="progress-tracker"
+  class="progress-tracker"
+  data-progress-root
+  data-stage="read"
+  data-slug={slug}
+  data-has-practice-checkpoint={hasPracticeCheckpoint ? 'true' : 'false'}
+>
+  <div class="progress-tracker__status">
+    <span>Stage</span>
+    <strong class="progress-tracker__stage">Read</strong>
+  </div>
+  <div class="progress-tracker__actions">
+    {actions.map((action) => (
+      <button
+        class="progress-tracker__btn"
+        type="button"
+        data-progress-stage={action.stage}
+        aria-pressed="false"
+      >
+        {action.label}
+      </button>
+    ))}
+  </div>
+</div>

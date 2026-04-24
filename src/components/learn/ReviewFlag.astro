@@ -1,0 +1,21 @@
+---
+interface Props {
+  articleId: string;
+}
+
+const { articleId } = Astro.props;
+---
+
+<div
+  id="flag-for-review"
+  class="flag-review"
+  data-article-id={articleId}
+  data-state="idle"
+>
+  <button type="button" class="flag-review__btn" id="flag-review-btn">
+    🚩 Flag for Review
+  </button>
+  <span class="flag-review__status" id="flag-review-status" role="status" aria-live="polite">
+    Notice something unclear? Flag this article for review.
+  </span>
+</div>

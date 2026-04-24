@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
+import ArticleProgress from '../../components/learn/ArticleProgress.astro';
 import InteractiveExercise from '../../components/learn/InteractiveExercise.tsx';
+import ReviewFlag from '../../components/learn/ReviewFlag.astro';
 import LearnLayout from '../../layouts/LearnLayout.astro';
 
 export const prerender = true;
@@ -253,20 +255,9 @@ const confidenceMessages: Record<string, string> = {
 
       <article set:html={html} />
 
-      {/* Progress tracking placeholder — hydrated by client script */}
-      <div
-        id="progress-tracker"
-        data-slug={entry.id}
-        data-has-practice-checkpoint={hasPracticeCheckpoint ? 'true' : 'false'}
-      ></div>
+      <ArticleProgress slug={entry.id} hasPracticeCheckpoint={hasPracticeCheckpoint} />
 
-      {/* Flag for review */}
-      <div id="flag-for-review" data-article-id={entry.id} class="flag-review">
-        <button type="button" class="flag-review__btn" id="flag-review-btn">
-          🚩 Flag for Review
-        </button>
-        <span class="flag-review__status" id="flag-review-status"></span>
-      </div>
+      <ReviewFlag articleId={entry.id} />
 
       {/* Exercises */}
       {entry.data.exercises.length > 0 && (
