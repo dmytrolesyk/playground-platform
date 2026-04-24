@@ -25,12 +25,11 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
 
   const isSelected = (): boolean => state.selectedDesktopIcon === props.id;
 
-  const handlePointerDown = (e: PointerEvent): void => {
+  const handlePointerDown: JSX.EventHandler<HTMLButtonElement, PointerEvent> = (e) => {
     if (state.isMobile) return;
     if (e.button !== 0) return;
 
-    const target = e.currentTarget as HTMLElement;
-    target.setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
     isDragging = true;
     hasMoved = false;
     dragOffsetX = e.clientX - props.x;
@@ -62,12 +61,11 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
     }
   };
 
-  const handlePointerUp = (e: PointerEvent): void => {
+  const handlePointerUp: JSX.EventHandler<HTMLButtonElement, PointerEvent> = (e) => {
     if (!isDragging) return;
     isDragging = false;
 
-    const target = e.currentTarget as HTMLElement;
-    target.releasePointerCapture(e.pointerId);
+    e.currentTarget.releasePointerCapture(e.pointerId);
 
     if (hasMoved && elementRef) {
       // Read final position from the transform we've been setting
