@@ -1,12 +1,8 @@
 {
-  "extends": "astro/tsconfigs/strictest",
+  "extends": ["./tsconfig.base.json", "astro/tsconfigs/strictest"],
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist", "scripts"],
   "compilerOptions": {
-    "noPropertyAccessFromIndexSignature": true,
-    "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   }
