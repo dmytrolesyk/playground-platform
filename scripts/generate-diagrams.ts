@@ -214,7 +214,17 @@ export function generateCategoryDistributionDiagram(graph: KnowledgeGraph): stri
 
 function main(): void {
   const graphJson = readFileSync(GRAPH_PATH, 'utf8');
-  const graph = JSON.parse(graphJson) as KnowledgeGraph;
+  const parsed: unknown = JSON.parse(graphJson);
+  if (
+    typeof parsed !== 'object' ||
+    parsed === null ||
+    !('nodes' in parsed) ||
+    !('edges' in parsed) ||
+    !('metadata' in parsed)
+  ) {
+    throw new Error('Invalid knowledge graph JSON — missing required fields');
+  }
+  const graph = parsed as KnowledgeGraph;
 
   mkdirSync(OUTPUT_DIR, { recursive: true });
 

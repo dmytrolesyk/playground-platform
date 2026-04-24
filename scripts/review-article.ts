@@ -258,7 +258,11 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
 
   const parseResult = tryCatch(
     () => {
-      const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
+      const rawParsed: unknown = JSON.parse(jsonMatch[0]);
+      if (typeof rawParsed !== 'object' || rawParsed === null || Array.isArray(rawParsed)) {
+        return { score: 0, rationale: 'JSON parse returned non-object', error: 'JSON parse failure' };
+      }
+      const parsed = rawParsed as Record<string, unknown>;
       // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
       const score = typeof parsed['score'] === 'number' ? parsed['score'] : 0;
       // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
@@ -281,10 +285,17 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
   });
 }
 
+const REVIEW_DIMENSIONS = new Set<string>(['grounding', 'depth', 'coverage', 'exerciseQuality', 'referenceQuality']);
+
+function isReviewDimension(key: string): key is ReviewDimension {
+  return REVIEW_DIMENSIONS.has(key);
+}
+
 function computeOverallScore(dimensions: QualityReport['dimensions']): number {
   let total = 0;
   for (const [key, weight] of Object.entries(DIMENSION_WEIGHTS)) {
-    const dim = dimensions[key as ReviewDimension];
+    if (!isReviewDimension(key)) continue;
+    const dim = dimensions[key];
     if (dim) {
       total += dim.score * weight;
     }
@@ -320,6 +331,10 @@ async function reviewArticle(
     }
   }
 
+  const missingDims = dimensions.filter((d) => !(d in results));
+  if (missingDims.length > 0) {
+    throw new Error(`Missing review dimensions: ${missingDims.join(', ')}`);
+  }
   const allDimensions = results as QualityReport['dimensions'];
   const overallScore = computeOverallScore(allDimensions);
 
