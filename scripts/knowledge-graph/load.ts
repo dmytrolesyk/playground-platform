@@ -108,10 +108,12 @@ function articleIdFromPath(contentRoot: string, filePath: string): string {
 
 function parseFrontmatter(source: string, filePath: string): Record<string, unknown> {
   const match = FRONTMATTER_PATTERN.exec(source);
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
   if (!match?.groups?.['frontmatter']) {
     return {};
   }
 
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
   const parsed: unknown = parseYaml(match.groups['frontmatter']);
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
     throw new Error(`Frontmatter in ${filePath} must parse to an object.`);

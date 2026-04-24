@@ -69,8 +69,7 @@ function cleanArticle(
     ...overrides,
   };
   for (const key of omit) {
-    // biome-ignore lint/performance/noDelete: test helper needs to omit optional properties for exactOptionalPropertyTypes
-    delete ((base as unknown) as Record<string, unknown>)[key];
+    delete (base as unknown as Record<string, unknown>)[key];
   }
   return base;
 }
@@ -434,11 +433,14 @@ describe('no-orphan-articles', () => {
     const issues = auditNoOrphanArticles(
       baseInput({
         articles: [
-          cleanArticle({
-            id: 'a',
-            relatedConcepts: [],
-            prerequisites: [],
-          }, ['module']),
+          cleanArticle(
+            {
+              id: 'a',
+              relatedConcepts: [],
+              prerequisites: [],
+            },
+            ['module'],
+          ),
         ],
       }),
     );
@@ -833,9 +835,12 @@ describe('stale-code-reference', () => {
     const issues = auditStaleCodeReference(
       baseInput({
         articles: [
-          cleanArticle({
-            relatedFiles: ['src/components/Foo.tsx'],
-          }, ['lastUpdated']),
+          cleanArticle(
+            {
+              relatedFiles: ['src/components/Foo.tsx'],
+            },
+            ['lastUpdated'],
+          ),
         ],
         fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-21' }],
       }),
@@ -943,9 +948,12 @@ describe('uncited-reference', () => {
     const issues = auditUncitedReference(
       baseInput({
         articles: [
-          cleanArticle({
-            externalReferences: [{ type: 'docs', url: 'https://solidjs.com/' }],
-          }, ['body']),
+          cleanArticle(
+            {
+              externalReferences: [{ type: 'docs', url: 'https://solidjs.com/' }],
+            },
+            ['body'],
+          ),
         ],
       }),
     );
