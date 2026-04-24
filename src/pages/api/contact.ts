@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
+import { isRecord } from '../../utils/type-guards';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,7 +17,20 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }: { request: Request }) => {
   let body: ContactBody;
   try {
-    body = (await request.json()) as ContactBody;
+    const raw: unknown = await request.json();
+    if (!isRecord(raw)) {
+      return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    body = {
+      ...(typeof raw['name'] === 'string' && { name: raw['name'] }),
+      ...(typeof raw['email'] === 'string' && { email: raw['email'] }),
+      ...(typeof raw['subject'] === 'string' && { subject: raw['subject'] }),
+      ...(typeof raw['message'] === 'string' && { message: raw['message'] }),
+      ...(typeof raw['website'] === 'string' && { website: raw['website'] }),
+    };
   } catch {
     return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
       status: 400,

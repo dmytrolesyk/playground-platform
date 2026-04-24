@@ -1,4 +1,5 @@
 import { createSignal, type JSX, Show } from 'solid-js';
+import { isRecord } from '../../../utils/type-guards';
 import './styles/email-app.css';
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error';
@@ -62,7 +63,13 @@ export function EmailApp(): JSX.Element {
         }),
       });
 
-      const data = (await res.json()) as { ok: boolean; error?: string };
+      const raw: unknown = await res.json();
+      const data = isRecord(raw) && typeof raw['ok'] === 'boolean'
+        ? {
+            ok: raw['ok'],
+            ...(typeof raw['error'] === 'string' && { error: raw['error'] }),
+          }
+        : { ok: false, error: 'Invalid response' };
 
       if (data.ok) {
         setStatus('success');

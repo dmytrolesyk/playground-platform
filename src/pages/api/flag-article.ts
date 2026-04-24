@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { APIRoute } from 'astro';
+import { isRecord } from '../../utils/type-guards';
 
 export const prerender = false;
 
@@ -14,7 +15,17 @@ const ARTICLE_ID_PATTERN = /^[\w-]+\/[\w-]+$/;
 export const POST: APIRoute = async ({ request }: { request: Request }) => {
   let body: FlagBody;
   try {
-    body = (await request.json()) as FlagBody;
+    const raw: unknown = await request.json();
+    if (!isRecord(raw)) {
+      return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    body = {
+      ...(typeof raw['articleId'] === 'string' && { articleId: raw['articleId'] }),
+      ...(typeof raw['reason'] === 'string' && { reason: raw['reason'] }),
+    };
   } catch {
     return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
       status: 400,
