@@ -18,7 +18,7 @@ technologies:
   - node
 order: 6
 dateAdded: 2026-04-21
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Astro Content Collections"
     url: "https://docs.astro.build/en/guides/content-collections/"

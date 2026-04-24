@@ -13,7 +13,7 @@ technologies:
   - resend
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Resend Documentation"
     url: "https://resend.com/docs"
@@ -51,7 +51,7 @@ exercises:
   - question: "Read src/pages/api/contact.ts and identify: (1) the honeypot field name, (2) how the API key is accessed, and (3) how the error is handled."
     type: do
     hint: "Look for process.env, the hidden field check, and the Resend response destructuring."
-    answer: "(1) The honeypot field is 'website' — a hidden form field that bots fill out. (2) The API key is accessed via process.env['RESEND_API_KEY'] (NOT import.meta.env). (3) Error handling uses: const { error } = await resend.emails.send(...); if (error) return Response with error status. It does not use try/catch because Resend doesn't throw on API errors."
+    answer: "(1) The honeypot field is 'website' — a hidden form field that bots fill out. (2) The API key is accessed via process.env (NOT import.meta.env) on the server. (3) Error handling uses: const { error } = await resend.emails.send(...); if (error) return Response with error status. It does not use try/catch because Resend doesn't throw on API errors."
 ---
 
 ## Why Should I Care?
@@ -153,10 +153,10 @@ This is the single most dangerous deployment bug in the project. Vite inlines **
 const apiKey = import.meta.env.RESEND_API_KEY;
 
 // ✅ CORRECT — read at runtime
-const apiKey = process.env['RESEND_API_KEY'];
+const apiKey = process.env.RESEND_API_KEY;
 ```
 
-The bracket notation (`process.env['RESEND_API_KEY']`) is required by the project's TypeScript `noPropertyAccessFromIndexSignature` setting. Dot notation would cause a type error.
+Dot notation and bracket notation both work here. The important deployment rule is that server-side secrets come from `process.env`, not `import.meta.env`.
 
 ## Error Handling: No Exceptions
 

@@ -79,63 +79,71 @@ const InteractiveExercise: Component<Props> = (props: Props): JSX.Element => {
 
   // ── CodeMirror initialization ───────────────────────────────────
 
-  onMount(async () => {
-    if (!editorContainer) return;
-
-    try {
-      const [
-        { EditorView, lineNumbers, highlightActiveLine, drawSelection },
-        { EditorState },
-        { basicSetup },
-        langExt,
-      ] = await Promise.all([
-        import('@codemirror/view'),
-        import('@codemirror/state'),
-        import('codemirror'),
-        loadLanguageExtension(props.language),
-      ]);
-
-      const extensions = [
-        basicSetup,
-        lineNumbers(),
-        highlightActiveLine(),
-        drawSelection(),
-        EditorView.theme({
-          '&': {
-            fontSize: '14px',
-            border: '1px solid #d0d0c8',
-            borderRadius: '3px',
-          },
-          '.cm-content': {
-            fontFamily: '"Courier New", Courier, monospace',
-            minHeight: '120px',
-          },
-          '.cm-gutters': {
-            backgroundColor: '#f5f5f0',
-            borderRight: '1px solid #d0d0c8',
-          },
-          '&.cm-focused': {
-            outline: '2px solid #008080',
-          },
-        }),
-      ];
-
-      if (langExt) {
-        extensions.push(langExt);
-      }
-
-      editorView = new EditorView({
-        state: EditorState.create({
-          doc: props.starterCode,
-          extensions,
-        }),
-        parent: editorContainer,
-      });
-
-      setCmLoaded(true);
-    } catch {
-      setCmFailed(true);
+  async function initializeCodeMirror(): Promise<void> {
+    if (!editorContainer) {
+      throw new Error('Code exercise editor container is unavailable');
     }
+
+    const [
+      { EditorView, lineNumbers, highlightActiveLine, drawSelection },
+      { EditorState },
+      { basicSetup },
+      langExt,
+    ] = await Promise.all([
+      import('@codemirror/view'),
+      import('@codemirror/state'),
+      import('codemirror'),
+      loadLanguageExtension(props.language),
+    ]);
+
+    const extensions = [
+      basicSetup,
+      lineNumbers(),
+      highlightActiveLine(),
+      drawSelection(),
+      EditorView.theme({
+        '&': {
+          fontSize: '14px',
+          border: '1px solid #d0d0c8',
+          borderRadius: '3px',
+        },
+        '.cm-content': {
+          fontFamily: '"Courier New", Courier, monospace',
+          minHeight: '120px',
+        },
+        '.cm-gutters': {
+          backgroundColor: '#f5f5f0',
+          borderRight: '1px solid #d0d0c8',
+        },
+        '&.cm-focused': {
+          outline: '2px solid #008080',
+        },
+      }),
+    ];
+
+    if (langExt) {
+      extensions.push(langExt);
+    }
+
+    editorView = new EditorView({
+      state: EditorState.create({
+        doc: props.starterCode,
+        extensions,
+      }),
+      parent: editorContainer,
+    });
+
+    setCmLoaded(true);
+  }
+
+  function handleCodeMirrorLoadError(): void {
+    setCmFailed(true);
+  }
+
+  onMount(() => {
+    initializeCodeMirror().catch(() => {
+      handleCodeMirrorLoadError();
+    });
   });
 
   onCleanup(() => {

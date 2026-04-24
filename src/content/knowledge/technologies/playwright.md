@@ -22,7 +22,7 @@ technologies:
   - playwright
 order: 7
 dateAdded: 2026-04-23
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Playwright Official Documentation"
     url: "https://playwright.dev/docs/intro"

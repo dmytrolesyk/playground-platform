@@ -5,8 +5,7 @@ import './styles/contact-app.css';
 export function ContactApp(): JSX.Element {
   const [, actions] = useDesktop();
 
-  // biome-ignore lint/complexity/useLiteralKeys: env var from build
-  const telegramUser = import.meta.env['PUBLIC_TELEGRAM_USERNAME'] as string | undefined;
+  const telegramUser = import.meta.env.PUBLIC_TELEGRAM_USERNAME;
 
   const handleSendEmail = (): void => {
     actions.openWindow('email');

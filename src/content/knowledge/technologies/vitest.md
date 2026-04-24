@@ -20,7 +20,7 @@ technologies:
   - vitest
 order: 6
 dateAdded: 2026-04-23
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Vitest Official Documentation"
     url: "https://vitest.dev/"

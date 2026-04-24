@@ -53,8 +53,10 @@ function classifyResponse(
   }
 
   if (statusCode === 301 || statusCode === 302 || statusCode === 307 || statusCode === 308) {
-    const redirectUrl = response.headers.get('location') ?? undefined;
-    return { url, status: 'redirect', statusCode, redirectUrl };
+    const redirectUrl = response.headers.get('location');
+    return redirectUrl
+      ? { url, status: 'redirect' as const, statusCode, redirectUrl }
+      : { url, status: 'redirect' as const, statusCode };
   }
 
   if (statusCode === 404 || statusCode === 410) {

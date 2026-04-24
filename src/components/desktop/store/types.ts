@@ -20,7 +20,7 @@ export interface AppRegistryEntry {
   id: string;
   title: string;
   icon: string;
-  component: Component | ReturnType<typeof import('solid-js')['lazy']>;
+  component: Component;
   desktop: boolean;
   startMenu: boolean;
   startMenuCategory?: string;

@@ -16,7 +16,7 @@ technologies:
   - solidjs
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "xterm.js Documentation"
     url: "https://xtermjs.org/"

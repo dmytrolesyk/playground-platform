@@ -17,7 +17,7 @@ technologies:
   - node
 order: 8
 dateAdded: 2026-04-23
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Node.js Official Documentation"
     url: "https://nodejs.org/en/docs"
@@ -142,11 +142,11 @@ This is the most dangerous gotcha in the project, and it stems from Node.js play
 |---|---|---|
 | `import.meta.env.PUBLIC_*` | Build time (Vite inlines) | Client-side public values |
 | `import.meta.env.SECRET` | Build time (Vite inlines) | **Nothing** in Docker/CI — empty string |
-| `process.env['SECRET']` | Runtime (Node.js reads) | Server-side secrets |
+| `process.env.SECRET` (or bracket form) | Runtime (Node.js reads) | Server-side secrets |
 
 [Vite replaces](https://vite.dev/guide/env-and-mode) ALL `import.meta.env` references at build time with their literal values. If `RESEND_API_KEY` isn't in the environment during `pnpm build` (which it isn't in Docker), it becomes an empty string permanently baked into the JavaScript output. `process.env` is read at runtime by Node.js, so it correctly accesses container environment variables.
 
-The project rule: **server-side endpoints use `process.env['VAR']`** for secrets, **client-side code uses `import.meta.env.PUBLIC_*`** for public values. Mixing them up compiles fine but fails silently in production.
+The project rule: **server-side endpoints use `process.env`** for secrets, **client-side code uses `import.meta.env.PUBLIC_*`** for public values. Mixing them up compiles fine but fails silently in production.
 
 ## ES Modules Throughout
 

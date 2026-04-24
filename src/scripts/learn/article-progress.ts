@@ -27,6 +27,12 @@ const STAGE_ORDER: Record<MasteryStage, number> = {
   mastered: 3,
 };
 
+const MASTERY_STAGES = new Set<string>(['read', 'checked', 'practiced', 'mastered']);
+
+function isMasteryStage(value: string | undefined): value is MasteryStage {
+  return value !== undefined && MASTERY_STAGES.has(value);
+}
+
 function stageAtLeast(stage: MasteryStage, minimum: MasteryStage): boolean {
   return STAGE_ORDER[stage] >= STAGE_ORDER[minimum];
 }
@@ -60,8 +66,9 @@ function updateArticleProgress(root: HTMLElement, slug: string): void {
   }
 
   root.querySelectorAll<HTMLButtonElement>('[data-progress-stage]').forEach((button) => {
-    const buttonStage = button.dataset[DATA_PROGRESS_STAGE] as MasteryStage | undefined;
-    if (buttonStage === undefined) return;
+    const buttonStageRaw = button.dataset[DATA_PROGRESS_STAGE];
+    if (!isMasteryStage(buttonStageRaw)) return;
+    const buttonStage = buttonStageRaw;
 
     const isActive = stageAtLeast(stage, buttonStage);
     button.classList.toggle('progress-tracker__btn--active', isActive);
@@ -78,8 +85,9 @@ function bindStageButtons(root: HTMLElement, slug: string): void {
 
   root.querySelectorAll<HTMLButtonElement>('[data-progress-stage]').forEach((button) => {
     button.addEventListener('click', () => {
-      const nextStage = button.dataset[DATA_PROGRESS_STAGE] as MasteryStage | undefined;
-      if (nextStage === undefined) return;
+      const nextStageRaw = button.dataset[DATA_PROGRESS_STAGE];
+      if (!isMasteryStage(nextStageRaw)) return;
+      const nextStage = nextStageRaw;
 
       markStage(slug, nextStage);
       updateArticleProgress(root, slug);

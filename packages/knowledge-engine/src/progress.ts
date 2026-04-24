@@ -128,7 +128,15 @@ function loadProgress(): LearningProgress {
     const raw = storage.getItem(STORAGE_KEY);
     if (raw === null) return emptyProgress();
 
-    const parsed = JSON.parse(raw) as StoredLearningProgress;
+    const rawParsed: unknown = JSON.parse(raw);
+    if (typeof rawParsed !== 'object' || rawParsed === null || Array.isArray(rawParsed)) {
+      return emptyProgress();
+    }
+    const obj = rawParsed as Record<string, unknown>;
+    const parsed: StoredLearningProgress = {
+      articlesRead: obj.articlesRead,
+      modulesCompleted: obj.modulesCompleted,
+    };
     const progress = migrateProgress(parsed);
     saveProgress(progress);
     return progress;

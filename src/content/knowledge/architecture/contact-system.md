@@ -16,7 +16,7 @@ technologies:
   - astro
 order: 6
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Resend Documentation"
     url: "https://resend.com/docs"
@@ -177,16 +177,16 @@ This affects **all** `import.meta.env` values, not just `PUBLIC_*` ones. In a Do
 
 ### The Fix
 
-Server-side code must use `process.env['VAR_NAME']` — which reads the actual environment variable at runtime:
+Server-side code must use `process.env` — which reads the actual environment variable at runtime:
 
 ```typescript
 // ✅ Correct: reads at runtime
-const apiKey = process.env['RESEND_API_KEY'];
-const toEmail = process.env['CONTACT_TO_EMAIL'];
-const fromEmail = process.env['CONTACT_FROM_EMAIL'];
+const apiKey = process.env.RESEND_API_KEY;
+const toEmail = process.env.CONTACT_TO_EMAIL;
+const fromEmail = process.env.CONTACT_FROM_EMAIL;
 ```
 
-The bracket notation (`process.env['VAR_NAME']` not `process.env.VAR_NAME`) is required by TypeScript's `noPropertyAccessFromIndexSignature` setting.
+Dot notation and bracket notation are both fine here. The important rule is **use `process.env` in server code, not `import.meta.env`**.
 
 ### The Docker Build Diagram
 
@@ -280,13 +280,14 @@ For the current scale, the honeypot is sufficient.
 
 ## Testing the Contact System
 
-Because the contact endpoint makes a real API call to Resend, it's not covered by unit tests — there's no pure function to test in isolation. The endpoint's correctness is verified through:
+The endpoint now has focused unit coverage for the request boundary plus the higher-level checks you'd expect for the full flow:
 
-1. **Type checking** — `astro check` validates the endpoint's TypeScript types, ensuring the `APIRoute` type is satisfied and `process.env` access is correct.
-2. **Manual testing** — Filling out the form on `localhost:4321` and verifying the email arrives. Requires `RESEND_API_KEY` and other secrets in `.env`.
-3. **Code review** — The endpoint is small enough (~50 lines) to verify by inspection. The critical paths (honeypot, validation, error handling) are each a few lines.
+1. **Unit tests** — `tests/unit/api/contact.test.ts` verifies malformed JSON, non-object payloads, wrong-type fields, and the success-path response shape with Resend mocked.
+2. **Type checking** — `astro check` validates the endpoint's TypeScript types, ensuring the `APIRoute` type is satisfied and the server/client env split stays correct.
+3. **Manual testing** — Filling out the form on `localhost:4321` and verifying the email arrives. Requires `RESEND_API_KEY` and other secrets in `.env`.
+4. **Code review** — The endpoint is still small enough to inspect quickly, especially the honeypot, validation, and Resend error handling paths.
 
-This is an acceptable trade-off for a single endpoint. If the project had multiple API routes, a test harness with mocked Resend would be worthwhile.
+This is a better balance than the earlier “manual only” setup: the unit tests lock down the dangerous input-boundary behavior, while manual testing still covers the real Resend integration.
 
 ## Key Design Decisions
 

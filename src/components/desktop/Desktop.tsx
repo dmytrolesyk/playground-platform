@@ -12,7 +12,8 @@ function DesktopInner(): JSX.Element {
   const [state, actions] = useDesktop();
 
   const handleDesktopClick = (e: MouseEvent): void => {
-    const target = e.target as HTMLElement;
+    const target = e.target;
+    if (!(target instanceof HTMLElement)) return;
 
     // Close start menu when clicking anywhere outside it and the start button
     if (state.startMenuOpen) {

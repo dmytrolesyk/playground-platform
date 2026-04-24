@@ -1,42 +1,28 @@
 // Pure computation functions for knowledge graph statistics.
 // Takes the knowledge-graph.json shape as input — no I/O.
 
-export interface ArticleNode {
-  id: string;
-  type: 'article';
-  category: string;
-  module: string | null;
-  technologies: string[];
+import type {
+  ArticleNode,
+  GraphEdge,
+  GraphNode,
+  KnowledgeGraph,
+  ModuleNode,
+  TechnologyNode,
+} from '@playground/knowledge-engine/graph/types';
+
+export type { ArticleNode, GraphEdge, GraphNode, ModuleNode, TechnologyNode };
+export type GraphStatsInput = Pick<KnowledgeGraph, 'nodes' | 'edges'>;
+
+function isArticleNode(n: GraphNode): n is ArticleNode {
+  return n.type === 'article';
 }
 
-export interface TechnologyNode {
-  id: string;
-  type: 'technology';
-  label: string;
+function isModuleNode(n: GraphNode): n is ModuleNode {
+  return n.type === 'module';
 }
 
-export interface ModuleNode {
-  id: string;
-  type: 'module';
-  label: string;
-}
-
-export interface OtherNode {
-  id: string;
-  type: string;
-}
-
-export type GraphNode = ArticleNode | TechnologyNode | ModuleNode | OtherNode;
-
-export interface GraphEdge {
-  source: string;
-  target: string;
-  type: string;
-}
-
-export interface KnowledgeGraphData {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
+function isTechnologyNode(n: GraphNode): n is TechnologyNode {
+  return n.type === 'technology';
 }
 
 // ── Result types ──
@@ -103,8 +89,8 @@ function countEdgesByType(edges: GraphEdge[]): Record<string, number> {
 function getArticlesPerCategory(nodes: GraphNode[]): CategoryCount[] {
   const counts: Record<string, number> = {};
   for (const n of nodes) {
-    if (n.type === 'article') {
-      const cat = (n as ArticleNode).category;
+    if (isArticleNode(n)) {
+      const cat = n.category;
       counts[cat] = (counts[cat] ?? 0) + 1;
     }
   }
@@ -202,8 +188,8 @@ function getModuleSizes(nodes: GraphNode[], edges: GraphEdge[]): ModuleSize[] {
   // Module nodes provide the label
   const moduleLabels = new Map<string, string>();
   for (const n of nodes) {
-    if (n.type === 'module') {
-      moduleLabels.set(n.id, (n as ModuleNode).label);
+    if (isModuleNode(n)) {
+      moduleLabels.set(n.id, n.label);
     }
   }
 
@@ -232,14 +218,14 @@ function getModuleSizes(nodes: GraphNode[], edges: GraphEdge[]): ModuleSize[] {
 function getTechnologyGaps(nodes: GraphNode[]): TechnologyGap[] {
   const techNodes: { slug: string; label: string }[] = [];
   for (const n of nodes) {
-    if (n.type === 'technology') {
-      techNodes.push({ slug: n.id.replace('tech:', ''), label: (n as TechnologyNode).label });
+    if (isTechnologyNode(n)) {
+      techNodes.push({ slug: n.id.replace('tech:', ''), label: n.label });
     }
   }
 
   const techArticleSlugs = new Set<string>();
   for (const n of nodes) {
-    if (n.type === 'article' && (n as ArticleNode).category === 'technology') {
+    if (isArticleNode(n) && n.category === 'technology') {
       const slug = n.id.includes('/') ? (n.id.split('/').pop() ?? n.id) : n.id;
       techArticleSlugs.add(slug);
     }
@@ -252,7 +238,7 @@ function getTechnologyGaps(nodes: GraphNode[]): TechnologyGap[] {
 
 // ── Main entry point ──
 
-export function computeGraphStats(graph: KnowledgeGraphData): GraphStats {
+export function computeGraphStats(graph: GraphStatsInput): GraphStats {
   const chain = getLongestPrerequisiteChain(graph.nodes, graph.edges);
 
   return {

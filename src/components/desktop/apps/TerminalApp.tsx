@@ -99,6 +99,7 @@ const HELP_TEXT = [
 export function TerminalApp(): JSX.Element {
   const [, actions] = useDesktop();
   const [isLoaded, setIsLoaded] = createSignal(false);
+  const [loadError, setLoadError] = createSignal<string | null>(null);
   let containerRef: HTMLDivElement | undefined;
   let terminalInstance: import('@xterm/xterm').Terminal | undefined;
   let fitAddonInstance: import('@xterm/addon-fit').FitAddon | undefined;
@@ -153,13 +154,15 @@ export function TerminalApp(): JSX.Element {
     }
   }
 
-  onMount(async () => {
+  async function initializeTerminal(): Promise<void> {
     const [{ Terminal }, { FitAddon }] = await Promise.all([
       import('@xterm/xterm'),
       import('@xterm/addon-fit'),
     ]);
 
-    if (!containerRef) return;
+    if (!containerRef) {
+      throw new Error('Terminal container is unavailable');
+    }
 
     const fitAddon = new FitAddon();
     fitAddonInstance = fitAddon;
@@ -206,6 +209,17 @@ export function TerminalApp(): JSX.Element {
     });
 
     setIsLoaded(true);
+  }
+
+  function handleTerminalLoadError(): void {
+    setLoadError('Failed to load the terminal. Refresh the page and try again.');
+    setIsLoaded(false);
+  }
+
+  onMount(() => {
+    initializeTerminal().catch(() => {
+      handleTerminalLoadError();
+    });
   });
 
   function handleTerminalInput(data: string, terminal: import('@xterm/xterm').Terminal): void {
@@ -255,10 +269,16 @@ export function TerminalApp(): JSX.Element {
 
   return (
     <div class="terminal-app">
-      {!isLoaded() && (
-        <div class="terminal-app__loading">
-          <span>Loading terminal...</span>
+      {loadError() ? (
+        <div class="terminal-app__error" role="alert">
+          <span>{loadError()}</span>
         </div>
+      ) : (
+        !isLoaded() && (
+          <div class="terminal-app__loading">
+            <span>Loading terminal...</span>
+          </div>
+        )
       )}
       <div
         ref={containerRef}

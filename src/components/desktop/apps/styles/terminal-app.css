@@ -19,6 +19,19 @@
   background: #000;
 }
 
+.terminal-app__error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+  color: #ff8080;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  text-align: center;
+  background: #000;
+}
+
 .terminal-app__container {
   flex: 1;
   min-height: 0;

@@ -27,7 +27,7 @@ technologies:
   - typescript
 order: 7
 dateAdded: 2026-04-21
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Topological Sorting — Wikipedia"
     url: "https://en.wikipedia.org/wiki/Topological_sorting"

@@ -9,6 +9,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { KnowledgeGraph, ModuleNode } from '@playground/knowledge-engine/graph/types';
+import { parseKnowledgeGraph } from '../src/utils/knowledge-graph.ts';
 
 const ROOT = process.cwd();
 const GRAPH_PATH = join(ROOT, 'src/data/knowledge-graph.json');
@@ -59,6 +60,7 @@ function loadModulePrerequisites(root: string): {
     const prereqMatch = MODULE_PREREQ_PATTERN.exec(block);
     if (!idMatch) continue;
     const id = idMatch[1];
+    if (!id) continue;
     const prereqs = prereqMatch?.[1]
       ? prereqMatch[1]
           .split(',')
@@ -190,9 +192,8 @@ export function generateTechnologyUsageDiagram(graph: KnowledgeGraph): string {
 export function generateCategoryDistributionDiagram(graph: KnowledgeGraph): string {
   const categoryCounts = new Map<string, number>();
   for (const node of graph.nodes) {
-    if (node.type === 'article' && 'category' in node) {
-      const cat = (node as { category: string }).category;
-      categoryCounts.set(cat, (categoryCounts.get(cat) ?? 0) + 1);
+    if (node.type === 'article') {
+      categoryCounts.set(node.category, (categoryCounts.get(node.category) ?? 0) + 1);
     }
   }
 
@@ -213,7 +214,7 @@ export function generateCategoryDistributionDiagram(graph: KnowledgeGraph): stri
 
 function main(): void {
   const graphJson = readFileSync(GRAPH_PATH, 'utf8');
-  const graph = JSON.parse(graphJson) as KnowledgeGraph;
+  const graph = parseKnowledgeGraph(JSON.parse(graphJson));
 
   mkdirSync(OUTPUT_DIR, { recursive: true });
 

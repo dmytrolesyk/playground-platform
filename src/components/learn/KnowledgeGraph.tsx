@@ -253,6 +253,7 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
   const [hiddenEdgeTypes, setHiddenEdgeTypes] = createSignal<Set<string>>(new Set());
   const [hiddenNodeTypes, setHiddenNodeTypes] = createSignal<Set<string>>(new Set());
   const [loading, setLoading] = createSignal(true);
+  const [loadError, setLoadError] = createSignal<string | null>(null);
   const [hoveredNode, setHoveredNode] = createSignal<string | null>(null);
 
   // ── Mastery coloring ──────────────────────────────────────────────
@@ -343,8 +344,10 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
   // ── Initialize Cytoscape ──────────────────────────────────────────
 
-  onMount(async () => {
-    if (!containerRef) return;
+  async function initializeGraph(): Promise<void> {
+    if (!containerRef) {
+      throw new Error('Knowledge graph container is unavailable');
+    }
 
     // Dynamic import to keep bundle small (lazy loading boundary)
     const [cytoscapeMod, fcoseMod] = await Promise.all([
@@ -363,15 +366,16 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
       elements: [
         ...elements.nodes.map((n) => ({
           group: 'nodes' as const,
-          data: n.data as unknown as Record<string, unknown>,
+          data: { ...n.data },
           classes: n.classes,
         })),
         ...elements.edges.map((e) => ({
           group: 'edges' as const,
-          data: e.data as unknown as Record<string, unknown>,
+          data: { ...e.data },
         })),
       ] as cytoscape.ElementDefinition[],
-      style: buildStylesheet() as unknown as cytoscape.StylesheetJson,
+      // Cytoscape accepts both 'style' and 'css' as the property name; types only declare 'css'
+      style: buildStylesheet() as cytoscape.StylesheetJson,
       layout: {
         name: 'fcose',
         animate: false,
@@ -436,6 +440,17 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
     // Expose for E2E testing
     window.__cyGraph = cy;
+  }
+
+  function handleGraphLoadError(): void {
+    setLoadError('Failed to load the knowledge graph. Refresh the page and try again.');
+    setLoading(false);
+  }
+
+  onMount(() => {
+    initializeGraph().catch(() => {
+      handleGraphLoadError();
+    });
   });
 
   onCleanup(() => {
@@ -452,115 +467,124 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
   return (
     <div class="knowledge-graph-wrapper">
-      {/* Filter controls */}
-      <div class="knowledge-graph-controls">
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Categories</legend>
-          <For each={categories}>
-            {(cat: string) => (
-              <label class="knowledge-graph-filter">
-                <input
-                  type="checkbox"
-                  checked={!hiddenCategories().has(cat)}
-                  onChange={() => toggleCategory(cat)}
-                />
-                <span
-                  class="knowledge-graph-swatch"
-                  style={{ 'background-color': CATEGORY_COLORS[cat] ?? '#999' }}
-                />
-                {CATEGORY_LABELS[cat] ?? cat}
-              </label>
-            )}
-          </For>
-        </fieldset>
-
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Node Types</legend>
-          <For each={nodeTypes}>
-            {(nt: string) => (
-              <label class="knowledge-graph-filter">
-                <input
-                  type="checkbox"
-                  checked={!hiddenNodeTypes().has(nt)}
-                  onChange={() => toggleNodeType(nt)}
-                />
-                {NODE_TYPE_LABELS[nt] ?? nt}
-              </label>
-            )}
-          </For>
-        </fieldset>
-
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Edge Types</legend>
-          <For each={edgeTypes}>
-            {(et: string) => (
-              <label class="knowledge-graph-filter">
-                <input
-                  type="checkbox"
-                  checked={!hiddenEdgeTypes().has(et)}
-                  onChange={() => toggleEdgeType(et)}
-                />
-                {EDGE_TYPE_LABELS[et] ?? et}
-              </label>
-            )}
-          </For>
-        </fieldset>
-
-        {/* Legend: mastery borders */}
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Mastery Progress</legend>
-          <div class="knowledge-graph-legend">
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': '#ccc' }}
-              />
-              Unread
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.read }}
-              />
-              Read
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.checked }}
-              />
-              Checked
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.practiced }}
-              />
-              Practiced
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.mastered }}
-              />
-              Mastered
-            </span>
+      <Show
+        when={!loadError()}
+        fallback={
+          <div class="knowledge-graph-error" role="alert">
+            {loadError()}
           </div>
-        </fieldset>
-      </div>
+        }
+      >
+        {/* Filter controls */}
+        <div class="knowledge-graph-controls">
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Categories</legend>
+            <For each={categories}>
+              {(cat: string) => (
+                <label class="knowledge-graph-filter">
+                  <input
+                    type="checkbox"
+                    checked={!hiddenCategories().has(cat)}
+                    onChange={() => toggleCategory(cat)}
+                  />
+                  <span
+                    class="knowledge-graph-swatch"
+                    style={{ 'background-color': CATEGORY_COLORS[cat] ?? '#999' }}
+                  />
+                  {CATEGORY_LABELS[cat] ?? cat}
+                </label>
+              )}
+            </For>
+          </fieldset>
 
-      {/* Tooltip */}
-      <Show when={hoveredNode()}>
-        <div class="knowledge-graph-tooltip">{hoveredNode()}</div>
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Node Types</legend>
+            <For each={nodeTypes}>
+              {(nt: string) => (
+                <label class="knowledge-graph-filter">
+                  <input
+                    type="checkbox"
+                    checked={!hiddenNodeTypes().has(nt)}
+                    onChange={() => toggleNodeType(nt)}
+                  />
+                  {NODE_TYPE_LABELS[nt] ?? nt}
+                </label>
+              )}
+            </For>
+          </fieldset>
+
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Edge Types</legend>
+            <For each={edgeTypes}>
+              {(et: string) => (
+                <label class="knowledge-graph-filter">
+                  <input
+                    type="checkbox"
+                    checked={!hiddenEdgeTypes().has(et)}
+                    onChange={() => toggleEdgeType(et)}
+                  />
+                  {EDGE_TYPE_LABELS[et] ?? et}
+                </label>
+              )}
+            </For>
+          </fieldset>
+
+          {/* Legend: mastery borders */}
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Mastery Progress</legend>
+            <div class="knowledge-graph-legend">
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': '#ccc' }}
+                />
+                Unread
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.read }}
+                />
+                Read
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.checked }}
+                />
+                Checked
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.practiced }}
+                />
+                Practiced
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.mastered }}
+                />
+                Mastered
+              </span>
+            </div>
+          </fieldset>
+        </div>
+
+        {/* Tooltip */}
+        <Show when={hoveredNode()}>
+          <div class="knowledge-graph-tooltip">{hoveredNode()}</div>
+        </Show>
+
+        {/* Loading indicator */}
+        <Show when={loading()}>
+          <div class="knowledge-graph-loading">Loading graph…</div>
+        </Show>
+
+        {/* Graph container */}
+        <div ref={containerRef} class="knowledge-graph-container" data-cy="knowledge-graph" />
       </Show>
-
-      {/* Loading indicator */}
-      <Show when={loading()}>
-        <div class="knowledge-graph-loading">Loading graph…</div>
-      </Show>
-
-      {/* Graph container */}
-      <div ref={containerRef} class="knowledge-graph-container" data-cy="knowledge-graph" />
     </div>
   );
 };

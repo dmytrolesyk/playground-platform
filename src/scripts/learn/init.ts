@@ -4,8 +4,8 @@ import { initIndexProgress } from './index-progress';
 import { initMermaid } from './mermaid';
 
 export async function initLearnEnhancements(): Promise<void> {
-  await initMermaid();
   initArticleProgress();
   initIndexProgress();
   initFlagReview();
+  await initMermaid();
 }

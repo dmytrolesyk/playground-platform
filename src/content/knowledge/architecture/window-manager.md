@@ -20,7 +20,7 @@ technologies:
 diagramRef: "window-manager"
 order: 2
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-21
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Pointer Events API — MDN"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events"

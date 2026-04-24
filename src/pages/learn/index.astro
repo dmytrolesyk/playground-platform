@@ -11,6 +11,7 @@ import LearnLayout from '../../layouts/LearnLayout.astro';
 import type { GraphAnalysis } from '../../utils/graph-analysis';
 import { prepareGraphAnalysisDisplay } from '../../utils/graph-analysis';
 import { computeGraphStats } from '../../utils/graph-stats';
+import { parseKnowledgeGraph } from '../../utils/knowledge-graph';
 
 export const prerender = true;
 
@@ -20,10 +21,13 @@ export const prerender = true;
 // When adding Pagefind or Fuse.js, configure it to search across
 // title + altLabels + summary.
 
-const stats = computeGraphStats(graphData);
+const typedGraphData = parseKnowledgeGraph(graphData);
+const stats = computeGraphStats(typedGraphData);
 const graphAnalysis = prepareGraphAnalysisDisplay(graphAnalysisData as GraphAnalysis);
 const articleLabelById = new Map<string, string>(
-  graphData.nodes.filter((node) => node.type === 'article').map((node) => [node.id, node.label]),
+  typedGraphData.nodes
+    .filter((node) => node.type === 'article')
+    .map((node) => [node.id, node.label]),
 );
 const getArticleLabel = (id: string): string => articleLabelById.get(id) ?? id;
 const topCentrality = graphAnalysis.centrality.slice(0, 5);

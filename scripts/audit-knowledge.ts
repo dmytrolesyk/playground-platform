@@ -6,6 +6,7 @@ import {
   formatKnowledgeAuditReport,
   hasKnowledgeAuditErrors,
 } from '@playground/knowledge-engine/audit/report';
+import { isRecord } from '@playground/knowledge-engine/frontmatter';
 
 try {
   const input = await loadKnowledgeAuditInput();
@@ -38,6 +39,15 @@ interface ReviewFlag {
   reason?: string;
 }
 
+function isReviewFlag(value: unknown): value is ReviewFlag {
+  return (
+    isRecord(value) &&
+    typeof value.articleId === 'string' &&
+    typeof value.flaggedAt === 'string' &&
+    (value.reason === undefined || typeof value.reason === 'string')
+  );
+}
+
 function loadFlaggedArticles(): ReviewFlag[] {
   const flagDir = join(process.cwd(), 'src/data/review-flags');
   try {
@@ -45,8 +55,11 @@ function loadFlaggedArticles(): ReviewFlag[] {
       .filter((f) => f.endsWith('.json'))
       .map((f) => {
         const content = readFileSync(join(flagDir, f), 'utf8');
-        return JSON.parse(content) as ReviewFlag;
+        const parsed: unknown = JSON.parse(content);
+        if (!isReviewFlag(parsed)) return null;
+        return parsed;
       })
+      .filter((f): f is ReviewFlag => f !== null)
       .sort((a, b) => a.articleId.localeCompare(b.articleId));
   } catch {
     return [];

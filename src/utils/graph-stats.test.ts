@@ -1,31 +1,56 @@
+import type {
+  ArchitectureGraphNode,
+  ArticleNode,
+  GraphEdge,
+  GraphNode,
+  ModuleNode,
+  TechnologyNode,
+} from '@playground/knowledge-engine/graph/types';
 import { describe, expect, it } from 'vitest';
-import type { GraphEdge, GraphNode, KnowledgeGraphData } from './graph-stats.ts';
+import type { GraphStatsInput } from './graph-stats.ts';
 import { computeGraphStats } from './graph-stats.ts';
 
-function makeGraph(nodes: GraphNode[], edges: GraphEdge[] = []): KnowledgeGraphData {
+function makeGraph(nodes: GraphNode[], edges: GraphEdge[] = []): GraphStatsInput {
   return { nodes, edges };
 }
 
 function article(id: string, category = 'concept', module: string | null = null): GraphNode {
-  return { id, type: 'article', category, module, technologies: [] } as GraphNode;
+  const node: ArticleNode = {
+    id,
+    type: 'article',
+    label: id,
+    category,
+    difficulty: null,
+    module,
+    estimatedMinutes: null,
+    technologies: [],
+    hasExercises: false,
+    exerciseCount: 0,
+    hasLearningObjectives: false,
+    diagramRef: null,
+  };
+  return node;
 }
 
 function techNode(slug: string, label: string): GraphNode {
-  return { id: `tech:${slug}`, type: 'technology', label };
+  const node: TechnologyNode = { id: `tech:${slug}`, type: 'technology', label };
+  return node;
 }
 
 function moduleNode(id: string, label: string): GraphNode {
-  return { id: `module:${id}`, type: 'module', label, order: 1 } as GraphNode;
+  const node: ModuleNode = { id: `module:${id}`, type: 'module', label, order: 1 };
+  return node;
 }
 
 function archNode(id: string): GraphNode {
-  return {
+  const node: ArchitectureGraphNode = {
     id,
     type: 'architecture-node',
     label: id,
     category: 'component',
     knowledgeSlug: null,
-  } as GraphNode;
+  };
+  return node;
 }
 
 function edge(source: string, target: string, type: string): GraphEdge {
@@ -40,11 +65,13 @@ describe('computeGraphStats', () => {
         article('a/two'),
         techNode('ts', 'TypeScript'),
         moduleNode('foundation', 'Foundation'),
+        archNode('arch:desktop'),
       ]);
       const stats = computeGraphStats(graph);
-      expect(stats.nodes.total).toBe(4);
+      expect(stats.nodes.total).toBe(5);
       expect(stats.nodes.byType).toEqual({
         article: 2,
+        'architecture-node': 1,
         technology: 1,
         module: 1,
       });

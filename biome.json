@@ -17,6 +17,9 @@
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "types": "all"
+    },
     "rules": {
       "recommended": true,
       "style": {
@@ -30,7 +33,8 @@
         "useThrowOnlyError": "error",
         "useExplicitLengthCheck": "error",
         "useCollapsedElseIf": "error",
-        "useDefaultSwitchClause": "error"
+        "useDefaultSwitchClause": "error",
+        "noNonNullAssertion": "error"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "error",
@@ -46,7 +50,8 @@
         "noConsole": "warn",
         "noReactSpecificProps": "off",
         "noEvolvingTypes": "error",
-        "useErrorMessage": "error"
+        "useErrorMessage": "error",
+        "noExplicitAny": "error"
       },
       "performance": {
         "noBarrelFile": "error",
@@ -54,7 +59,10 @@
         "useTopLevelRegex": "error"
       },
       "nursery": {
-        "useExplicitType": "error"
+        "useExplicitType": "error",
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error",
+        "useAwaitThenable": "error"
       }
     }
   },

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
+import { isRecord } from '../../utils/type-guards';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -11,25 +12,78 @@ interface ContactBody {
   website?: string; // honeypot
 }
 
+type ParseResult<T> = { ok: true; value: T } | { ok: false; status: 400; error: string };
+
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }: { request: Request }) => {
-  let body: ContactBody;
-  try {
-    body = (await request.json()) as ContactBody;
-  } catch {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+function jsonResponse(body: { ok: boolean; error?: string }, status: number): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+function parseOptionalStringField(
+  raw: Record<string, unknown>,
+  field: keyof ContactBody,
+): ParseResult<string | undefined> {
+  const value = raw[field];
+  if (value === undefined) {
+    return { ok: true, value: undefined };
   }
+  if (typeof value !== 'string') {
+    return { ok: false, status: 400, error: `Field "${field}" must be a string` };
+  }
+  return { ok: true, value };
+}
+
+async function parseContactBody(request: Request): Promise<ParseResult<ContactBody>> {
+  let raw: unknown;
+  try {
+    raw = await request.json();
+  } catch {
+    return { ok: false, status: 400, error: 'Malformed JSON body' };
+  }
+  if (!isRecord(raw)) {
+    return { ok: false, status: 400, error: 'JSON body must be an object' };
+  }
+
+  const name = parseOptionalStringField(raw, 'name');
+  if (!name.ok) return name;
+
+  const email = parseOptionalStringField(raw, 'email');
+  if (!email.ok) return email;
+
+  const subject = parseOptionalStringField(raw, 'subject');
+  if (!subject.ok) return subject;
+
+  const message = parseOptionalStringField(raw, 'message');
+  if (!message.ok) return message;
+
+  const website = parseOptionalStringField(raw, 'website');
+  if (!website.ok) return website;
+
+  const body: ContactBody = {};
+  if (name.value !== undefined) body.name = name.value;
+  if (email.value !== undefined) body.email = email.value;
+  if (subject.value !== undefined) body.subject = subject.value;
+  if (message.value !== undefined) body.message = message.value;
+  if (website.value !== undefined) body.website = website.value;
+
+  return { ok: true, value: body };
+}
+
+export async function handleContactRequest(request: Request): Promise<Response> {
+  const parsedBody = await parseContactBody(request);
+  if (!parsedBody.ok) {
+    return jsonResponse({ ok: false, error: parsedBody.error }, parsedBody.status);
+  }
+
+  const body = parsedBody.value;
 
   // Honeypot check — silent discard
   if (body.website) {
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ ok: true }, 200);
   }
 
   // Validate required fields
@@ -39,26 +93,17 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
   const message = body.message?.trim();
 
   if (!(name && email && subject && message)) {
-    return new Response(JSON.stringify({ ok: false, error: 'All fields are required' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ ok: false, error: 'All fields are required' }, 400);
   }
 
   if (!EMAIL_REGEX.test(email)) {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid email format' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ ok: false, error: 'Invalid email format' }, 400);
   }
 
   // Use process.env for server-side runtime vars (not import.meta.env which Vite inlines at build time)
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const apiKey = process.env['RESEND_API_KEY'];
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const toEmail = process.env['CONTACT_TO_EMAIL'];
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const fromEmail = process.env['CONTACT_FROM_EMAIL'];
+  const apiKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.CONTACT_TO_EMAIL;
+  const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
   if (!(apiKey && toEmail && fromEmail)) {
     process.stderr.write(
@@ -70,10 +115,7 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
         hasFromEmail: Boolean(fromEmail),
       })}\n`,
     );
-    return new Response(JSON.stringify({ ok: false, error: 'Server configuration error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ ok: false, error: 'Server configuration error' }, 500);
   }
 
   const resend = new Resend(apiKey);
@@ -93,17 +135,10 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
     process.stderr.write(
       `${JSON.stringify({ scope: 'contact', message: 'Resend error', error })}\n`,
     );
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Failed to send email. Please try again later.' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    );
+    return jsonResponse({ ok: false, error: 'Failed to send email. Please try again later.' }, 500);
   }
 
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
-};
+  return jsonResponse({ ok: true }, 200);
+}
+
+export const POST: APIRoute = ({ request }: { request: Request }) => handleContactRequest(request);

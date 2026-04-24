@@ -45,9 +45,40 @@ function makeBody(category: string): string {
   return `See https://example.com/doc1 and https://example.com/doc2 and https://example.com/doc3 for details.\n\n${filler}`;
 }
 
-function cleanArticle(overrides: Partial<KnowledgeArticle> = {}): KnowledgeArticle {
+type OmittableKnowledgeArticleField = 'body' | 'diagramRef' | 'lastUpdated' | 'module';
+
+function omitOptionalField(
+  article: KnowledgeArticle,
+  field: OmittableKnowledgeArticleField,
+): KnowledgeArticle {
+  switch (field) {
+    case 'body': {
+      const { body: _body, ...rest } = article;
+      return rest;
+    }
+    case 'diagramRef': {
+      const { diagramRef: _diagramRef, ...rest } = article;
+      return rest;
+    }
+    case 'lastUpdated': {
+      const { lastUpdated: _lastUpdated, ...rest } = article;
+      return rest;
+    }
+    case 'module': {
+      const { module: _module, ...rest } = article;
+      return rest;
+    }
+    default:
+      return article;
+  }
+}
+
+function cleanArticle(
+  overrides: Partial<KnowledgeArticle> = {},
+  omit: OmittableKnowledgeArticleField[] = [],
+): KnowledgeArticle {
   const category = overrides.category ?? 'architecture';
-  return {
+  let article: KnowledgeArticle = {
     id: 'architecture/overview',
     category,
     module: 'foundation',
@@ -65,6 +96,10 @@ function cleanArticle(overrides: Partial<KnowledgeArticle> = {}): KnowledgeArtic
     lastUpdated: '2026-04-21',
     ...overrides,
   };
+  for (const key of omit) {
+    article = omitOptionalField(article, key);
+  }
+  return article;
 }
 
 function baseInput(overrides: Partial<KnowledgeAuditInput> = {}): KnowledgeAuditInput {
@@ -84,7 +119,6 @@ function baseInput(overrides: Partial<KnowledgeAuditInput> = {}): KnowledgeAudit
         module: 'foundation',
         relatedConcepts: ['architecture/overview'],
         prerequisites: ['architecture/overview'],
-        diagramRef: undefined,
       }),
     ],
     modules: [{ id: 'foundation' }],
@@ -352,7 +386,7 @@ describe('architecture-requires-diagram', () => {
   it('warns when architecture article has no diagramRef', () => {
     const issues = auditArchitectureRequiresDiagram(
       baseInput({
-        articles: [cleanArticle({ category: 'architecture', diagramRef: undefined })],
+        articles: [cleanArticle({ category: 'architecture' }, ['diagramRef'])],
       }),
     );
     expect(issues).toHaveLength(1);
@@ -363,7 +397,7 @@ describe('architecture-requires-diagram', () => {
   it('skips non-architecture articles', () => {
     const issues = auditArchitectureRequiresDiagram(
       baseInput({
-        articles: [cleanArticle({ category: 'concept', diagramRef: undefined })],
+        articles: [cleanArticle({ category: 'concept' }, ['diagramRef'])],
       }),
     );
     expect(issues).toEqual([]);
@@ -406,8 +440,8 @@ describe('no-orphan-articles', () => {
     const issues = auditNoOrphanArticles(
       baseInput({
         articles: [
-          cleanArticle({ id: 'a', module: undefined, relatedConcepts: ['b'] }),
-          cleanArticle({ id: 'b', module: undefined, relatedConcepts: ['a'] }),
+          cleanArticle({ id: 'a', relatedConcepts: ['b'] }, ['module']),
+          cleanArticle({ id: 'b', relatedConcepts: ['a'] }, ['module']),
         ],
       }),
     );
@@ -427,12 +461,14 @@ describe('no-orphan-articles', () => {
     const issues = auditNoOrphanArticles(
       baseInput({
         articles: [
-          cleanArticle({
-            id: 'a',
-            module: undefined,
-            relatedConcepts: [],
-            prerequisites: [],
-          }),
+          cleanArticle(
+            {
+              id: 'a',
+              relatedConcepts: [],
+              prerequisites: [],
+            },
+            ['module'],
+          ),
         ],
       }),
     );
@@ -445,8 +481,8 @@ describe('no-orphan-articles', () => {
     const issues = auditNoOrphanArticles(
       baseInput({
         articles: [
-          cleanArticle({ id: 'a', module: undefined, relatedConcepts: [], prerequisites: ['b'] }),
-          cleanArticle({ id: 'b', module: undefined, relatedConcepts: [] }),
+          cleanArticle({ id: 'a', relatedConcepts: [], prerequisites: ['b'] }, ['module']),
+          cleanArticle({ id: 'b', relatedConcepts: [] }, ['module']),
         ],
       }),
     );
@@ -762,7 +798,7 @@ describe('inline-citation-density', () => {
 
   it('skips articles with no body', () => {
     const issues = auditInlineCitationDensity(
-      baseInput({ articles: [cleanArticle({ body: undefined })] }),
+      baseInput({ articles: [cleanArticle({}, ['body'])] }),
     );
     expect(issues).toEqual([]);
   });
@@ -780,7 +816,7 @@ describe('missing-last-updated', () => {
 
   it('warns when article has no lastUpdated', () => {
     const issues = auditMissingLastUpdated(
-      baseInput({ articles: [cleanArticle({ lastUpdated: undefined })] }),
+      baseInput({ articles: [cleanArticle({}, ['lastUpdated'])] }),
     );
     expect(issues).toHaveLength(1);
     expect(issues[0]?.code).toBe('missing-last-updated');
@@ -827,10 +863,12 @@ describe('stale-code-reference', () => {
     const issues = auditStaleCodeReference(
       baseInput({
         articles: [
-          cleanArticle({
-            lastUpdated: undefined,
-            relatedFiles: ['src/components/Foo.tsx'],
-          }),
+          cleanArticle(
+            {
+              relatedFiles: ['src/components/Foo.tsx'],
+            },
+            ['lastUpdated'],
+          ),
         ],
         fileModifiedDates: [{ filePath: 'src/components/Foo.tsx', lastModified: '2026-04-21' }],
       }),
@@ -938,10 +976,12 @@ describe('uncited-reference', () => {
     const issues = auditUncitedReference(
       baseInput({
         articles: [
-          cleanArticle({
-            body: undefined,
-            externalReferences: [{ type: 'docs', url: 'https://solidjs.com/' }],
-          }),
+          cleanArticle(
+            {
+              externalReferences: [{ type: 'docs', url: 'https://solidjs.com/' }],
+            },
+            ['body'],
+          ),
         ],
       }),
     );
@@ -986,7 +1026,7 @@ describe('unlisted-inline-citation', () => {
   it('skips articles without body', () => {
     const issues = auditUnlistedInlineCitation(
       baseInput({
-        articles: [cleanArticle({ body: undefined })],
+        articles: [cleanArticle({}, ['body'])],
       }),
     );
     expect(issues).toEqual([]);

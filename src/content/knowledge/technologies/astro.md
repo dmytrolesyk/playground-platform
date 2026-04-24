@@ -25,7 +25,7 @@ technologies:
   - astro
 order: 2
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Astro Documentation"
     url: "https://docs.astro.build/"
@@ -209,7 +209,7 @@ For a portfolio/CV site, Astro's strengths align perfectly: most pages are pure 
 
 ## Gotchas
 
-**`import.meta.env` is inlined at build time.** Vite replaces all `import.meta.env.VAR` references with their literal values during the build. This means server-side secrets (like `RESEND_API_KEY`) must use `process.env['VAR']` in SSR endpoints — otherwise they become empty strings in Docker builds where secrets aren't available at build time. This is the single most common deployment bug in the project.
+**`import.meta.env` is inlined at build time.** Vite replaces all `import.meta.env.VAR` references with their literal values during the build. This means server-side secrets (like `RESEND_API_KEY`) must use `process.env` in SSR endpoints — otherwise they become empty strings in Docker builds where secrets aren't available at build time. This is the single most common deployment bug in the project.
 
 **Content collection schema changes require a restart.** If you modify the Zod schema in `content.config.ts`, the Astro dev server needs a full restart to pick up the changes. Hot reload doesn't cover schema changes.
 

@@ -47,6 +47,19 @@ Never set `nursery.recommended: true` — unstable rules break CI between Biome 
 ### TypeScript strictness
 `tsconfig.json` extends `astro/tsconfigs/strictest` with additional flags. If the compiler complains, fix the code — do not loosen the config.
 
+### Prefer avoiding `as` type assertions
+Prefer not to use `as` type assertions. They can bypass the type checker and hide bugs. Start with runtime validation or type narrowing first, especially at untrusted boundaries. Instead:
+- Use **type guards** (`value is T` predicates) for `JSON.parse`, `fetch().json()`, `localStorage` data.
+- Use **`instanceof`** narrowing for DOM event targets (`e.target instanceof HTMLElement`).
+- Use **SolidJS JSX event handler types** (`JSX.EventHandler<HTMLDivElement, PointerEvent>`) for extracted event handlers — these type `e.currentTarget` correctly.
+- Use **discriminated union narrowing** — check the `type` field and let TypeScript narrow automatically.
+- `as const` is fine — it's a narrowing tool, not a cast.
+- Narrow, documented exceptions are acceptable when validation or inference would be worse than the cast:
+  - typed JSON or module-import boundaries with trusted provenance
+  - third-party library typing gaps
+  - generated or build-time data whose shape is guaranteed by the pipeline
+- When keeping an `as` cast, add a brief comment explaining why that tradeoff is intentional.
+
 ### CV content is build-time only
 Markdown → Astro content collections → pre-rendered HTML serialized as `<script type="application/json">` in the page. Zero runtime Markdown processing. If you're importing a Markdown parser into client code, stop.
 
@@ -60,7 +73,7 @@ xterm.js, games, WASM modules must always be behind dynamic `import()` / SolidJS
 Astro 6.x with `@astrojs/node` adapter means hybrid rendering by default — pages are prerendered unless they opt out with `export const prerender = false`. There is no `output: 'hybrid'` config. If you add a new page, it's static by default. Only mark `prerender = false` if it genuinely needs SSR.
 
 ### Server-side env vars: use `process.env`, NOT `import.meta.env`
-**Critical landmine.** Vite inlines ALL `import.meta.env` values at build time — not just `PUBLIC_*`. In Docker/CI builds where secrets aren't present during `pnpm build`, they become empty strings. Server-side endpoints (`src/pages/api/`) MUST use `process.env['VAR_NAME']` for runtime secrets (RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL). Only client-side code should use `import.meta.env` for `PUBLIC_*` vars.
+**Critical landmine.** Vite inlines ALL `import.meta.env` values at build time — not just `PUBLIC_*`. In Docker/CI builds where secrets aren't present during `pnpm build`, they become empty strings. Server-side endpoints (`src/pages/api/`) MUST use `process.env` for runtime secrets (RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL). Dot notation and bracket notation are both fine in server code; the important rule is `process.env`, not `import.meta.env`. Only client-side code should use `import.meta.env` for `PUBLIC_*` vars.
 
 ### Contact API
 Single endpoint: `src/pages/api/contact.ts` → Resend. Uses `process.env` for secrets (see above). The Resend SDK returns `{ data, error }` — it does NOT throw. Always check `error` explicitly; do not use try/catch for Resend API errors. The `from` address domain must exactly match the verified Resend domain.
