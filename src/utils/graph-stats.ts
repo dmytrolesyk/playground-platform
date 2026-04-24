@@ -28,6 +28,18 @@ export interface OtherNode {
 
 export type GraphNode = ArticleNode | TechnologyNode | ModuleNode | OtherNode;
 
+function isArticleNode(n: GraphNode): n is ArticleNode {
+  return n.type === 'article';
+}
+
+function isModuleNode(n: GraphNode): n is ModuleNode {
+  return n.type === 'module';
+}
+
+function isTechnologyNode(n: GraphNode): n is TechnologyNode {
+  return n.type === 'technology';
+}
+
 export interface GraphEdge {
   source: string;
   target: string;
@@ -103,8 +115,8 @@ function countEdgesByType(edges: GraphEdge[]): Record<string, number> {
 function getArticlesPerCategory(nodes: GraphNode[]): CategoryCount[] {
   const counts: Record<string, number> = {};
   for (const n of nodes) {
-    if (n.type === 'article') {
-      const cat = (n as ArticleNode).category;
+    if (isArticleNode(n)) {
+      const cat = n.category;
       counts[cat] = (counts[cat] ?? 0) + 1;
     }
   }
@@ -202,8 +214,8 @@ function getModuleSizes(nodes: GraphNode[], edges: GraphEdge[]): ModuleSize[] {
   // Module nodes provide the label
   const moduleLabels = new Map<string, string>();
   for (const n of nodes) {
-    if (n.type === 'module') {
-      moduleLabels.set(n.id, (n as ModuleNode).label);
+    if (isModuleNode(n)) {
+      moduleLabels.set(n.id, n.label);
     }
   }
 
@@ -232,14 +244,14 @@ function getModuleSizes(nodes: GraphNode[], edges: GraphEdge[]): ModuleSize[] {
 function getTechnologyGaps(nodes: GraphNode[]): TechnologyGap[] {
   const techNodes: { slug: string; label: string }[] = [];
   for (const n of nodes) {
-    if (n.type === 'technology') {
-      techNodes.push({ slug: n.id.replace('tech:', ''), label: (n as TechnologyNode).label });
+    if (isTechnologyNode(n)) {
+      techNodes.push({ slug: n.id.replace('tech:', ''), label: n.label });
     }
   }
 
   const techArticleSlugs = new Set<string>();
   for (const n of nodes) {
-    if (n.type === 'article' && (n as ArticleNode).category === 'technology') {
+    if (isArticleNode(n) && n.category === 'technology') {
       const slug = n.id.includes('/') ? (n.id.split('/').pop() ?? n.id) : n.id;
       techArticleSlugs.add(slug);
     }
