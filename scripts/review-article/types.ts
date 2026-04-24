@@ -1,5 +1,7 @@
 // Types for the AI-assisted content review CLI.
 
+import type { Result } from '@playground/knowledge-engine/result';
+
 export type ReviewDimension =
   | 'grounding'
   | 'depth'
@@ -46,5 +48,5 @@ export type CliArgs =
   | { mode: 'since'; since: string };
 
 export interface LlmProvider {
-  complete(prompt: string): Promise<string>;
+  complete(prompt: string): Promise<Result<string, string>>;
 }

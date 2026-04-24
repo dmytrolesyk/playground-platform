@@ -4,6 +4,12 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import {
+  getArray,
+  getNumber,
+  getString,
+  getStringArray,
+} from '@playground/knowledge-engine/frontmatter';
 import type {
   ArchitectureEdgeInput,
   ArchitectureNodeInput,
@@ -135,27 +141,4 @@ async function importArchitectureData(root: string): Promise<ArchitectureDataMod
 async function importCurriculumModules(root: string): Promise<CurriculumModuleDataModule> {
   const moduleUrl = pathToFileURL(join(root, 'src/content/knowledge/modules.ts')).href;
   return (await import(moduleUrl)) as CurriculumModuleDataModule;
-}
-
-// ── Value extractors ────────────────────────────────────────────────────
-
-function getString(record: Record<string, unknown>, key: string): string | undefined {
-  const value = record[key];
-  return typeof value === 'string' ? value : undefined;
-}
-
-function getNumber(record: Record<string, unknown>, key: string): number | undefined {
-  const value = record[key];
-  return typeof value === 'number' ? value : undefined;
-}
-
-function getStringArray(record: Record<string, unknown>, key: string): string[] {
-  const value = record[key];
-  if (!Array.isArray(value)) return [];
-  return value.filter((item): item is string => typeof item === 'string');
-}
-
-function getArray(record: Record<string, unknown>, key: string): unknown[] {
-  const value = record[key];
-  return Array.isArray(value) ? value : [];
 }

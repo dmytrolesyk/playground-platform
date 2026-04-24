@@ -3,6 +3,15 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
+import {
+  getArray,
+  getDateString,
+  getNumber,
+  getString,
+  getStringArray,
+  isRecord,
+} from '../frontmatter.ts';
+import { isOk, type Result, tryCatch } from '../result.ts';
 import type {
   ArchitectureEdge,
   ArchitectureNode,
@@ -163,24 +172,6 @@ async function importCurriculumModules(root: string): Promise<CurriculumModuleDa
   return (await import(moduleUrl)) as CurriculumModuleDataModule;
 }
 
-function getString(record: Record<string, unknown>, key: string): string | undefined {
-  const value = record[key];
-  return typeof value === 'string' ? value : undefined;
-}
-
-function getStringArray(record: Record<string, unknown>, key: string): string[] {
-  const value = record[key];
-  if (!Array.isArray(value)) {
-    return [];
-  }
-  return value.filter((item): item is string => typeof item === 'string');
-}
-
-function getArray(record: Record<string, unknown>, key: string): unknown[] {
-  const value = record[key];
-  return Array.isArray(value) ? value : [];
-}
-
 function getExercises(record: Record<string, unknown>): Exercise[] {
   return getArray(record, 'exercises')
     .filter(isRecord)
@@ -198,31 +189,27 @@ function getExternalReferences(record: Record<string, unknown>): ExternalReferen
     });
 }
 
-function getNumber(record: Record<string, unknown>, key: string): number | undefined {
-  const value = record[key];
-  return typeof value === 'number' ? value : undefined;
-}
-
-/**
- * Extract a date value as an ISO date string (YYYY-MM-DD).
- * Handles both string dates and Date objects (from Zod/Astro parsing).
- */
-function getDateString(record: Record<string, unknown>, key: string): string | undefined {
-  const value = record[key];
-  if (typeof value === 'string') return value;
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
-  return undefined;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
 /**
  * Get the last git modification date for each file path.
  * Uses `git log` to find the most recent commit date for each file.
  * Returns only entries where the file exists and has git history.
  */
+function getFileGitDate(root: string, filePath: string): Result<string, string> {
+  return tryCatch(
+    () => {
+      const output = execSync(`git log -1 --format=%aI -- "${filePath}"`, {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }).trim();
+
+      if (!output) throw new Error(`No git history for ${filePath}`);
+      return output.slice(0, 10);
+    },
+    (e: unknown) => (e instanceof Error ? e.message : String(e)),
+  );
+}
+
 function getFileModifiedDates(root: string, filePaths: string[]): FileModifiedDate[] {
   const results: FileModifiedDate[] = [];
 
@@ -230,20 +217,9 @@ function getFileModifiedDates(root: string, filePaths: string[]): FileModifiedDa
     const fullPath = join(root, filePath);
     if (!existsSync(fullPath)) continue;
 
-    try {
-      const output = execSync(`git log -1 --format=%aI -- "${filePath}"`, {
-        cwd: root,
-        encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe'],
-      }).trim();
-
-      if (output) {
-        // Extract YYYY-MM-DD from ISO date
-        const lastModified = output.slice(0, 10);
-        results.push({ filePath, lastModified });
-      }
-    } catch {
-      // Git not available or file not tracked — skip
+    const result = getFileGitDate(root, filePath);
+    if (isOk(result)) {
+      results.push({ filePath, lastModified: result.value });
     }
   }
 
