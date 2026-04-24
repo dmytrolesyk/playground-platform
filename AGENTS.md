@@ -47,6 +47,15 @@ Never set `nursery.recommended: true` — unstable rules break CI between Biome 
 ### TypeScript strictness
 `tsconfig.json` extends `astro/tsconfigs/strictest` with additional flags. If the compiler complains, fix the code — do not loosen the config.
 
+### No `as X` type assertions
+Do not use `as` type assertions (type casts). They bypass the type checker and hide bugs. Instead:
+- Use **type guards** (`value is T` predicates) for `JSON.parse`, `fetch().json()`, `localStorage` data.
+- Use **`instanceof`** narrowing for DOM event targets (`e.target instanceof HTMLElement`).
+- Use **SolidJS JSX event handler types** (`JSX.EventHandler<HTMLDivElement, PointerEvent>`) for extracted event handlers — these type `e.currentTarget` correctly.
+- Use **discriminated union narrowing** — check the `type` field and let TypeScript narrow automatically.
+- `as const` is fine — it's a narrowing tool, not a cast.
+- In rare cases, an `as` cast is acceptable when the cost of removing it is worse than keeping it (e.g., build-time data from typed Astro content collections where the shape is guaranteed by the build pipeline, or dynamic `import()` of `.ts` modules in build scripts). When leaving an `as` cast, add a brief comment explaining why the tradeoff favors keeping it.
+
 ### CV content is build-time only
 Markdown → Astro content collections → pre-rendered HTML serialized as `<script type="application/json">` in the page. Zero runtime Markdown processing. If you're importing a Markdown parser into client code, stop.
 
