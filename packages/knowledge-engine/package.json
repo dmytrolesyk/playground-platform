@@ -10,7 +10,8 @@
     "./audit/report": "./src/audit/report.ts",
     "./graph": "./src/graph/extract.ts",
     "./graph/types": "./src/graph/types.ts",
-    "./progress": "./src/progress.ts"
+    "./progress": "./src/progress.ts",
+    "./result": "./src/result.ts"
   },
   "dependencies": {
     "yaml": "^2.8.3",
