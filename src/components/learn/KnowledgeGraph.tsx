@@ -364,15 +364,16 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
       elements: [
         ...elements.nodes.map((n) => ({
           group: 'nodes' as const,
-          data: n.data as unknown as Record<string, unknown>,
+          data: { ...n.data },
           classes: n.classes,
         })),
         ...elements.edges.map((e) => ({
           group: 'edges' as const,
-          data: e.data as unknown as Record<string, unknown>,
+          data: { ...e.data },
         })),
       ] as cytoscape.ElementDefinition[],
-      style: buildStylesheet() as unknown as cytoscape.StylesheetJson,
+      // Cytoscape accepts both 'style' and 'css' as the property name; types only declare 'css'
+      style: buildStylesheet() as cytoscape.StylesheetJson,
       layout: {
         name: 'fcose',
         animate: false,
