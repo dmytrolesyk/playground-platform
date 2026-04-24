@@ -23,7 +23,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { getArray, getString, getStringArray } from '@playground/knowledge-engine/frontmatter';
-import { match } from '@playground/knowledge-engine/result';
+import { match, tryCatch } from '@playground/knowledge-engine/result';
 import { parse as parseYaml } from 'yaml';
 import {
   buildCoveragePrompt,
@@ -201,8 +201,29 @@ function buildPromptForDimension(article: ArticleContent, dimension: ReviewDimen
 
 const JSON_EXTRACT_PATTERN = /\{[\s\S]*\}/u;
 
+const DIMENSION_FIELDS: Record<string, string> = {
+  grounding: 'issues',
+  depth: 'suggestedImprovements',
+  coverage: 'missingTopics',
+  exerciseQuality: 'suggestedExercises',
+  referenceQuality: 'suggestedReferences',
+};
+
+function extractDimensionField(
+  result: DimensionResult,
+  dimension: ReviewDimension,
+  parsed: Record<string, unknown>,
+): void {
+  const field = DIMENSION_FIELDS[dimension];
+  if (!field) return;
+  const value = parsed[field];
+  if (!Array.isArray(value)) return;
+  (result as Record<string, unknown>)[field] = value.filter(
+    (item): item is string => typeof item === 'string',
+  );
+}
+
 function parseDimensionResponse(response: string, dimension: ReviewDimension): DimensionResult {
-  // Try to extract JSON from the response
   const jsonMatch = JSON_EXTRACT_PATTERN.exec(response);
   if (!jsonMatch) {
     return {
@@ -212,46 +233,27 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
     };
   }
 
-  try {
-    const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
-    const score = typeof parsed.score === 'number' ? parsed.score : 0;
-    const rationale = typeof parsed.rationale === 'string' ? parsed.rationale : '';
+  const parseResult = tryCatch(
+    () => {
+      const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
+      const score = typeof parsed.score === 'number' ? parsed.score : 0;
+      const rationale = typeof parsed.rationale === 'string' ? parsed.rationale : '';
 
-    const result: DimensionResult = { score, rationale };
-
-    // Dimension-specific fields
-    if (dimension === 'grounding' && Array.isArray(parsed.issues)) {
-      result.issues = parsed.issues.filter((item): item is string => typeof item === 'string');
-    }
-    if (dimension === 'depth' && Array.isArray(parsed.suggestedImprovements)) {
-      result.suggestedImprovements = parsed.suggestedImprovements.filter(
-        (item): item is string => typeof item === 'string',
-      );
-    }
-    if (dimension === 'coverage' && Array.isArray(parsed.missingTopics)) {
-      result.missingTopics = parsed.missingTopics.filter(
-        (item): item is string => typeof item === 'string',
-      );
-    }
-    if (dimension === 'exerciseQuality' && Array.isArray(parsed.suggestedExercises)) {
-      result.suggestedExercises = parsed.suggestedExercises.filter(
-        (item): item is string => typeof item === 'string',
-      );
-    }
-    if (dimension === 'referenceQuality' && Array.isArray(parsed.suggestedReferences)) {
-      result.suggestedReferences = parsed.suggestedReferences.filter(
-        (item): item is string => typeof item === 'string',
-      );
-    }
-
-    return result;
-  } catch {
-    return {
+      const result: DimensionResult = { score, rationale };
+      extractDimensionField(result, dimension, parsed);
+      return result;
+    },
+    (): DimensionResult => ({
       score: 0,
       rationale: `JSON parse error. Raw response: ${response.slice(0, 500)}`,
       error: 'JSON parse failure',
-    };
-  }
+    }),
+  );
+
+  return match(parseResult, {
+    onOk: (dim: DimensionResult) => dim,
+    onErr: (dim: DimensionResult) => dim,
+  });
 }
 
 function computeOverallScore(dimensions: QualityReport['dimensions']): number {
