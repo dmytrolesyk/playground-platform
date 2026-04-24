@@ -102,10 +102,8 @@ function loadArticle(slug: string): ArticleContent {
     throw new Error(`Could not parse frontmatter for ${slug}`);
   }
 
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const frontmatter = parseYaml(match.groups['frontmatter'] ?? '') as Record<string, unknown>;
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const body = match.groups['body'] ?? '';
+  const frontmatter = parseYaml(match.groups.frontmatter ?? '') as Record<string, unknown>;
+  const body = match.groups.body ?? '';
 
   // Load related files content
   const relatedFiles = getStringArray(frontmatter, 'relatedFiles');
@@ -267,10 +265,8 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
         };
       }
       const parsed = rawParsed as Record<string, unknown>;
-      // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-      const score = typeof parsed['score'] === 'number' ? parsed['score'] : 0;
-      // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-      const rationale = typeof parsed['rationale'] === 'string' ? parsed['rationale'] : '';
+      const score = typeof parsed.score === 'number' ? parsed.score : 0;
+      const rationale = typeof parsed.rationale === 'string' ? parsed.rationale : '';
 
       const result: DimensionResult = { score, rationale };
       extractDimensionField(result, dimension, parsed);
@@ -408,8 +404,7 @@ function delay(ms: number): Promise<void> {
 // ── Main ────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const apiKey = process.env['REVIEW_API_KEY'];
+  const apiKey = process.env.REVIEW_API_KEY;
   if (!apiKey) {
     process.stderr.write(
       'Error: REVIEW_API_KEY environment variable is required.\n' +
@@ -419,12 +414,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const providerName = (process.env['REVIEW_PROVIDER'] ?? 'anthropic') as 'anthropic' | 'openai';
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const model = process.env['REVIEW_MODEL'] ?? 'claude-sonnet-4-20250514';
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const baseUrl = process.env['REVIEW_BASE_URL'];
+  const providerName = (process.env.REVIEW_PROVIDER ?? 'anthropic') as 'anthropic' | 'openai';
+  const model = process.env.REVIEW_MODEL ?? 'claude-sonnet-4-20250514';
+  const baseUrl = process.env.REVIEW_BASE_URL;
 
   let cliArgs: CliArgs;
   try {

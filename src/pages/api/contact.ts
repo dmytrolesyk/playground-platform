@@ -25,11 +25,11 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
       });
     }
     body = {
-      ...(typeof raw['name'] === 'string' && { name: raw['name'] }),
-      ...(typeof raw['email'] === 'string' && { email: raw['email'] }),
-      ...(typeof raw['subject'] === 'string' && { subject: raw['subject'] }),
-      ...(typeof raw['message'] === 'string' && { message: raw['message'] }),
-      ...(typeof raw['website'] === 'string' && { website: raw['website'] }),
+      ...(typeof raw.name === 'string' && { name: raw.name }),
+      ...(typeof raw.email === 'string' && { email: raw.email }),
+      ...(typeof raw.subject === 'string' && { subject: raw.subject }),
+      ...(typeof raw.message === 'string' && { message: raw.message }),
+      ...(typeof raw.website === 'string' && { website: raw.website }),
     };
   } catch {
     return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
@@ -67,12 +67,9 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
   }
 
   // Use process.env for server-side runtime vars (not import.meta.env which Vite inlines at build time)
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const apiKey = process.env['RESEND_API_KEY'];
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const toEmail = process.env['CONTACT_TO_EMAIL'];
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-  const fromEmail = process.env['CONTACT_FROM_EMAIL'];
+  const apiKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.CONTACT_TO_EMAIL;
+  const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
   if (!(apiKey && toEmail && fromEmail)) {
     process.stderr.write(

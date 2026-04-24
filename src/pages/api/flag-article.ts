@@ -23,8 +23,8 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
       });
     }
     body = {
-      ...(typeof raw['articleId'] === 'string' && { articleId: raw['articleId'] }),
-      ...(typeof raw['reason'] === 'string' && { reason: raw['reason'] }),
+      ...(typeof raw.articleId === 'string' && { articleId: raw.articleId }),
+      ...(typeof raw.reason === 'string' && { reason: raw.reason }),
     };
   } catch {
     return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {

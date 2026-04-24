@@ -65,10 +65,10 @@ export function EmailApp(): JSX.Element {
 
       const raw: unknown = await res.json();
       const data =
-        isRecord(raw) && typeof raw['ok'] === 'boolean'
+        isRecord(raw) && typeof raw.ok === 'boolean'
           ? {
-              ok: raw['ok'],
-              ...(typeof raw['error'] === 'string' && { error: raw['error'] }),
+              ok: raw.ok,
+              ...(typeof raw.error === 'string' && { error: raw.error }),
             }
           : { ok: false, error: 'Invalid response' };
 

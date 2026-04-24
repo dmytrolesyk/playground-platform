@@ -134,8 +134,8 @@ function loadProgress(): LearningProgress {
     }
     const obj = rawParsed as Record<string, unknown>;
     const parsed: StoredLearningProgress = {
-      articlesRead: obj['articlesRead'],
-      modulesCompleted: obj['modulesCompleted'],
+      articlesRead: obj.articlesRead,
+      modulesCompleted: obj.modulesCompleted,
     };
     const progress = migrateProgress(parsed);
     saveProgress(progress);

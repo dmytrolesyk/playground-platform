@@ -43,9 +43,9 @@ function isReviewFlag(value: unknown): value is ReviewFlag {
     typeof value === 'object' &&
     value !== null &&
     'articleId' in value &&
-    typeof (value as Record<string, unknown>)['articleId'] === 'string' &&
+    typeof (value as Record<string, unknown>).articleId === 'string' &&
     'flaggedAt' in value &&
-    typeof (value as Record<string, unknown>)['flaggedAt'] === 'string'
+    typeof (value as Record<string, unknown>).flaggedAt === 'string'
   );
 }
 

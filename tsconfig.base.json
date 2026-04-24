@@ -10,7 +10,6 @@
     "noUncheckedIndexedAccess": true,
     "noUncheckedSideEffectImports": true,
     "exactOptionalPropertyTypes": true,
-    "noPropertyAccessFromIndexSignature": true,
     "erasableSyntaxOnly": true,
     "noErrorTruncation": true,
     "allowUnreachableCode": false,
