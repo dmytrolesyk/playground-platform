@@ -28,5 +28,5 @@ export function getStartMenuCategories(): Record<string, AppRegistryEntry[]> {
 }
 
 export function resolveAppComponent(appId: string): Component | undefined {
-  return APP_REGISTRY[appId]?.component as Component | undefined;
+  return APP_REGISTRY[appId]?.component;
 }
