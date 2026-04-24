@@ -57,6 +57,10 @@ function cleanArticle(overrides: Partial<KnowledgeArticle> = {}): KnowledgeArtic
     learningObjectives: ['Describe the architecture'],
     exercises: [{ type: 'predict' }, { type: 'explain' }],
     externalReferences: [{ type: 'docs' }, { type: 'article' }],
+    technologies: [],
+    relatedFiles: [],
+    broader: [],
+    narrower: [],
     body: makeBody(category),
     lastUpdated: '2026-04-21',
     ...overrides,
@@ -282,9 +286,9 @@ describe('minimum-related-concepts', () => {
     expect(issues[0]?.severity).toBe('warning');
   });
 
-  it('warns when relatedConcepts is undefined', () => {
+  it('warns when relatedConcepts is empty', () => {
     const issues = auditMinimumRelatedConcepts(
-      baseInput({ articles: [cleanArticle({ relatedConcepts: undefined })] }),
+      baseInput({ articles: [cleanArticle({ relatedConcepts: [] })] }),
     );
     expect(issues).toHaveLength(1);
   });

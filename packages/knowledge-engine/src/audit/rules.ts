@@ -56,7 +56,7 @@ function auditRelatedConcepts(
   article: KnowledgeArticle,
   articleIds: ReadonlySet<string>,
 ): KnowledgeAuditIssue[] {
-  return (article.relatedConcepts ?? [])
+  return article.relatedConcepts
     .filter((relatedConcept) => !articleIds.has(relatedConcept))
     .map((relatedConcept) =>
       error(
@@ -71,7 +71,7 @@ function auditPrerequisites(
   article: KnowledgeArticle,
   articleIds: ReadonlySet<string>,
 ): KnowledgeAuditIssue[] {
-  return (article.prerequisites ?? [])
+  return article.prerequisites
     .filter((prerequisite) => !articleIds.has(prerequisite))
     .map((prerequisite) =>
       error(
@@ -86,7 +86,7 @@ function auditBroaderTargets(
   article: KnowledgeArticle,
   articleIds: ReadonlySet<string>,
 ): KnowledgeAuditIssue[] {
-  return (article.broader ?? [])
+  return article.broader
     .filter((broaderId) => !articleIds.has(broaderId))
     .map((broaderId) =>
       error(
@@ -101,7 +101,7 @@ function auditNarrowerTargets(
   article: KnowledgeArticle,
   articleIds: ReadonlySet<string>,
 ): KnowledgeAuditIssue[] {
-  return (article.narrower ?? [])
+  return article.narrower
     .filter((narrowerId) => !articleIds.has(narrowerId))
     .map((narrowerId) =>
       error(
@@ -269,7 +269,7 @@ export function auditPrerequisiteCycles(input: KnowledgeAuditInput): KnowledgeAu
   const prerequisitesByArticle = new Map<string, readonly string[]>(
     input.articles.map((article) => [
       article.id,
-      (article.prerequisites ?? []).filter((prerequisite) => articleIds.has(prerequisite)),
+      article.prerequisites.filter((prerequisite) => articleIds.has(prerequisite)),
     ]),
   );
   const visited = new Set<string>();
@@ -358,7 +358,7 @@ function warning(
 
 export function auditMinimumRelatedConcepts(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return input.articles
-    .filter((article) => (article.relatedConcepts?.length ?? 0) < 1)
+    .filter((article) => article.relatedConcepts.length === 0)
     .map((article) =>
       warning(
         'minimum-related-concepts',
@@ -373,12 +373,12 @@ export function auditMinimumRelatedConcepts(input: KnowledgeAuditInput): Knowled
 export function auditMinimumExercises(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return input.articles
     .filter((article) => article.category !== 'lab')
-    .filter((article) => (article.exercises?.length ?? 0) < 2)
+    .filter((article) => article.exercises.length < 2)
     .map((article) =>
       error(
         'minimum-exercises',
         article.id,
-        `${article.id} has ${article.exercises?.length ?? 0} exercises (minimum 2 for non-lab articles).`,
+        `${article.id} has ${article.exercises.length} exercises (minimum 2 for non-lab articles).`,
       ),
     );
 }
@@ -387,7 +387,7 @@ export function auditMinimumExercises(input: KnowledgeAuditInput): KnowledgeAudi
 
 export function auditRequiredLearningObjectives(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return input.articles
-    .filter((article) => (article.learningObjectives?.length ?? 0) < 1)
+    .filter((article) => article.learningObjectives.length === 0)
     .map((article) =>
       error(
         'required-learning-objectives',
@@ -419,7 +419,7 @@ export function auditArchitectureRequiresDiagram(
 export function auditLabRequiresPrerequisites(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return input.articles
     .filter((article) => article.category === 'lab')
-    .filter((article) => (article.prerequisites?.length ?? 0) < 1)
+    .filter((article) => article.prerequisites.length === 0)
     .map((article) =>
       warning(
         'lab-requires-prerequisites',
@@ -437,10 +437,10 @@ export function auditNoOrphanArticles(input: KnowledgeAuditInput): KnowledgeAudi
   // - It's assigned to a module
   const referenced = new Set<string>();
   for (const article of input.articles) {
-    for (const ref of article.relatedConcepts ?? []) {
+    for (const ref of article.relatedConcepts) {
       referenced.add(ref);
     }
-    for (const prereq of article.prerequisites ?? []) {
+    for (const prereq of article.prerequisites) {
       referenced.add(prereq);
     }
   }
@@ -462,7 +462,7 @@ export function auditTechnologyCoverage(input: KnowledgeAuditInput): KnowledgeAu
   // Collect all unique technology tags used across all articles
   const allTechTags = new Set<string>();
   for (const article of input.articles) {
-    for (const tech of article.technologies ?? []) {
+    for (const tech of article.technologies) {
       allTechTags.add(tech);
     }
   }
@@ -529,9 +529,9 @@ function checkBroaderLinks(
 ): KnowledgeAuditIssue[] {
   const issues: KnowledgeAuditIssue[] = [];
   for (const article of articles) {
-    for (const broaderId of article.broader ?? []) {
+    for (const broaderId of article.broader) {
       const broaderArticle = articleMap.get(broaderId);
-      if (broaderArticle && !(broaderArticle.narrower ?? []).includes(article.id)) {
+      if (broaderArticle && !broaderArticle.narrower.includes(article.id)) {
         issues.push(
           error(
             'broader-narrower-symmetry',
@@ -551,9 +551,9 @@ function checkNarrowerLinks(
 ): KnowledgeAuditIssue[] {
   const issues: KnowledgeAuditIssue[] = [];
   for (const article of articles) {
-    for (const narrowerId of article.narrower ?? []) {
+    for (const narrowerId of article.narrower) {
       const narrowerArticle = articleMap.get(narrowerId);
-      if (narrowerArticle && !(narrowerArticle.broader ?? []).includes(article.id)) {
+      if (narrowerArticle && !narrowerArticle.broader.includes(article.id)) {
         issues.push(
           error(
             'broader-narrower-symmetry',
@@ -612,9 +612,9 @@ export function countWords(text: string): number {
 export function auditExerciseTypeDiversity(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return input.articles
     .filter((article) => article.category !== 'lab')
-    .filter((article) => (article.exercises?.length ?? 0) > 0)
+    .filter((article) => article.exercises.length > 0)
     .filter((article) => {
-      const types = (article.exercises ?? []).map((ex) => ex.type).filter(Boolean);
+      const types = article.exercises.map((ex) => ex.type).filter(Boolean);
       return !types.some((type) => type === 'predict' || type === 'do');
     })
     .map((article) =>
@@ -631,13 +631,13 @@ export function auditExerciseTypeDiversity(input: KnowledgeAuditInput): Knowledg
 export function auditExternalReferenceMinimum(input: KnowledgeAuditInput): KnowledgeAuditIssue[] {
   return input.articles
     .filter((article) => {
-      const refs = article.externalReferences ?? [];
+      const refs = article.externalReferences;
       if (refs.length < 2) return true;
       const types = new Set(refs.map((ref) => ref.type).filter(Boolean));
       return types.size < 2;
     })
     .map((article) => {
-      const refs = article.externalReferences ?? [];
+      const refs = article.externalReferences;
       const types = new Set(refs.map((ref) => ref.type).filter(Boolean));
       if (refs.length < 2) {
         return warning(
@@ -705,7 +705,7 @@ export function auditStaleCodeReference(input: KnowledgeAuditInput): KnowledgeAu
 
   for (const article of input.articles) {
     const { lastUpdated, relatedFiles } = article;
-    if (!(lastUpdated && relatedFiles) || relatedFiles.length === 0) continue;
+    if (!lastUpdated || relatedFiles.length === 0) continue;
 
     for (const filePath of relatedFiles) {
       const fileModified = fileModifiedMap.get(filePath);
@@ -749,7 +749,7 @@ export function auditUncitedReference(input: KnowledgeAuditInput): KnowledgeAudi
 
   for (const article of input.articles) {
     const { body, externalReferences } = article;
-    if (!(body && externalReferences) || externalReferences.length === 0) continue;
+    if (!body || externalReferences.length === 0) continue;
 
     const inlineUrls = extractInlineLinkUrls(body);
     const referencedUrls = externalReferences
@@ -782,7 +782,7 @@ export function auditUnlistedInlineCitation(input: KnowledgeAuditInput): Knowled
 
     const inlineUrls = extractInlineLinkUrls(article.body);
     const referenceUrls = new Set(
-      (article.externalReferences ?? [])
+      article.externalReferences
         .map((ref) => ref.url)
         .filter((url): url is string => url !== undefined),
     );
