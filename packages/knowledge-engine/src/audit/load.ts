@@ -11,6 +11,7 @@ import {
   getStringArray,
   isRecord,
 } from '../frontmatter.ts';
+import { isOk, type Result, tryCatch } from '../result.ts';
 import type {
   ArchitectureEdge,
   ArchitectureNode,
@@ -193,6 +194,22 @@ function getExternalReferences(record: Record<string, unknown>): ExternalReferen
  * Uses `git log` to find the most recent commit date for each file.
  * Returns only entries where the file exists and has git history.
  */
+function getFileGitDate(root: string, filePath: string): Result<string, string> {
+  return tryCatch(
+    () => {
+      const output = execSync(`git log -1 --format=%aI -- "${filePath}"`, {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }).trim();
+
+      if (!output) throw new Error(`No git history for ${filePath}`);
+      return output.slice(0, 10);
+    },
+    (e: unknown) => (e instanceof Error ? e.message : String(e)),
+  );
+}
+
 function getFileModifiedDates(root: string, filePaths: string[]): FileModifiedDate[] {
   const results: FileModifiedDate[] = [];
 
@@ -200,20 +217,9 @@ function getFileModifiedDates(root: string, filePaths: string[]): FileModifiedDa
     const fullPath = join(root, filePath);
     if (!existsSync(fullPath)) continue;
 
-    try {
-      const output = execSync(`git log -1 --format=%aI -- "${filePath}"`, {
-        cwd: root,
-        encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe'],
-      }).trim();
-
-      if (output) {
-        // Extract YYYY-MM-DD from ISO date
-        const lastModified = output.slice(0, 10);
-        results.push({ filePath, lastModified });
-      }
-    } catch {
-      // Git not available or file not tracked — skip
+    const result = getFileGitDate(root, filePath);
+    if (isOk(result)) {
+      results.push({ filePath, lastModified: result.value });
     }
   }
 
