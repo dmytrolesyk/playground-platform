@@ -11,7 +11,8 @@
     "./graph": "./src/graph/extract.ts",
     "./graph/types": "./src/graph/types.ts",
     "./progress": "./src/progress.ts",
-    "./result": "./src/result.ts"
+    "./result": "./src/result.ts",
+    "./frontmatter": "./src/frontmatter.ts"
   },
   "dependencies": {
     "yaml": "^2.8.3",
