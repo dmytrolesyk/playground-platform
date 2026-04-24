@@ -64,12 +64,13 @@ export function EmailApp(): JSX.Element {
       });
 
       const raw: unknown = await res.json();
-      const data = isRecord(raw) && typeof raw['ok'] === 'boolean'
-        ? {
-            ok: raw['ok'],
-            ...(typeof raw['error'] === 'string' && { error: raw['error'] }),
-          }
-        : { ok: false, error: 'Invalid response' };
+      const data =
+        isRecord(raw) && typeof raw['ok'] === 'boolean'
+          ? {
+              ok: raw['ok'],
+              ...(typeof raw['error'] === 'string' && { error: raw['error'] }),
+            }
+          : { ok: false, error: 'Invalid response' };
 
       if (data.ok) {
         setStatus('success');
@@ -137,7 +138,9 @@ export function EmailApp(): JSX.Element {
             id="email-from"
             type="email"
             value={email()}
-            onInput={(e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement }) => setEmail(e.target.value)}
+            onInput={(
+              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
+            ) => setEmail(e.target.value)}
             placeholder="your@email.com"
             required={true}
             class="email-field__input"
@@ -151,7 +154,9 @@ export function EmailApp(): JSX.Element {
             id="email-name"
             type="text"
             value={name()}
-            onInput={(e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement }) => setName(e.target.value)}
+            onInput={(
+              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
+            ) => setName(e.target.value)}
             placeholder="Your name"
             required={true}
             class="email-field__input"
@@ -165,7 +170,9 @@ export function EmailApp(): JSX.Element {
             id="email-subject"
             type="text"
             value={subject()}
-            onInput={(e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement }) => setSubject(e.target.value)}
+            onInput={(
+              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
+            ) => setSubject(e.target.value)}
             placeholder="Subject"
             required={true}
             class="email-field__input"
@@ -178,7 +185,9 @@ export function EmailApp(): JSX.Element {
             type="text"
             name="website"
             value={honeypot()}
-            onInput={(e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement }) => setHoneypot(e.target.value)}
+            onInput={(
+              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
+            ) => setHoneypot(e.target.value)}
             tabIndex={-1}
             autocomplete="off"
           />
@@ -216,7 +225,9 @@ export function EmailApp(): JSX.Element {
 
         <select
           class="email-format-select"
-          onChange={(e: Event & { currentTarget: HTMLSelectElement; target: HTMLSelectElement }) => {
+          onChange={(
+            e: Event & { currentTarget: HTMLSelectElement; target: HTMLSelectElement },
+          ) => {
             const val = e.target.value;
             if (val) execFormat('fontSize', val);
           }}

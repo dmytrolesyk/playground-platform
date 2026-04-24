@@ -155,59 +155,61 @@ export function TerminalApp(): JSX.Element {
 
   onMount(() => {
     (async () => {
-    const [{ Terminal }, { FitAddon }] = await Promise.all([
-      import('@xterm/xterm'),
-      import('@xterm/addon-fit'),
-    ]);
+      const [{ Terminal }, { FitAddon }] = await Promise.all([
+        import('@xterm/xterm'),
+        import('@xterm/addon-fit'),
+      ]);
 
-    if (!containerRef) return;
+      if (!containerRef) return;
 
-    const fitAddon = new FitAddon();
-    fitAddonInstance = fitAddon;
+      const fitAddon = new FitAddon();
+      fitAddonInstance = fitAddon;
 
-    const terminal = new Terminal({
-      theme: {
-        background: '#000000',
-        foreground: '#c0c0c0',
-        cursor: '#c0c0c0',
-        cursorAccent: '#000000',
-        selectionBackground: '#000080',
-      },
-      fontFamily: '"Courier New", monospace',
-      fontSize: 14,
-      cursorBlink: true,
-      cursorStyle: 'block',
-      allowProposedApi: true,
-    });
+      const terminal = new Terminal({
+        theme: {
+          background: '#000000',
+          foreground: '#c0c0c0',
+          cursor: '#c0c0c0',
+          cursorAccent: '#000000',
+          selectionBackground: '#000080',
+        },
+        fontFamily: '"Courier New", monospace',
+        fontSize: 14,
+        cursorBlink: true,
+        cursorStyle: 'block',
+        allowProposedApi: true,
+      });
 
-    terminalInstance = terminal;
-    terminal.loadAddon(fitAddon);
-    terminal.open(containerRef);
+      terminalInstance = terminal;
+      terminal.loadAddon(fitAddon);
+      terminal.open(containerRef);
 
-    // Fit to container
-    requestAnimationFrame(() => {
-      fitAddon.fit();
-    });
-
-    // Observe resize
-    resizeObserver = new ResizeObserver(() => {
+      // Fit to container
       requestAnimationFrame(() => {
         fitAddon.fit();
       });
+
+      // Observe resize
+      resizeObserver = new ResizeObserver(() => {
+        requestAnimationFrame(() => {
+          fitAddon.fit();
+        });
+      });
+      resizeObserver.observe(containerRef);
+
+      // Write banner and prompt
+      writeLine(ASCII_BANNER);
+      writePrompt();
+
+      // Handle input
+      terminal.onData((data) => {
+        handleTerminalInput(data, terminal);
+      });
+
+      setIsLoaded(true);
+    })().catch(() => {
+      /* async init failure is handled by the terminal UI */
     });
-    resizeObserver.observe(containerRef);
-
-    // Write banner and prompt
-    writeLine(ASCII_BANNER);
-    writePrompt();
-
-    // Handle input
-    terminal.onData((data) => {
-      handleTerminalInput(data, terminal);
-    });
-
-    setIsLoaded(true);
-    })().catch(() => { /* async init failure is handled by the terminal UI */ });
   });
 
   function handleTerminalInput(data: string, terminal: import('@xterm/xterm').Terminal): void {

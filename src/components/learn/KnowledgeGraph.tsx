@@ -345,100 +345,102 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
   onMount(() => {
     (async () => {
-    if (!containerRef) return;
+      if (!containerRef) return;
 
-    // Dynamic import to keep bundle small (lazy loading boundary)
-    const [cytoscapeMod, fcoseMod] = await Promise.all([
-      import('cytoscape'),
-      import('cytoscape-fcose'),
-    ]);
+      // Dynamic import to keep bundle small (lazy loading boundary)
+      const [cytoscapeMod, fcoseMod] = await Promise.all([
+        import('cytoscape'),
+        import('cytoscape-fcose'),
+      ]);
 
-    const cytoscape = cytoscapeMod.default;
-    const fcose = fcoseMod.default;
+      const cytoscape = cytoscapeMod.default;
+      const fcose = fcoseMod.default;
 
-    // Register the layout extension
-    cytoscape.use(fcose);
+      // Register the layout extension
+      cytoscape.use(fcose);
 
-    cy = cytoscape({
-      container: containerRef,
-      elements: [
-        ...elements.nodes.map((n) => ({
-          group: 'nodes' as const,
-          data: { ...n.data },
-          classes: n.classes,
-        })),
-        ...elements.edges.map((e) => ({
-          group: 'edges' as const,
-          data: { ...e.data },
-        })),
-      ] as cytoscape.ElementDefinition[],
-      // Cytoscape accepts both 'style' and 'css' as the property name; types only declare 'css'
-      style: buildStylesheet() as cytoscape.StylesheetJson,
-      layout: {
-        name: 'fcose',
-        animate: false,
-        quality: 'proof',
-        nodeDimensionsIncludeLabels: true,
-        packComponents: true,
-        nodeRepulsion: () => 8000,
-        idealEdgeLength: () => 80,
-        edgeElasticity: () => 0.45,
-        nestingFactor: 0.1,
-        gravity: 0.25,
-        gravityRange: 3.8,
-        numIter: 2500,
-        tile: true,
-        tilingPaddingVertical: 20,
-        tilingPaddingHorizontal: 20,
-      } as cytoscape.LayoutOptions,
-      minZoom: 0.1,
-      maxZoom: 4,
-      wheelSensitivity: 0.3,
-    });
+      cy = cytoscape({
+        container: containerRef,
+        elements: [
+          ...elements.nodes.map((n) => ({
+            group: 'nodes' as const,
+            data: { ...n.data },
+            classes: n.classes,
+          })),
+          ...elements.edges.map((e) => ({
+            group: 'edges' as const,
+            data: { ...e.data },
+          })),
+        ] as cytoscape.ElementDefinition[],
+        // Cytoscape accepts both 'style' and 'css' as the property name; types only declare 'css'
+        style: buildStylesheet() as cytoscape.StylesheetJson,
+        layout: {
+          name: 'fcose',
+          animate: false,
+          quality: 'proof',
+          nodeDimensionsIncludeLabels: true,
+          packComponents: true,
+          nodeRepulsion: () => 8000,
+          idealEdgeLength: () => 80,
+          edgeElasticity: () => 0.45,
+          nestingFactor: 0.1,
+          gravity: 0.25,
+          gravityRange: 3.8,
+          numIter: 2500,
+          tile: true,
+          tilingPaddingVertical: 20,
+          tilingPaddingHorizontal: 20,
+        } as cytoscape.LayoutOptions,
+        minZoom: 0.1,
+        maxZoom: 4,
+        wheelSensitivity: 0.3,
+      });
 
-    // Apply mastery colors after initialization
-    applyMasteryColors();
-    setLoading(false);
+      // Apply mastery colors after initialization
+      applyMasteryColors();
+      setLoading(false);
 
-    // ── Interactions ──────────────────────────────────────────────
+      // ── Interactions ──────────────────────────────────────────────
 
-    // Click → navigate to article
-    cy.on('tap', 'node', (evt) => {
-      const node = evt.target;
-      const nodeType = node.data('nodeType') as string;
-      const nodeId = node.data('id') as string;
+      // Click → navigate to article
+      cy.on('tap', 'node', (evt) => {
+        const node = evt.target;
+        const nodeType = node.data('nodeType') as string;
+        const nodeId = node.data('id') as string;
 
-      if (nodeType === 'article') {
-        window.location.href = `/learn/${nodeId}`;
-      } else if (nodeType === 'architecture-node') {
-        const slug = node.data('knowledgeSlug') as string | null;
-        if (slug) {
-          window.location.href = `/learn/${slug}`;
+        if (nodeType === 'article') {
+          window.location.href = `/learn/${nodeId}`;
+        } else if (nodeType === 'architecture-node') {
+          const slug = node.data('knowledgeSlug') as string | null;
+          if (slug) {
+            window.location.href = `/learn/${slug}`;
+          }
         }
-      }
-    });
+      });
 
-    // Hover → show tooltip
-    cy.on('mouseover', 'node', (evt) => {
-      const node = evt.target;
-      const label = node.data('label') as string;
-      const nodeType = node.data('nodeType') as string;
-      const category = node.data('category') as string | undefined;
-      const parts = [label];
-      if (nodeType) parts.push(`[${nodeType}]`);
-      if (category) parts.push(`(${category})`);
-      setHoveredNode(parts.join(' '));
-      if (containerRef) containerRef.style.cursor = 'pointer';
-    });
+      // Hover → show tooltip
+      cy.on('mouseover', 'node', (evt) => {
+        const node = evt.target;
+        const label = node.data('label') as string;
+        const nodeType = node.data('nodeType') as string;
+        const category = node.data('category') as string | undefined;
+        const parts = [label];
+        if (nodeType) parts.push(`[${nodeType}]`);
+        if (category) parts.push(`(${category})`);
+        setHoveredNode(parts.join(' '));
+        if (containerRef) containerRef.style.cursor = 'pointer';
+      });
 
-    cy.on('mouseout', 'node', () => {
-      setHoveredNode(null);
-      if (containerRef) containerRef.style.cursor = 'default';
-    });
+      cy.on('mouseout', 'node', () => {
+        setHoveredNode(null);
+        if (containerRef) containerRef.style.cursor = 'default';
+      });
 
-    // Expose for E2E testing
-    window.__cyGraph = cy;
-    })().catch(() => { /* cytoscape init failure */ });
+      // Expose for E2E testing
+      window.__cyGraph = cy;
+    })().catch(() => {
+      /* cytoscape init failure */
+    });
   });
 
   onCleanup(() => {

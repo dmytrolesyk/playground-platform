@@ -25,7 +25,9 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
 
   const isSelected = (): boolean => state.selectedDesktopIcon === props.id;
 
-  const handlePointerDown: JSX.EventHandler<HTMLButtonElement, PointerEvent> = (e) => {
+  const handlePointerDown: JSX.EventHandler<HTMLButtonElement, PointerEvent> = (
+    e: PointerEvent & { currentTarget: HTMLButtonElement; target: Element },
+  ) => {
     if (state.isMobile) return;
     if (e.button !== 0) return;
 
@@ -61,7 +63,9 @@ export function DesktopIcon(props: DesktopIconProps): JSX.Element {
     }
   };
 
-  const handlePointerUp: JSX.EventHandler<HTMLButtonElement, PointerEvent> = (e) => {
+  const handlePointerUp: JSX.EventHandler<HTMLButtonElement, PointerEvent> = (
+    e: PointerEvent & { currentTarget: HTMLButtonElement; target: Element },
+  ) => {
     if (!isDragging) return;
     isDragging = false;
 

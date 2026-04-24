@@ -260,7 +260,11 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
     () => {
       const rawParsed: unknown = JSON.parse(jsonMatch[0]);
       if (typeof rawParsed !== 'object' || rawParsed === null || Array.isArray(rawParsed)) {
-        return { score: 0, rationale: 'JSON parse returned non-object', error: 'JSON parse failure' };
+        return {
+          score: 0,
+          rationale: 'JSON parse returned non-object',
+          error: 'JSON parse failure',
+        };
       }
       const parsed = rawParsed as Record<string, unknown>;
       // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
@@ -285,7 +289,13 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
   });
 }
 
-const REVIEW_DIMENSIONS = new Set<string>(['grounding', 'depth', 'coverage', 'exerciseQuality', 'referenceQuality']);
+const REVIEW_DIMENSIONS = new Set<string>([
+  'grounding',
+  'depth',
+  'coverage',
+  'exerciseQuality',
+  'referenceQuality',
+]);
 
 function isReviewDimension(key: string): key is ReviewDimension {
   return REVIEW_DIMENSIONS.has(key);

@@ -81,63 +81,65 @@ const InteractiveExercise: Component<Props> = (props: Props): JSX.Element => {
 
   onMount(() => {
     (async () => {
-    if (!editorContainer) return;
+      if (!editorContainer) return;
 
-    try {
-      const [
-        { EditorView, lineNumbers, highlightActiveLine, drawSelection },
-        { EditorState },
-        { basicSetup },
-        langExt,
-      ] = await Promise.all([
-        import('@codemirror/view'),
-        import('@codemirror/state'),
-        import('codemirror'),
-        loadLanguageExtension(props.language),
-      ]);
+      try {
+        const [
+          { EditorView, lineNumbers, highlightActiveLine, drawSelection },
+          { EditorState },
+          { basicSetup },
+          langExt,
+        ] = await Promise.all([
+          import('@codemirror/view'),
+          import('@codemirror/state'),
+          import('codemirror'),
+          loadLanguageExtension(props.language),
+        ]);
 
-      const extensions = [
-        basicSetup,
-        lineNumbers(),
-        highlightActiveLine(),
-        drawSelection(),
-        EditorView.theme({
-          '&': {
-            fontSize: '14px',
-            border: '1px solid #d0d0c8',
-            borderRadius: '3px',
-          },
-          '.cm-content': {
-            fontFamily: '"Courier New", Courier, monospace',
-            minHeight: '120px',
-          },
-          '.cm-gutters': {
-            backgroundColor: '#f5f5f0',
-            borderRight: '1px solid #d0d0c8',
-          },
-          '&.cm-focused': {
-            outline: '2px solid #008080',
-          },
-        }),
-      ];
+        const extensions = [
+          basicSetup,
+          lineNumbers(),
+          highlightActiveLine(),
+          drawSelection(),
+          EditorView.theme({
+            '&': {
+              fontSize: '14px',
+              border: '1px solid #d0d0c8',
+              borderRadius: '3px',
+            },
+            '.cm-content': {
+              fontFamily: '"Courier New", Courier, monospace',
+              minHeight: '120px',
+            },
+            '.cm-gutters': {
+              backgroundColor: '#f5f5f0',
+              borderRight: '1px solid #d0d0c8',
+            },
+            '&.cm-focused': {
+              outline: '2px solid #008080',
+            },
+          }),
+        ];
 
-      if (langExt) {
-        extensions.push(langExt);
+        if (langExt) {
+          extensions.push(langExt);
+        }
+
+        editorView = new EditorView({
+          state: EditorState.create({
+            doc: props.starterCode,
+            extensions,
+          }),
+          parent: editorContainer,
+        });
+
+        setCmLoaded(true);
+      } catch {
+        setCmFailed(true);
       }
-
-      editorView = new EditorView({
-        state: EditorState.create({
-          doc: props.starterCode,
-          extensions,
-        }),
-        parent: editorContainer,
-      });
-
-      setCmLoaded(true);
-    } catch {
-      setCmFailed(true);
-    }
-    })().catch(() => { /* CodeMirror load failure handled by setCmFailed */ });
+    })().catch(() => {
+      /* CodeMirror load failure handled by setCmFailed */
+    });
   });
 
   onCleanup(() => {
