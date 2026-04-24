@@ -35,12 +35,44 @@ export function EmailApp(): JSX.Element {
 
   let editorRef: HTMLDivElement | undefined;
 
-  // biome-ignore lint/complexity/useLiteralKeys: env var from build
-  const telegramUser = import.meta.env['PUBLIC_TELEGRAM_USERNAME'] as string | undefined;
+  const telegramUser = import.meta.env.PUBLIC_TELEGRAM_USERNAME;
 
   const getMessage = (): string => editorRef?.innerHTML ?? '';
 
   const getPlainText = (): string => editorRef?.textContent?.trim() ?? '';
+
+  const handleEmailInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+    e: InputEvent & { currentTarget: HTMLInputElement },
+  ) => {
+    setEmail(e.currentTarget.value);
+  };
+
+  const handleNameInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+    e: InputEvent & { currentTarget: HTMLInputElement },
+  ) => {
+    setName(e.currentTarget.value);
+  };
+
+  const handleSubjectInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+    e: InputEvent & { currentTarget: HTMLInputElement },
+  ) => {
+    setSubject(e.currentTarget.value);
+  };
+
+  const handleHoneypotInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+    e: InputEvent & { currentTarget: HTMLInputElement },
+  ) => {
+    setHoneypot(e.currentTarget.value);
+  };
+
+  const handleFontSizeChange: JSX.EventHandler<HTMLSelectElement, Event> = (
+    e: Event & { currentTarget: HTMLSelectElement },
+  ) => {
+    const fontSize = e.currentTarget.value;
+    if (fontSize) {
+      execFormat('fontSize', fontSize);
+    }
+  };
 
   const handleSubmit = async (e: Event): Promise<void> => {
     e.preventDefault();
@@ -138,9 +170,7 @@ export function EmailApp(): JSX.Element {
             id="email-from"
             type="email"
             value={email()}
-            onInput={(
-              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
-            ) => setEmail(e.target.value)}
+            onInput={handleEmailInput}
             placeholder="your@email.com"
             required={true}
             class="email-field__input"
@@ -154,9 +184,7 @@ export function EmailApp(): JSX.Element {
             id="email-name"
             type="text"
             value={name()}
-            onInput={(
-              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
-            ) => setName(e.target.value)}
+            onInput={handleNameInput}
             placeholder="Your name"
             required={true}
             class="email-field__input"
@@ -170,9 +198,7 @@ export function EmailApp(): JSX.Element {
             id="email-subject"
             type="text"
             value={subject()}
-            onInput={(
-              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
-            ) => setSubject(e.target.value)}
+            onInput={handleSubjectInput}
             placeholder="Subject"
             required={true}
             class="email-field__input"
@@ -185,9 +211,7 @@ export function EmailApp(): JSX.Element {
             type="text"
             name="website"
             value={honeypot()}
-            onInput={(
-              e: InputEvent & { currentTarget: HTMLInputElement; target: HTMLInputElement },
-            ) => setHoneypot(e.target.value)}
+            onInput={handleHoneypotInput}
             tabIndex={-1}
             autocomplete="off"
           />
@@ -223,16 +247,7 @@ export function EmailApp(): JSX.Element {
 
         <span class="email-format-divider" />
 
-        <select
-          class="email-format-select"
-          onChange={(
-            e: Event & { currentTarget: HTMLSelectElement; target: HTMLSelectElement },
-          ) => {
-            const val = e.target.value;
-            if (val) execFormat('fontSize', val);
-          }}
-          title="Font size"
-        >
+        <select class="email-format-select" onChange={handleFontSizeChange} title="Font size">
           {FONT_SIZES.map((s) => (
             <option value={s.value} selected={s.value === '3'}>
               {s.label}

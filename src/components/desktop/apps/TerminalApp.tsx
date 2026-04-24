@@ -99,6 +99,7 @@ const HELP_TEXT = [
 export function TerminalApp(): JSX.Element {
   const [, actions] = useDesktop();
   const [isLoaded, setIsLoaded] = createSignal(false);
+  const [loadError, setLoadError] = createSignal<string | null>(null);
   let containerRef: HTMLDivElement | undefined;
   let terminalInstance: import('@xterm/xterm').Terminal | undefined;
   let fitAddonInstance: import('@xterm/addon-fit').FitAddon | undefined;
@@ -153,62 +154,71 @@ export function TerminalApp(): JSX.Element {
     }
   }
 
-  onMount(() => {
-    (async () => {
-      const [{ Terminal }, { FitAddon }] = await Promise.all([
-        import('@xterm/xterm'),
-        import('@xterm/addon-fit'),
-      ]);
+  async function initializeTerminal(): Promise<void> {
+    const [{ Terminal }, { FitAddon }] = await Promise.all([
+      import('@xterm/xterm'),
+      import('@xterm/addon-fit'),
+    ]);
 
-      if (!containerRef) return;
+    if (!containerRef) {
+      throw new Error('Terminal container is unavailable');
+    }
 
-      const fitAddon = new FitAddon();
-      fitAddonInstance = fitAddon;
+    const fitAddon = new FitAddon();
+    fitAddonInstance = fitAddon;
 
-      const terminal = new Terminal({
-        theme: {
-          background: '#000000',
-          foreground: '#c0c0c0',
-          cursor: '#c0c0c0',
-          cursorAccent: '#000000',
-          selectionBackground: '#000080',
-        },
-        fontFamily: '"Courier New", monospace',
-        fontSize: 14,
-        cursorBlink: true,
-        cursorStyle: 'block',
-        allowProposedApi: true,
-      });
+    const terminal = new Terminal({
+      theme: {
+        background: '#000000',
+        foreground: '#c0c0c0',
+        cursor: '#c0c0c0',
+        cursorAccent: '#000000',
+        selectionBackground: '#000080',
+      },
+      fontFamily: '"Courier New", monospace',
+      fontSize: 14,
+      cursorBlink: true,
+      cursorStyle: 'block',
+      allowProposedApi: true,
+    });
 
-      terminalInstance = terminal;
-      terminal.loadAddon(fitAddon);
-      terminal.open(containerRef);
+    terminalInstance = terminal;
+    terminal.loadAddon(fitAddon);
+    terminal.open(containerRef);
 
-      // Fit to container
+    // Fit to container
+    requestAnimationFrame(() => {
+      fitAddon.fit();
+    });
+
+    // Observe resize
+    resizeObserver = new ResizeObserver(() => {
       requestAnimationFrame(() => {
         fitAddon.fit();
       });
+    });
+    resizeObserver.observe(containerRef);
 
-      // Observe resize
-      resizeObserver = new ResizeObserver(() => {
-        requestAnimationFrame(() => {
-          fitAddon.fit();
-        });
-      });
-      resizeObserver.observe(containerRef);
+    // Write banner and prompt
+    writeLine(ASCII_BANNER);
+    writePrompt();
 
-      // Write banner and prompt
-      writeLine(ASCII_BANNER);
-      writePrompt();
+    // Handle input
+    terminal.onData((data) => {
+      handleTerminalInput(data, terminal);
+    });
 
-      // Handle input
-      terminal.onData((data) => {
-        handleTerminalInput(data, terminal);
-      });
+    setIsLoaded(true);
+  }
 
-      setIsLoaded(true);
-    })().catch(() => {
-      /* async init failure is handled by the terminal UI */
+  function handleTerminalLoadError(): void {
+    setLoadError('Failed to load the terminal. Refresh the page and try again.');
+    setIsLoaded(false);
+  }
+
+  onMount(() => {
+    initializeTerminal().catch(() => {
+      handleTerminalLoadError();
     });
   });
 
@@ -259,10 +269,16 @@ export function TerminalApp(): JSX.Element {
 
   return (
     <div class="terminal-app">
-      {!isLoaded() && (
-        <div class="terminal-app__loading">
-          <span>Loading terminal...</span>
+      {loadError() ? (
+        <div class="terminal-app__error" role="alert">
+          <span>{loadError()}</span>
         </div>
+      ) : (
+        !isLoaded() && (
+          <div class="terminal-app__loading">
+            <span>Loading terminal...</span>
+          </div>
+        )
       )}
       <div
         ref={containerRef}

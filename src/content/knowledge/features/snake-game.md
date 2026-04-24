@@ -15,7 +15,7 @@ technologies:
   - solidjs
 order: 3
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-20
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "requestAnimationFrame — MDN"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame"

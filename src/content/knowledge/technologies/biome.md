@@ -13,7 +13,7 @@ technologies:
   - biome
 order: 5
 dateAdded: 2026-04-23
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Biome Official Documentation"
     url: "https://biomejs.dev/"
@@ -182,11 +182,11 @@ The distinction matters: run `pnpm lint:fix` to clean up formatting before commi
 When a Biome rule conflicts with a legitimate pattern, the project uses ignore comments with mandatory explanations:
 
 ```typescript
-// biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
+// biome-ignore lint/complexity/useLiteralKeys: explicit env lookup by string key
 const port: string = process.env['PLAYWRIGHT_PORT'] ?? '4321';
 ```
 
-The format is `biome-ignore <rule>: <reason>`. The reason is not optional — bare `biome-ignore` comments without explanations are themselves a code smell. The project uses these sparingly, primarily for the `useLiteralKeys` / `noPropertyAccessFromIndexSignature` interaction where TypeScript strictness and Biome's preference conflict.
+The format is `biome-ignore <rule>: <reason>`. The reason is not optional — bare `biome-ignore` comments without explanations are themselves a code smell. The project uses these sparingly, usually when an external API, env lookup, or generated shape is clearer with an explicit key than with the lint-preferred form.
 
 ## Gotchas
 

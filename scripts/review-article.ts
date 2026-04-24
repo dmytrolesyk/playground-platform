@@ -22,7 +22,12 @@
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
-import { getArray, getString, getStringArray } from '@playground/knowledge-engine/frontmatter';
+import {
+  getArray,
+  getString,
+  getStringArray,
+  isRecord,
+} from '@playground/knowledge-engine/frontmatter';
 import { match, tryCatch } from '@playground/knowledge-engine/result';
 import { parse as parseYaml } from 'yaml';
 import {
@@ -89,6 +94,14 @@ function parseArgs(argv: string[]): CliArgs {
 const FRONTMATTER_PATTERN = /^---\r?\n(?<frontmatter>[\s\S]*?)\r?\n---\r?\n?(?<body>[\s\S]*)$/u;
 const MARKDOWN_EXTENSION_PATTERN = /\.md$/;
 
+function parseYamlRecord(source: string, context: string): Record<string, unknown> {
+  const parsed: unknown = parseYaml(source);
+  if (!isRecord(parsed)) {
+    throw new Error(`YAML in ${context} must parse to an object.`);
+  }
+  return parsed;
+}
+
 function loadArticle(slug: string): ArticleContent {
   const filePath = join(CONTENT_ROOT, `${slug}.md`);
   if (!existsSync(filePath)) {
@@ -102,7 +115,7 @@ function loadArticle(slug: string): ArticleContent {
     throw new Error(`Could not parse frontmatter for ${slug}`);
   }
 
-  const frontmatter = parseYaml(match.groups.frontmatter ?? '') as Record<string, unknown>;
+  const frontmatter = parseYamlRecord(match.groups.frontmatter ?? '', slug);
   const body = match.groups.body ?? '';
 
   // Load related files content
@@ -199,7 +212,7 @@ function buildPromptForDimension(article: ArticleContent, dimension: ReviewDimen
     case 'referenceQuality':
       return buildReferenceQualityPrompt(article);
     default:
-      throw new Error(`Unknown review dimension: ${dimension as string}`);
+      throw new Error(`Unknown review dimension: ${String(dimension)}`);
   }
 }
 
@@ -244,6 +257,14 @@ function extractDimensionField(
   }
 }
 
+function parseDimensionJsonObject(rawJson: string): Record<string, unknown> {
+  const parsed: unknown = JSON.parse(rawJson);
+  if (!isRecord(parsed)) {
+    throw new Error('JSON parse returned non-object');
+  }
+  return parsed;
+}
+
 function parseDimensionResponse(response: string, dimension: ReviewDimension): DimensionResult {
   const jsonMatch = JSON_EXTRACT_PATTERN.exec(response);
   if (!jsonMatch) {
@@ -256,15 +277,7 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
 
   const parseResult = tryCatch(
     () => {
-      const rawParsed: unknown = JSON.parse(jsonMatch[0]);
-      if (typeof rawParsed !== 'object' || rawParsed === null || Array.isArray(rawParsed)) {
-        return {
-          score: 0,
-          rationale: 'JSON parse returned non-object',
-          error: 'JSON parse failure',
-        };
-      }
-      const parsed = rawParsed as Record<string, unknown>;
+      const parsed = parseDimensionJsonObject(jsonMatch[0]);
       const score = typeof parsed.score === 'number' ? parsed.score : 0;
       const rationale = typeof parsed.rationale === 'string' ? parsed.rationale : '';
 
@@ -283,6 +296,39 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
     onOk: (dim: DimensionResult) => dim,
     onErr: (dim: DimensionResult) => dim,
   });
+}
+
+function requireDimensionResult(
+  results: Partial<QualityReport['dimensions']>,
+  dimension: ReviewDimension,
+): DimensionResult {
+  const result = results[dimension];
+  if (!result) {
+    throw new Error(`Missing review dimensions: ${dimension}`);
+  }
+  return result;
+}
+
+function collectDimensions(
+  results: Partial<QualityReport['dimensions']>,
+): QualityReport['dimensions'] {
+  return {
+    grounding: requireDimensionResult(results, 'grounding'),
+    depth: requireDimensionResult(results, 'depth'),
+    coverage: requireDimensionResult(results, 'coverage'),
+    exerciseQuality: requireDimensionResult(results, 'exerciseQuality'),
+    referenceQuality: requireDimensionResult(results, 'referenceQuality'),
+  };
+}
+
+function parseProviderName(value: string | undefined): 'anthropic' | 'openai' {
+  if (value === undefined || value === 'anthropic') {
+    return 'anthropic';
+  }
+  if (value === 'openai') {
+    return 'openai';
+  }
+  throw new Error(`Unsupported REVIEW_PROVIDER value: ${value}`);
 }
 
 const REVIEW_DIMENSIONS = new Set<string>([
@@ -341,7 +387,7 @@ async function reviewArticle(
   if (missingDims.length > 0) {
     throw new Error(`Missing review dimensions: ${missingDims.join(', ')}`);
   }
-  const allDimensions = results as QualityReport['dimensions'];
+  const allDimensions = collectDimensions(results);
   const overallScore = computeOverallScore(allDimensions);
 
   return {
@@ -414,7 +460,7 @@ async function main(): Promise<void> {
     return;
   }
 
-  const providerName = (process.env.REVIEW_PROVIDER ?? 'anthropic') as 'anthropic' | 'openai';
+  const providerName = parseProviderName(process.env.REVIEW_PROVIDER);
   const model = process.env.REVIEW_MODEL ?? 'claude-sonnet-4-20250514';
   const baseUrl = process.env.REVIEW_BASE_URL;
 
@@ -450,9 +496,8 @@ async function main(): Promise<void> {
 
   const reports: QualityReport[] = [];
 
-  for (let i = 0; i < slugs.length; i++) {
-    const slug = slugs[i] as string;
-    process.stdout.write(`  [${i + 1}/${slugs.length}] ${slug}\n`);
+  for (const [index, slug] of slugs.entries()) {
+    process.stdout.write(`  [${index + 1}/${slugs.length}] ${slug}\n`);
 
     try {
       const report = await reviewArticle(provider, slug, model);
@@ -465,7 +510,7 @@ async function main(): Promise<void> {
     }
 
     // Rate-limit between articles
-    if (i < slugs.length - 1) {
+    if (index < slugs.length - 1) {
       await delay(DELAY_BETWEEN_ARTICLES_MS);
     }
   }

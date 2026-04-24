@@ -10,42 +10,70 @@ interface FlagBody {
   reason?: string;
 }
 
+type ParseResult<T> = { ok: true; value: T } | { ok: false; status: 400; error: string };
+
 const ARTICLE_ID_PATTERN = /^[\w-]+\/[\w-]+$/;
 
-export const POST: APIRoute = async ({ request }: { request: Request }) => {
-  let body: FlagBody;
+function jsonResponse(body: { ok: boolean; error?: string }, status: number): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+function parseOptionalStringField(
+  raw: Record<string, unknown>,
+  field: keyof FlagBody,
+): ParseResult<string | undefined> {
+  const value = raw[field];
+  if (value === undefined) {
+    return { ok: true, value: undefined };
+  }
+  if (typeof value !== 'string') {
+    return { ok: false, status: 400, error: `Field "${field}" must be a string` };
+  }
+  return { ok: true, value };
+}
+
+async function parseFlagBody(request: Request): Promise<ParseResult<FlagBody>> {
+  let raw: unknown;
   try {
-    const raw: unknown = await request.json();
-    if (!isRecord(raw)) {
-      return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    body = {
-      ...(typeof raw.articleId === 'string' && { articleId: raw.articleId }),
-      ...(typeof raw.reason === 'string' && { reason: raw.reason }),
-    };
+    raw = await request.json();
   } catch {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return { ok: false, status: 400, error: 'Malformed JSON body' };
+  }
+  if (!isRecord(raw)) {
+    return { ok: false, status: 400, error: 'JSON body must be an object' };
   }
 
+  const articleId = parseOptionalStringField(raw, 'articleId');
+  if (!articleId.ok) return articleId;
+
+  const reason = parseOptionalStringField(raw, 'reason');
+  if (!reason.ok) return reason;
+
+  const body: FlagBody = {};
+  if (articleId.value !== undefined) body.articleId = articleId.value;
+  if (reason.value !== undefined) body.reason = reason.value;
+
+  return { ok: true, value: body };
+}
+
+export async function handleFlagArticleRequest(request: Request): Promise<Response> {
+  const parsedBody = await parseFlagBody(request);
+  if (!parsedBody.ok) {
+    return jsonResponse({ ok: false, error: parsedBody.error }, parsedBody.status);
+  }
+
+  const body = parsedBody.value;
+
   if (!body.articleId || typeof body.articleId !== 'string') {
-    return new Response(JSON.stringify({ ok: false, error: 'Missing articleId' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ ok: false, error: 'Missing articleId' }, 400);
   }
 
   // Validate article ID format to prevent path traversal
   if (!ARTICLE_ID_PATTERN.test(body.articleId)) {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid articleId format' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ ok: false, error: 'Invalid articleId format' }, 400);
   }
 
   const flagDir = join(process.cwd(), 'src/data/review-flags');
@@ -64,8 +92,8 @@ export const POST: APIRoute = async ({ request }: { request: Request }) => {
 
   writeFileSync(flagPath, `${JSON.stringify(flag, null, 2)}\n`);
 
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
-};
+  return jsonResponse({ ok: true }, 200);
+}
+
+export const POST: APIRoute = ({ request }: { request: Request }) =>
+  handleFlagArticleRequest(request);

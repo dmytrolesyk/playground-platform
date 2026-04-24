@@ -9,6 +9,7 @@ import {
   getNumber,
   getString,
   getStringArray,
+  isRecord,
 } from '@playground/knowledge-engine/frontmatter';
 import type {
   ArchitectureEdgeInput,
@@ -113,11 +114,11 @@ function parseFrontmatter(source: string, filePath: string): Record<string, unkn
   }
 
   const parsed: unknown = parseYaml(match.groups.frontmatter);
-  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+  if (!isRecord(parsed)) {
     throw new Error(`Frontmatter in ${filePath} must parse to an object.`);
   }
 
-  return parsed as Record<string, unknown>;
+  return parsed;
 }
 
 // ── Dynamic imports ─────────────────────────────────────────────────────
@@ -131,14 +132,72 @@ interface CurriculumModuleDataModule {
   MODULES: ReadonlyArray<{ id: string; title: string; order: number }>;
 }
 
+function isArchitectureNodeModuleValue(
+  value: unknown,
+): value is ArchitectureDataModule['NODES'][number] {
+  return (
+    isRecord(value) &&
+    typeof value.id === 'string' &&
+    typeof value.label === 'string' &&
+    typeof value.category === 'string' &&
+    (value.knowledgeSlug === undefined || typeof value.knowledgeSlug === 'string')
+  );
+}
+
+function isArchitectureEdgeModuleValue(
+  value: unknown,
+): value is ArchitectureDataModule['EDGES'][number] {
+  return (
+    isRecord(value) &&
+    typeof value.from === 'string' &&
+    typeof value.to === 'string' &&
+    typeof value.type === 'string'
+  );
+}
+
+function isArchitectureDataModule(value: unknown): value is ArchitectureDataModule {
+  return (
+    isRecord(value) &&
+    Array.isArray(value.NODES) &&
+    value.NODES.every(isArchitectureNodeModuleValue) &&
+    Array.isArray(value.EDGES) &&
+    value.EDGES.every(isArchitectureEdgeModuleValue)
+  );
+}
+
+function isCurriculumModuleValue(
+  value: unknown,
+): value is CurriculumModuleDataModule['MODULES'][number] {
+  return (
+    isRecord(value) &&
+    typeof value.id === 'string' &&
+    typeof value.title === 'string' &&
+    typeof value.order === 'number'
+  );
+}
+
+function isCurriculumModuleDataModule(value: unknown): value is CurriculumModuleDataModule {
+  return (
+    isRecord(value) && Array.isArray(value.MODULES) && value.MODULES.every(isCurriculumModuleValue)
+  );
+}
+
 async function importArchitectureData(root: string): Promise<ArchitectureDataModule> {
   const moduleUrl = pathToFileURL(
     join(root, 'src/components/desktop/apps/architecture-explorer/architecture-data.ts'),
   ).href;
-  return (await import(moduleUrl)) as ArchitectureDataModule;
+  const loaded: unknown = await import(moduleUrl);
+  if (!isArchitectureDataModule(loaded)) {
+    throw new Error('Architecture data module has an unexpected shape.');
+  }
+  return loaded;
 }
 
 async function importCurriculumModules(root: string): Promise<CurriculumModuleDataModule> {
   const moduleUrl = pathToFileURL(join(root, 'src/content/knowledge/modules.ts')).href;
-  return (await import(moduleUrl)) as CurriculumModuleDataModule;
+  const loaded: unknown = await import(moduleUrl);
+  if (!isCurriculumModuleDataModule(loaded)) {
+    throw new Error('Curriculum modules module has an unexpected shape.');
+  }
+  return loaded;
 }

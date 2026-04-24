@@ -17,7 +17,7 @@ technologies:
   - astro
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Types and Programming Languages — Benjamin C. Pierce"
     url: "https://mitpress.mit.edu/9780262162098/types-and-programming-languages/"

@@ -1,15 +1,42 @@
 // LLM provider implementations for the review CLI.
 
+import { isRecord } from '@playground/knowledge-engine/frontmatter';
 import { type Result, tryCatchAsync } from '@playground/knowledge-engine/result';
 import type { LlmProvider } from './types.ts';
 
 const REQUEST_TIMEOUT_MS = 120_000;
 
-// ── Anthropic provider ──────────────────────────────────────────────────
-
-interface AnthropicMessage {
-  content: Array<{ type: string; text?: string }>;
+function isTextBlock(value: unknown): value is { type: string; text?: string } {
+  return (
+    isRecord(value) &&
+    typeof value.type === 'string' &&
+    (value.text === undefined || typeof value.text === 'string')
+  );
 }
+
+function readAnthropicText(value: unknown): string {
+  if (!(isRecord(value) && Array.isArray(value.content))) {
+    throw new Error('Anthropic API returned an unexpected response shape');
+  }
+
+  const textBlock = value.content.find(isTextBlock);
+  return textBlock?.text ?? '';
+}
+
+function isOpenAiChoice(value: unknown): value is { message: { content: string } } {
+  return isRecord(value) && isRecord(value.message) && typeof value.message.content === 'string';
+}
+
+function readOpenAiText(value: unknown): string {
+  if (!(isRecord(value) && Array.isArray(value.choices))) {
+    throw new Error('OpenAI API returned an unexpected response shape');
+  }
+
+  const firstChoice = value.choices.find(isOpenAiChoice);
+  return firstChoice?.message.content ?? '';
+}
+
+// ── Anthropic provider ──────────────────────────────────────────────────
 
 function createAnthropicProvider(apiKey: string, model: string, baseUrl?: string): LlmProvider {
   const url = `${baseUrl ?? 'https://api.anthropic.com'}/v1/messages`;
@@ -41,9 +68,7 @@ function createAnthropicProvider(apiKey: string, model: string, baseUrl?: string
             throw new Error(`Anthropic API error (${response.status}): ${errorBody.slice(0, 500)}`);
           }
 
-          const data = (await response.json()) as AnthropicMessage;
-          const textBlock = data.content.find((block) => block.type === 'text');
-          return textBlock?.text ?? '';
+          return readAnthropicText(await response.json());
         },
         (e: unknown) => {
           if (e instanceof Error && e.name === 'AbortError')
@@ -59,10 +84,6 @@ function createAnthropicProvider(apiKey: string, model: string, baseUrl?: string
 }
 
 // ── OpenAI-compatible provider ──────────────────────────────────────────
-
-interface OpenAiChatResponse {
-  choices: Array<{ message: { content: string } }>;
-}
 
 function createOpenAiProvider(apiKey: string, model: string, baseUrl?: string): LlmProvider {
   const url = `${baseUrl ?? 'https://api.openai.com'}/v1/chat/completions`;
@@ -93,9 +114,7 @@ function createOpenAiProvider(apiKey: string, model: string, baseUrl?: string): 
             throw new Error(`OpenAI API error (${response.status}): ${errorBody.slice(0, 500)}`);
           }
 
-          const data = (await response.json()) as OpenAiChatResponse;
-          const firstChoice = data.choices[0];
-          return firstChoice?.message.content ?? '';
+          return readOpenAiText(await response.json());
         },
         (e: unknown) => {
           if (e instanceof Error && e.name === 'AbortError') return 'OpenAI API request timed out';
@@ -123,6 +142,6 @@ export function createProvider(
     case 'openai':
       return createOpenAiProvider(apiKey, model, baseUrl);
     default:
-      throw new Error(`Unknown provider: ${name as string}`);
+      throw new Error(`Unknown provider: ${String(name)}`);
   }
 }

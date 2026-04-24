@@ -14,7 +14,7 @@ technologies:
   - typescript
 order: 6
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Computer Networking: A Top-Down Approach — Kurose & Ross"
     url: "https://gaia.cs.umass.edu/kurose_ross/index.php"
@@ -177,7 +177,7 @@ const { error } = await resend.emails.send({
 
 This is server-to-server [HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview). The Resend SDK makes a `POST https://api.resend.com/emails` request with the API key in the `Authorization` header. The full path: Railway server → DNS → Resend's load balancer → Resend's API server → response back to Railway.
 
-**Critical detail**: The API key comes from `process.env['RESEND_API_KEY']`, not `import.meta.env`. Vite inlines `import.meta.env` at build time. In the Docker build (CI), secrets aren't available, so `import.meta.env.RESEND_API_KEY` would become an empty string in the built JavaScript. `process.env` reads from the actual runtime environment — the one Railway configures when the container starts.
+**Critical detail**: The API key comes from `process.env.RESEND_API_KEY`, not `import.meta.env`. Vite inlines `import.meta.env` at build time. In the Docker build (CI), secrets aren't available, so `import.meta.env.RESEND_API_KEY` would become an empty string in the built JavaScript. `process.env` reads from the actual runtime environment — the one Railway configures when the container starts.
 
 ## Email Delivery: Beyond HTTP
 

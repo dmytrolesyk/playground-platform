@@ -16,7 +16,7 @@ technologies:
   - typescript
 order: 5
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Chrome DevTools — Fix Memory Problems"
     url: "https://developer.chrome.com/docs/devtools/memory-problems"

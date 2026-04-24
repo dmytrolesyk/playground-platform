@@ -17,7 +17,7 @@ technologies:
   - typescript
 order: 4
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Astro — Server Endpoints (API Routes)"
     url: "https://docs.astro.build/en/guides/endpoints/#server-endpoints-api-routes"
@@ -120,9 +120,9 @@ The `website` field is a **honeypot** — a hidden field that real users never f
 
 3. Email validation uses a regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`. It checks after trimming whitespace.
 
-4. The API key comes from `process.env['RESEND_API_KEY']` — **not** `import.meta.env`. This is critical.
+4. The API key comes from `process.env.RESEND_API_KEY` — **not** `import.meta.env`. This is critical.
 
-**EXPLAIN:** The `process.env` vs `import.meta.env` distinction is a major landmine documented in `AGENTS.md`. Vite (which Astro uses) inlines **all** `import.meta.env` values at build time — including server-only secrets. In Docker builds where secrets aren't available during `pnpm build`, `import.meta.env.[RESEND](https://github.com/resend/resend-node)_API_KEY` would become an empty string baked into the JavaScript bundle. Using `process.env['RESEND_API_KEY']` reads the environment variable at **runtime**, when the Node.js server actually handles the request. The bracket notation (`['RESEND_API_KEY']`) is required by TypeScript's `noPropertyAccessFromIndexSignature` rule.
+**EXPLAIN:** The `process.env` vs `import.meta.env` distinction is a major landmine documented in `AGENTS.md`. Vite (which Astro uses) inlines **all** `import.meta.env` values at build time — including server-only secrets. In Docker builds where secrets aren't available during `pnpm build`, `import.meta.env.[RESEND](https://github.com/resend/resend-node)_API_KEY` would become an empty string baked into the JavaScript bundle. Using `process.env.RESEND_API_KEY` reads the environment variable at **runtime**, when the Node.js server actually handles the request. Dot notation and bracket notation both work here; the important rule is that server secrets come from `process.env`.
 
 ## Experiment 3: Trace the Resend API Call
 
@@ -159,13 +159,13 @@ Also note: the `from` address uses the `CONTACT_FROM_EMAIL` env var, which must 
 
 **DO:** Map out exactly where each environment variable is read and when:
 
-1. `PUBLIC_TELEGRAM_USERNAME` — used in `ContactApp.tsx` and `EmailApp.tsx` via `import.meta.env['PUBLIC_TELEGRAM_USERNAME']`. Search the codebase:
+1. `PUBLIC_TELEGRAM_USERNAME` — used in `ContactApp.tsx` and `EmailApp.tsx` via `import.meta.env.PUBLIC_TELEGRAM_USERNAME`. Search the codebase:
 
 ```bash
 grep -r "PUBLIC_TELEGRAM" src/
 ```
 
-2. `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` — used only in `src/pages/api/contact.ts` via `process.env['...']`.
+2. `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` — used only in `src/pages/api/contact.ts` via `process.env`.
 
 3. Check the Dockerfile to see how `PUBLIC_*` vars are handled during Docker build:
 

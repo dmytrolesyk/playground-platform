@@ -45,12 +45,40 @@ function makeBody(category: string): string {
   return `See https://example.com/doc1 and https://example.com/doc2 and https://example.com/doc3 for details.\n\n${filler}`;
 }
 
+type OmittableKnowledgeArticleField = 'body' | 'diagramRef' | 'lastUpdated' | 'module';
+
+function omitOptionalField(
+  article: KnowledgeArticle,
+  field: OmittableKnowledgeArticleField,
+): KnowledgeArticle {
+  switch (field) {
+    case 'body': {
+      const { body: _body, ...rest } = article;
+      return rest;
+    }
+    case 'diagramRef': {
+      const { diagramRef: _diagramRef, ...rest } = article;
+      return rest;
+    }
+    case 'lastUpdated': {
+      const { lastUpdated: _lastUpdated, ...rest } = article;
+      return rest;
+    }
+    case 'module': {
+      const { module: _module, ...rest } = article;
+      return rest;
+    }
+    default:
+      return article;
+  }
+}
+
 function cleanArticle(
   overrides: Partial<KnowledgeArticle> = {},
-  omit: (keyof KnowledgeArticle)[] = [],
+  omit: OmittableKnowledgeArticleField[] = [],
 ): KnowledgeArticle {
   const category = overrides.category ?? 'architecture';
-  const base: KnowledgeArticle = {
+  let article: KnowledgeArticle = {
     id: 'architecture/overview',
     category,
     module: 'foundation',
@@ -69,9 +97,9 @@ function cleanArticle(
     ...overrides,
   };
   for (const key of omit) {
-    delete (base as unknown as Record<string, unknown>)[key];
+    article = omitOptionalField(article, key);
   }
-  return base;
+  return article;
 }
 
 function baseInput(overrides: Partial<KnowledgeAuditInput> = {}): KnowledgeAuditInput {

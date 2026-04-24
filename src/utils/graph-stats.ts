@@ -1,32 +1,17 @@
 // Pure computation functions for knowledge graph statistics.
 // Takes the knowledge-graph.json shape as input — no I/O.
 
-export interface ArticleNode {
-  id: string;
-  type: 'article';
-  category: string;
-  module: string | null;
-  technologies: string[];
-}
+import type {
+  ArticleNode,
+  GraphEdge,
+  GraphNode,
+  KnowledgeGraph,
+  ModuleNode,
+  TechnologyNode,
+} from '@playground/knowledge-engine/graph/types';
 
-export interface TechnologyNode {
-  id: string;
-  type: 'technology';
-  label: string;
-}
-
-export interface ModuleNode {
-  id: string;
-  type: 'module';
-  label: string;
-}
-
-export interface OtherNode {
-  id: string;
-  type: string;
-}
-
-export type GraphNode = ArticleNode | TechnologyNode | ModuleNode | OtherNode;
+export type { ArticleNode, GraphEdge, GraphNode, ModuleNode, TechnologyNode };
+export type GraphStatsInput = Pick<KnowledgeGraph, 'nodes' | 'edges'>;
 
 function isArticleNode(n: GraphNode): n is ArticleNode {
   return n.type === 'article';
@@ -38,17 +23,6 @@ function isModuleNode(n: GraphNode): n is ModuleNode {
 
 function isTechnologyNode(n: GraphNode): n is TechnologyNode {
   return n.type === 'technology';
-}
-
-export interface GraphEdge {
-  source: string;
-  target: string;
-  type: string;
-}
-
-export interface KnowledgeGraphData {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
 }
 
 // ── Result types ──
@@ -264,7 +238,7 @@ function getTechnologyGaps(nodes: GraphNode[]): TechnologyGap[] {
 
 // ── Main entry point ──
 
-export function computeGraphStats(graph: KnowledgeGraphData): GraphStats {
+export function computeGraphStats(graph: GraphStatsInput): GraphStats {
   const chain = getLongestPrerequisiteChain(graph.nodes, graph.edges);
 
   return {

@@ -29,7 +29,7 @@ technologies:
   - typescript
 order: 2
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Introduction to Algorithms (CLRS) — Chapter 12: Binary Search Trees"
     url: "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"

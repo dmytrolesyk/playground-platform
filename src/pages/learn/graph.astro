@@ -1,13 +1,13 @@
 ---
 import type { KnowledgeGraph as KnowledgeGraphData } from '@playground/knowledge-engine/graph/types';
-import KnowledgeGraph from '../../components/learn/KnowledgeGraph.tsx';
+import KnowledgeGraphComponent from '../../components/learn/KnowledgeGraph.tsx';
 import graphData from '../../data/knowledge-graph.json';
 import LearnLayout from '../../layouts/LearnLayout.astro';
+import { parseKnowledgeGraph } from '../../utils/knowledge-graph';
 
 export const prerender = true;
 
-// JSON import has `type: string` not the literal union — cast to the typed shape
-const typedGraphData = graphData as unknown as KnowledgeGraphData;
+const typedGraphData: KnowledgeGraphData = parseKnowledgeGraph(graphData);
 ---
 
 <LearnLayout title="Knowledge Graph">
@@ -19,7 +19,7 @@ const typedGraphData = graphData as unknown as KnowledgeGraphData;
         Click any article node to navigate to it. Use the filters to focus on specific categories or edge types.
       </p>
     </header>
-    <KnowledgeGraph client:load graphData={typedGraphData} />
+    <KnowledgeGraphComponent client:load graphData={typedGraphData} />
   </div>
 </LearnLayout>
 

@@ -18,7 +18,7 @@ technologies:
   - astro
 order: 13
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Progressive Enhancement — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement"

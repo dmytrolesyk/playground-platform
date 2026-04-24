@@ -253,6 +253,7 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
   const [hiddenEdgeTypes, setHiddenEdgeTypes] = createSignal<Set<string>>(new Set());
   const [hiddenNodeTypes, setHiddenNodeTypes] = createSignal<Set<string>>(new Set());
   const [loading, setLoading] = createSignal(true);
+  const [loadError, setLoadError] = createSignal<string | null>(null);
   const [hoveredNode, setHoveredNode] = createSignal<string | null>(null);
 
   // ── Mastery coloring ──────────────────────────────────────────────
@@ -343,103 +344,112 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
   // ── Initialize Cytoscape ──────────────────────────────────────────
 
-  onMount(() => {
-    (async () => {
-      if (!containerRef) return;
+  async function initializeGraph(): Promise<void> {
+    if (!containerRef) {
+      throw new Error('Knowledge graph container is unavailable');
+    }
 
-      // Dynamic import to keep bundle small (lazy loading boundary)
-      const [cytoscapeMod, fcoseMod] = await Promise.all([
-        import('cytoscape'),
-        import('cytoscape-fcose'),
-      ]);
+    // Dynamic import to keep bundle small (lazy loading boundary)
+    const [cytoscapeMod, fcoseMod] = await Promise.all([
+      import('cytoscape'),
+      import('cytoscape-fcose'),
+    ]);
 
-      const cytoscape = cytoscapeMod.default;
-      const fcose = fcoseMod.default;
+    const cytoscape = cytoscapeMod.default;
+    const fcose = fcoseMod.default;
 
-      // Register the layout extension
-      cytoscape.use(fcose);
+    // Register the layout extension
+    cytoscape.use(fcose);
 
-      cy = cytoscape({
-        container: containerRef,
-        elements: [
-          ...elements.nodes.map((n) => ({
-            group: 'nodes' as const,
-            data: { ...n.data },
-            classes: n.classes,
-          })),
-          ...elements.edges.map((e) => ({
-            group: 'edges' as const,
-            data: { ...e.data },
-          })),
-        ] as cytoscape.ElementDefinition[],
-        // Cytoscape accepts both 'style' and 'css' as the property name; types only declare 'css'
-        style: buildStylesheet() as cytoscape.StylesheetJson,
-        layout: {
-          name: 'fcose',
-          animate: false,
-          quality: 'proof',
-          nodeDimensionsIncludeLabels: true,
-          packComponents: true,
-          nodeRepulsion: () => 8000,
-          idealEdgeLength: () => 80,
-          edgeElasticity: () => 0.45,
-          nestingFactor: 0.1,
-          gravity: 0.25,
-          gravityRange: 3.8,
-          numIter: 2500,
-          tile: true,
-          tilingPaddingVertical: 20,
-          tilingPaddingHorizontal: 20,
-        } as cytoscape.LayoutOptions,
-        minZoom: 0.1,
-        maxZoom: 4,
-        wheelSensitivity: 0.3,
-      });
+    cy = cytoscape({
+      container: containerRef,
+      elements: [
+        ...elements.nodes.map((n) => ({
+          group: 'nodes' as const,
+          data: { ...n.data },
+          classes: n.classes,
+        })),
+        ...elements.edges.map((e) => ({
+          group: 'edges' as const,
+          data: { ...e.data },
+        })),
+      ] as cytoscape.ElementDefinition[],
+      // Cytoscape accepts both 'style' and 'css' as the property name; types only declare 'css'
+      style: buildStylesheet() as cytoscape.StylesheetJson,
+      layout: {
+        name: 'fcose',
+        animate: false,
+        quality: 'proof',
+        nodeDimensionsIncludeLabels: true,
+        packComponents: true,
+        nodeRepulsion: () => 8000,
+        idealEdgeLength: () => 80,
+        edgeElasticity: () => 0.45,
+        nestingFactor: 0.1,
+        gravity: 0.25,
+        gravityRange: 3.8,
+        numIter: 2500,
+        tile: true,
+        tilingPaddingVertical: 20,
+        tilingPaddingHorizontal: 20,
+      } as cytoscape.LayoutOptions,
+      minZoom: 0.1,
+      maxZoom: 4,
+      wheelSensitivity: 0.3,
+    });
 
-      // Apply mastery colors after initialization
-      applyMasteryColors();
-      setLoading(false);
+    // Apply mastery colors after initialization
+    applyMasteryColors();
+    setLoading(false);
 
-      // ── Interactions ──────────────────────────────────────────────
+    // ── Interactions ──────────────────────────────────────────────
 
-      // Click → navigate to article
-      cy.on('tap', 'node', (evt) => {
-        const node = evt.target;
-        const nodeType = node.data('nodeType') as string;
-        const nodeId = node.data('id') as string;
+    // Click → navigate to article
+    cy.on('tap', 'node', (evt) => {
+      const node = evt.target;
+      const nodeType = node.data('nodeType') as string;
+      const nodeId = node.data('id') as string;
 
-        if (nodeType === 'article') {
-          window.location.href = `/learn/${nodeId}`;
-        } else if (nodeType === 'architecture-node') {
-          const slug = node.data('knowledgeSlug') as string | null;
-          if (slug) {
-            window.location.href = `/learn/${slug}`;
-          }
+      if (nodeType === 'article') {
+        window.location.href = `/learn/${nodeId}`;
+      } else if (nodeType === 'architecture-node') {
+        const slug = node.data('knowledgeSlug') as string | null;
+        if (slug) {
+          window.location.href = `/learn/${slug}`;
         }
-      });
+      }
+    });
 
-      // Hover → show tooltip
-      cy.on('mouseover', 'node', (evt) => {
-        const node = evt.target;
-        const label = node.data('label') as string;
-        const nodeType = node.data('nodeType') as string;
-        const category = node.data('category') as string | undefined;
-        const parts = [label];
-        if (nodeType) parts.push(`[${nodeType}]`);
-        if (category) parts.push(`(${category})`);
-        setHoveredNode(parts.join(' '));
-        if (containerRef) containerRef.style.cursor = 'pointer';
-      });
+    // Hover → show tooltip
+    cy.on('mouseover', 'node', (evt) => {
+      const node = evt.target;
+      const label = node.data('label') as string;
+      const nodeType = node.data('nodeType') as string;
+      const category = node.data('category') as string | undefined;
+      const parts = [label];
+      if (nodeType) parts.push(`[${nodeType}]`);
+      if (category) parts.push(`(${category})`);
+      setHoveredNode(parts.join(' '));
+      if (containerRef) containerRef.style.cursor = 'pointer';
+    });
 
-      cy.on('mouseout', 'node', () => {
-        setHoveredNode(null);
-        if (containerRef) containerRef.style.cursor = 'default';
-      });
+    cy.on('mouseout', 'node', () => {
+      setHoveredNode(null);
+      if (containerRef) containerRef.style.cursor = 'default';
+    });
 
-      // Expose for E2E testing
-      window.__cyGraph = cy;
-    })().catch(() => {
-      /* cytoscape init failure */
+    // Expose for E2E testing
+    window.__cyGraph = cy;
+  }
+
+  function handleGraphLoadError(): void {
+    setLoadError('Failed to load the knowledge graph. Refresh the page and try again.');
+    setLoading(false);
+  }
+
+  onMount(() => {
+    initializeGraph().catch(() => {
+      handleGraphLoadError();
     });
   });
 
@@ -457,115 +467,124 @@ const KnowledgeGraph: Component<Props> = (props: Props): JSX.Element => {
 
   return (
     <div class="knowledge-graph-wrapper">
-      {/* Filter controls */}
-      <div class="knowledge-graph-controls">
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Categories</legend>
-          <For each={categories}>
-            {(cat: string) => (
-              <label class="knowledge-graph-filter">
-                <input
-                  type="checkbox"
-                  checked={!hiddenCategories().has(cat)}
-                  onChange={() => toggleCategory(cat)}
-                />
-                <span
-                  class="knowledge-graph-swatch"
-                  style={{ 'background-color': CATEGORY_COLORS[cat] ?? '#999' }}
-                />
-                {CATEGORY_LABELS[cat] ?? cat}
-              </label>
-            )}
-          </For>
-        </fieldset>
-
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Node Types</legend>
-          <For each={nodeTypes}>
-            {(nt: string) => (
-              <label class="knowledge-graph-filter">
-                <input
-                  type="checkbox"
-                  checked={!hiddenNodeTypes().has(nt)}
-                  onChange={() => toggleNodeType(nt)}
-                />
-                {NODE_TYPE_LABELS[nt] ?? nt}
-              </label>
-            )}
-          </For>
-        </fieldset>
-
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Edge Types</legend>
-          <For each={edgeTypes}>
-            {(et: string) => (
-              <label class="knowledge-graph-filter">
-                <input
-                  type="checkbox"
-                  checked={!hiddenEdgeTypes().has(et)}
-                  onChange={() => toggleEdgeType(et)}
-                />
-                {EDGE_TYPE_LABELS[et] ?? et}
-              </label>
-            )}
-          </For>
-        </fieldset>
-
-        {/* Legend: mastery borders */}
-        <fieldset class="knowledge-graph-fieldset">
-          <legend>Mastery Progress</legend>
-          <div class="knowledge-graph-legend">
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': '#ccc' }}
-              />
-              Unread
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.read }}
-              />
-              Read
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.checked }}
-              />
-              Checked
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.practiced }}
-              />
-              Practiced
-            </span>
-            <span class="knowledge-graph-legend-item">
-              <span
-                class="knowledge-graph-swatch knowledge-graph-swatch--border"
-                style={{ 'border-color': MASTERY_BORDER_COLORS.mastered }}
-              />
-              Mastered
-            </span>
+      <Show
+        when={!loadError()}
+        fallback={
+          <div class="knowledge-graph-error" role="alert">
+            {loadError()}
           </div>
-        </fieldset>
-      </div>
+        }
+      >
+        {/* Filter controls */}
+        <div class="knowledge-graph-controls">
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Categories</legend>
+            <For each={categories}>
+              {(cat: string) => (
+                <label class="knowledge-graph-filter">
+                  <input
+                    type="checkbox"
+                    checked={!hiddenCategories().has(cat)}
+                    onChange={() => toggleCategory(cat)}
+                  />
+                  <span
+                    class="knowledge-graph-swatch"
+                    style={{ 'background-color': CATEGORY_COLORS[cat] ?? '#999' }}
+                  />
+                  {CATEGORY_LABELS[cat] ?? cat}
+                </label>
+              )}
+            </For>
+          </fieldset>
 
-      {/* Tooltip */}
-      <Show when={hoveredNode()}>
-        <div class="knowledge-graph-tooltip">{hoveredNode()}</div>
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Node Types</legend>
+            <For each={nodeTypes}>
+              {(nt: string) => (
+                <label class="knowledge-graph-filter">
+                  <input
+                    type="checkbox"
+                    checked={!hiddenNodeTypes().has(nt)}
+                    onChange={() => toggleNodeType(nt)}
+                  />
+                  {NODE_TYPE_LABELS[nt] ?? nt}
+                </label>
+              )}
+            </For>
+          </fieldset>
+
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Edge Types</legend>
+            <For each={edgeTypes}>
+              {(et: string) => (
+                <label class="knowledge-graph-filter">
+                  <input
+                    type="checkbox"
+                    checked={!hiddenEdgeTypes().has(et)}
+                    onChange={() => toggleEdgeType(et)}
+                  />
+                  {EDGE_TYPE_LABELS[et] ?? et}
+                </label>
+              )}
+            </For>
+          </fieldset>
+
+          {/* Legend: mastery borders */}
+          <fieldset class="knowledge-graph-fieldset">
+            <legend>Mastery Progress</legend>
+            <div class="knowledge-graph-legend">
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': '#ccc' }}
+                />
+                Unread
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.read }}
+                />
+                Read
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.checked }}
+                />
+                Checked
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.practiced }}
+                />
+                Practiced
+              </span>
+              <span class="knowledge-graph-legend-item">
+                <span
+                  class="knowledge-graph-swatch knowledge-graph-swatch--border"
+                  style={{ 'border-color': MASTERY_BORDER_COLORS.mastered }}
+                />
+                Mastered
+              </span>
+            </div>
+          </fieldset>
+        </div>
+
+        {/* Tooltip */}
+        <Show when={hoveredNode()}>
+          <div class="knowledge-graph-tooltip">{hoveredNode()}</div>
+        </Show>
+
+        {/* Loading indicator */}
+        <Show when={loading()}>
+          <div class="knowledge-graph-loading">Loading graph…</div>
+        </Show>
+
+        {/* Graph container */}
+        <div ref={containerRef} class="knowledge-graph-container" data-cy="knowledge-graph" />
       </Show>
-
-      {/* Loading indicator */}
-      <Show when={loading()}>
-        <div class="knowledge-graph-loading">Loading graph…</div>
-      </Show>
-
-      {/* Graph container */}
-      <div ref={containerRef} class="knowledge-graph-container" data-cy="knowledge-graph" />
     </div>
   );
 };

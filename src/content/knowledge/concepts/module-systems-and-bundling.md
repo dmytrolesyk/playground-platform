@@ -15,7 +15,7 @@ technologies:
   - solidjs
 order: 12
 dateAdded: 2026-04-20
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "JavaScript modules — MDN Web Docs"
     url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
@@ -228,7 +228,7 @@ const key = "sk_123";
 const key = "";  // 💥 Empty string baked in forever!
 ```
 
-This is why server-side code in `src/pages/api/contact.ts` uses `process.env['RESEND_API_KEY']` instead — it reads the actual environment variable at runtime, not a build-time substitution.
+This is why server-side code in `src/pages/api/contact.ts` uses `process.env.RESEND_API_KEY` instead — it reads the actual environment variable at runtime, not a build-time substitution.
 
 ## What Goes Wrong Without Code Splitting
 

@@ -6,6 +6,7 @@ import {
   formatKnowledgeAuditReport,
   hasKnowledgeAuditErrors,
 } from '@playground/knowledge-engine/audit/report';
+import { isRecord } from '@playground/knowledge-engine/frontmatter';
 
 try {
   const input = await loadKnowledgeAuditInput();
@@ -40,12 +41,10 @@ interface ReviewFlag {
 
 function isReviewFlag(value: unknown): value is ReviewFlag {
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    'articleId' in value &&
-    typeof (value as Record<string, unknown>).articleId === 'string' &&
-    'flaggedAt' in value &&
-    typeof (value as Record<string, unknown>).flaggedAt === 'string'
+    isRecord(value) &&
+    typeof value.articleId === 'string' &&
+    typeof value.flaggedAt === 'string' &&
+    (value.reason === undefined || typeof value.reason === 'string')
   );
 }
 

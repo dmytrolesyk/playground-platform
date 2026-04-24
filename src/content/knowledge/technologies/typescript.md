@@ -23,7 +23,7 @@ technologies:
   - typescript
 order: 4
 dateAdded: 2026-04-23
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "TypeScript Official Documentation"
     url: "https://www.typescriptlang.org/docs/"
@@ -91,9 +91,10 @@ The project's `tsconfig.json` extends [`astro/tsconfigs/strictest`](https://docs
 
 ```json
 {
-  "extends": "astro/tsconfigs/strictest",
+  "extends": ["./tsconfig.base.json", "astro/tsconfigs/strictest"],
   "compilerOptions": {
-    "noPropertyAccessFromIndexSignature": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
@@ -218,8 +219,8 @@ Each audit rule is a pure function: `(input: KnowledgeAuditInput) => KnowledgeAu
 
 ## Gotchas
 
-**`import.meta.env` is build-time only.** Vite inlines ALL `import.meta.env` values during build — not just `PUBLIC_*` prefixed ones. In Docker/CI where secrets aren't present at build time, they become empty strings. Server-side code must use `process.env['VAR_NAME']` for runtime secrets. This is a [Vite behavior](https://vite.dev/guide/env-and-mode), not a TypeScript issue, but TypeScript doesn't warn about it because both access patterns type-check.
+**`import.meta.env` is build-time only.** Vite inlines ALL `import.meta.env` values during build — not just `PUBLIC_*` prefixed ones. In Docker/CI where secrets aren't present at build time, they become empty strings. Server-side code must use `process.env` for runtime secrets. This is a [Vite behavior](https://vite.dev/guide/env-and-mode), not a TypeScript issue, but TypeScript doesn't warn about it because both access patterns type-check.
 
 **Type stripping doesn't type-check.** Neither Vite's esbuild transform nor Node.js type stripping actually run the type checker. They just remove type syntax. Type checking only happens when you explicitly run `astro check` or `tsc`. The `pnpm verify` command runs `astro check` as part of its pipeline, but if you skip verification, type errors won't be caught.
 
-**Strict index signatures require bracket notation.** With `noPropertyAccessFromIndexSignature`, you can't write `process.env.MY_VAR` — you must write `process.env['MY_VAR']`. The Biome linter also enforces this with `useLiteralKeys`. You'll see `// biome-ignore` comments in the codebase where this interacts with external APIs.
+**`exactOptionalPropertyTypes` changes fixture design.** With this flag on, `foo?: string` does **not** mean “`foo` may be the string `undefined`.” It means the property may be omitted entirely. This shows up most often in tests and parsed data: if an optional field is missing, omit it from the object instead of writing `foo: undefined`. The payoff is real signal at API and content boundaries, where “missing” and “present but undefined” should not silently collapse into the same thing.

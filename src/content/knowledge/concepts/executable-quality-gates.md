@@ -25,7 +25,7 @@ technologies:
   - biome
 order: 14
 dateAdded: 2026-04-21
-lastUpdated: 2026-04-23
+lastUpdated: 2026-04-24
 externalReferences:
   - title: "Continuous Integration — Martin Fowler"
     url: "https://martinfowler.com/articles/continuousIntegration.html"

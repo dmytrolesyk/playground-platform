@@ -3,19 +3,19 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-// biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
+// biome-ignore lint/complexity/useLiteralKeys: explicit env lookup by string key
 const e2ePort: string = process.env['PLAYWRIGHT_PORT'] ?? '4321';
 const baseURL: string = `http://localhost:${e2ePort}`;
 
 export default defineConfig({
   testDir: '.',
   fullyParallel: false,
-  // biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
+  // biome-ignore lint/complexity/useLiteralKeys: explicit env lookup by string key
   forbidOnly: !!process.env['CI'],
-  // biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
+  // biome-ignore lint/complexity/useLiteralKeys: explicit env lookup by string key
   retries: process.env['CI'] ? 1 : 0,
   workers: 1,
-  // biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
+  // biome-ignore lint/complexity/useLiteralKeys: explicit env lookup by string key
   reporter: process.env['CI'] ? 'github' : 'list',
   use: {
     baseURL,
@@ -41,7 +41,7 @@ export default defineConfig({
     cwd: repoRoot,
     command: 'pnpm build && node dist/server/entry.mjs',
     url: baseURL,
-    // biome-ignore lint/complexity/useLiteralKeys: TS strict requires bracket notation for index signatures
+    // biome-ignore lint/complexity/useLiteralKeys: explicit env lookup by string key
     reuseExistingServer: !process.env['CI'],
     timeout: 120_000,
     env: {
