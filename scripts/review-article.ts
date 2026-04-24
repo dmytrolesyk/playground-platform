@@ -22,6 +22,7 @@
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { getArray, getString, getStringArray } from '@playground/knowledge-engine/frontmatter';
 import { parse as parseYaml } from 'yaml';
 import {
   buildCoveragePrompt,
@@ -348,24 +349,6 @@ function printBatchSummary(reports: QualityReport[]): void {
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────
-
-function getString(record: Record<string, unknown>, key: string): string | undefined {
-  const value = record[key];
-  if (typeof value === 'string') return value;
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
-  return undefined;
-}
-
-function getStringArray(record: Record<string, unknown>, key: string): string[] {
-  const value = record[key];
-  if (!Array.isArray(value)) return [];
-  return value.filter((item): item is string => typeof item === 'string');
-}
-
-function getArray(record: Record<string, unknown>, key: string): unknown[] {
-  const value = record[key];
-  return Array.isArray(value) ? value : [];
-}
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

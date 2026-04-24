@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  type Result,
   err,
   flatMap,
   isErr,
@@ -9,6 +8,7 @@ import {
   mapErr,
   match,
   ok,
+  type Result,
   tryCatch,
   tryCatchAsync,
   unwrap,
@@ -84,16 +84,16 @@ describe('Result', () => {
   describe('match', () => {
     it('calls onOk for Ok results', () => {
       const result = match(ok(42), {
-        onOk: (v) => `value: ${v}`,
-        onErr: (e) => `error: ${e}`,
+        onOk: (v: number) => `value: ${v}`,
+        onErr: (e: string) => `error: ${e}`,
       });
       expect(result).toBe('value: 42');
     });
 
     it('calls onErr for Err results', () => {
       const result = match(err('boom') as Result<number, string>, {
-        onOk: (v) => `value: ${v}`,
-        onErr: (e) => `error: ${e}`,
+        onOk: (v: number) => `value: ${v}`,
+        onErr: (e: string) => `error: ${e}`,
       });
       expect(result).toBe('error: boom');
     });

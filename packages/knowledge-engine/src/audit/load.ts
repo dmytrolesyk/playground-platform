@@ -3,6 +3,14 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
+import {
+  getArray,
+  getDateString,
+  getNumber,
+  getString,
+  getStringArray,
+  isRecord,
+} from '../frontmatter.ts';
 import type {
   ArchitectureEdge,
   ArchitectureNode,
@@ -163,24 +171,6 @@ async function importCurriculumModules(root: string): Promise<CurriculumModuleDa
   return (await import(moduleUrl)) as CurriculumModuleDataModule;
 }
 
-function getString(record: Record<string, unknown>, key: string): string | undefined {
-  const value = record[key];
-  return typeof value === 'string' ? value : undefined;
-}
-
-function getStringArray(record: Record<string, unknown>, key: string): string[] {
-  const value = record[key];
-  if (!Array.isArray(value)) {
-    return [];
-  }
-  return value.filter((item): item is string => typeof item === 'string');
-}
-
-function getArray(record: Record<string, unknown>, key: string): unknown[] {
-  const value = record[key];
-  return Array.isArray(value) ? value : [];
-}
-
 function getExercises(record: Record<string, unknown>): Exercise[] {
   return getArray(record, 'exercises')
     .filter(isRecord)
@@ -196,26 +186,6 @@ function getExternalReferences(record: Record<string, unknown>): ExternalReferen
       if (typeof url === 'string') ref.url = url;
       return ref;
     });
-}
-
-function getNumber(record: Record<string, unknown>, key: string): number | undefined {
-  const value = record[key];
-  return typeof value === 'number' ? value : undefined;
-}
-
-/**
- * Extract a date value as an ISO date string (YYYY-MM-DD).
- * Handles both string dates and Date objects (from Zod/Astro parsing).
- */
-function getDateString(record: Record<string, unknown>, key: string): string | undefined {
-  const value = record[key];
-  if (typeof value === 'string') return value;
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
-  return undefined;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 /**
