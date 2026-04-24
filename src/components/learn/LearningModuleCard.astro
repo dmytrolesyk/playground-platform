@@ -1,0 +1,43 @@
+---
+interface ModuleArticleLink {
+  id: string;
+  title: string;
+}
+
+interface Props {
+  id: string;
+  title: string;
+  objective: string;
+  prerequisiteLabels: string[];
+  articles: ModuleArticleLink[];
+  articleSlugs: string[];
+  estimatedHours: number;
+}
+
+const { id, title, objective, prerequisiteLabels, articles, articleSlugs, estimatedHours } =
+  Astro.props;
+---
+
+<div class="learn-module" id={`module-${id}`}>
+  <div class="learn-module__header">
+    <h3 class="learn-module__title">{title}</h3>
+    <span class="learn-module__meta">~{estimatedHours}h</span>
+  </div>
+  <p class="learn-module__objective">{objective}</p>
+  {prerequisiteLabels.length > 0 && (
+    <p class="learn-module__prereqs">
+      Builds on: {prerequisiteLabels.join(', ')}
+    </p>
+  )}
+  <ul class="learn-module__articles">
+    {articles.map((article) => (
+      <li><a href={`/learn/${article.id}`}>{article.title}</a></li>
+    ))}
+  </ul>
+  <div class="learn-module__progress-bar" data-module-articles={articleSlugs.join(',')}>
+    <div class="learn-module__progress-fill" style="width: 0%"></div>
+  </div>
+  <span class="learn-module__progress-label learn-module__meta" style="display:block;margin-top:4px">
+    0/{articles.length} mastered · 0 read · 0 checked · 0 practiced
+  </span>
+</div>
