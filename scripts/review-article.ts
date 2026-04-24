@@ -23,6 +23,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { getArray, getString, getStringArray } from '@playground/knowledge-engine/frontmatter';
+import { match } from '@playground/knowledge-engine/result';
 import { parse as parseYaml } from 'yaml';
 import {
   buildCoveragePrompt,
@@ -169,18 +170,16 @@ async function reviewDimension(
   dimension: ReviewDimension,
 ): Promise<DimensionResult> {
   const prompt = buildPromptForDimension(article, dimension);
+  const result = await provider.complete(prompt);
 
-  try {
-    const response = await provider.complete(prompt);
-    return parseDimensionResponse(response, dimension);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return {
+  return match(result, {
+    onOk: (response: string) => parseDimensionResponse(response, dimension),
+    onErr: (message: string) => ({
       score: 0,
       rationale: `Review failed: ${message}`,
       error: message,
-    };
-  }
+    }),
+  });
 }
 
 function buildPromptForDimension(article: ArticleContent, dimension: ReviewDimension): string {
