@@ -59,6 +59,7 @@ function loadModulePrerequisites(root: string): {
     const prereqMatch = MODULE_PREREQ_PATTERN.exec(block);
     if (!idMatch) continue;
     const id = idMatch[1];
+    if (!id) continue;
     const prereqs = prereqMatch?.[1]
       ? prereqMatch[1]
           .split(',')

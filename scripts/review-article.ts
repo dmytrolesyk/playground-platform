@@ -102,8 +102,8 @@ function loadArticle(slug: string): ArticleContent {
     throw new Error(`Could not parse frontmatter for ${slug}`);
   }
 
-  const frontmatter = parseYaml(match.groups.frontmatter ?? '') as Record<string, unknown>;
-  const body = match.groups.body ?? '';
+  const frontmatter = parseYaml(match.groups['frontmatter'] ?? '') as Record<string, unknown>;
+  const body = match.groups['body'] ?? '';
 
   // Load related files content
   const relatedFiles = getStringArray(frontmatter, 'relatedFiles');
@@ -121,7 +121,8 @@ function loadArticle(slug: string): ArticleContent {
     }
   }
 
-  return {
+  const lastUpdated = getString(frontmatter, 'lastUpdated');
+  const base = {
     slug,
     title: getString(frontmatter, 'title') ?? slug,
     body,
@@ -130,8 +131,11 @@ function loadArticle(slug: string): ArticleContent {
     exercises: getArray(frontmatter, 'exercises'),
     learningObjectives: getStringArray(frontmatter, 'learningObjectives'),
     externalReferences: getArray(frontmatter, 'externalReferences'),
-    lastUpdated: getString(frontmatter, 'lastUpdated'),
   };
+  if (lastUpdated !== undefined) {
+    return { ...base, lastUpdated };
+  }
+  return base;
 }
 
 function listAllSlugs(): string[] {
@@ -218,9 +222,24 @@ function extractDimensionField(
   if (!field) return;
   const value = parsed[field];
   if (!Array.isArray(value)) return;
-  (result as Record<string, unknown>)[field] = value.filter(
-    (item): item is string => typeof item === 'string',
-  );
+  const filtered = value.filter((item): item is string => typeof item === 'string');
+  switch (field) {
+    case 'issues':
+      result.issues = filtered;
+      break;
+    case 'suggestedImprovements':
+      result.suggestedImprovements = filtered;
+      break;
+    case 'missingTopics':
+      result.missingTopics = filtered;
+      break;
+    case 'suggestedExercises':
+      result.suggestedExercises = filtered;
+      break;
+    case 'suggestedReferences':
+      result.suggestedReferences = filtered;
+      break;
+  }
 }
 
 function parseDimensionResponse(response: string, dimension: ReviewDimension): DimensionResult {
@@ -236,8 +255,8 @@ function parseDimensionResponse(response: string, dimension: ReviewDimension): D
   const parseResult = tryCatch(
     () => {
       const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
-      const score = typeof parsed.score === 'number' ? parsed.score : 0;
-      const rationale = typeof parsed.rationale === 'string' ? parsed.rationale : '';
+      const score = typeof parsed['score'] === 'number' ? parsed['score'] : 0;
+      const rationale = typeof parsed['rationale'] === 'string' ? parsed['rationale'] : '';
 
       const result: DimensionResult = { score, rationale };
       extractDimensionField(result, dimension, parsed);
@@ -358,7 +377,7 @@ function delay(ms: number): Promise<void> {
 // ── Main ────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  const apiKey = process.env.REVIEW_API_KEY;
+  const apiKey = process.env['REVIEW_API_KEY'];
   if (!apiKey) {
     process.stderr.write(
       'Error: REVIEW_API_KEY environment variable is required.\n' +
@@ -368,9 +387,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  const providerName = (process.env.REVIEW_PROVIDER ?? 'anthropic') as 'anthropic' | 'openai';
-  const model = process.env.REVIEW_MODEL ?? 'claude-sonnet-4-20250514';
-  const baseUrl = process.env.REVIEW_BASE_URL;
+  const providerName = (process.env['REVIEW_PROVIDER'] ?? 'anthropic') as 'anthropic' | 'openai';
+  const model = process.env['REVIEW_MODEL'] ?? 'claude-sonnet-4-20250514';
+  const baseUrl = process.env['REVIEW_BASE_URL'];
 
   let cliArgs: CliArgs;
   try {
@@ -394,8 +413,10 @@ async function main(): Promise<void> {
     case 'since':
       slugs = filterByDate(listAllSlugs(), cliArgs.since);
       break;
-    default:
-      throw new Error(`Unknown mode: ${cliArgs.mode as string}`);
+    default: {
+      const _exhaustive: never = cliArgs;
+      throw new Error(`Unknown CLI mode: ${String(_exhaustive)}`);
+    }
   }
 
   process.stdout.write(`\n🔍 Reviewing ${slugs.length} article(s) with ${model}...\n\n`);
