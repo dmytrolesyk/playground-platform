@@ -180,6 +180,7 @@ function buildPdfHtml(sections: CvSection[]): string {
   }
   .main h2:first-child { margin-top: 0; }
   .main h3 { font-size: 12px; font-weight: 700; color: #1a1a1a; margin: 12px 0 2px; }
+  .main h4 { font-size: 11px; font-weight: 700; color: #1e3a5f; margin: 10px 0 2px; }
   .main p { font-size: 11px; line-height: 1.6; color: #333; margin: 3px 0; }
   .main em { color: #555; }
   .main strong { color: #000; }
