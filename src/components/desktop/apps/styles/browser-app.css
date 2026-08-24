@@ -122,6 +122,13 @@
   color: #1a1a1a;
 }
 
+.browser-viewport h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 12px 0 4px;
+  color: var(--color-title-bar-active);
+}
+
 .browser-viewport p {
   margin: 4px 0;
   line-height: 1.6;
